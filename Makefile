@@ -6,7 +6,7 @@ check:
 
 .PHONY: clean
 clean:
-	$(RM) -r venv __pycache__ anodb.egg-info dist build
+	$(RM) -r venv __pycache__ anodb.egg-info dist build anodb/__pycache__
 
 .PHONY: install
 install:
