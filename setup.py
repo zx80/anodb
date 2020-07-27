@@ -12,5 +12,12 @@ setup(
     url="https://github.com/zx80/anodb",
     install_requires=["anosql>=1.0.0"],
     description="Convenient Wrapper around AnoSQL and a Database Connection",
-    long_description=long_description
+    long_description=long_description,
+    classifiers=["Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+        "Programming Language :: Python",
+        "Programming Language :: SQL",
+        "Topic :: Database :: Front-Ends",
+        "Topic :: Software Development :: Libraries :: Python Modules"]
 )
