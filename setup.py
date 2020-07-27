@@ -13,6 +13,7 @@ setup(
     install_requires=["anosql>=1.0.0"],
     description="Convenient Wrapper around AnoSQL and a Database Connection",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=["Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
