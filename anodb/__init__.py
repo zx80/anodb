@@ -15,7 +15,7 @@ class DB:
 	"""
 
 	def __init__(self, db: str, conn: str, queries: str, auto_reconnect=True, debug=False):
-		"""AnoDB constructor
+		"""DB constructor
 
 		- db: database engine, `sqlite` or `postgres`
 		- conn: connection string
