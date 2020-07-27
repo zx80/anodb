@@ -1,6 +1,8 @@
+.ONESHELL:
+
 .PHONY: check
 check:
-	pytest-3 test-anodb.py
+	cd tests && pytest-3 test-anodb.py
 
 .PHONY: clean
 clean:
@@ -12,6 +14,7 @@ install:
 
 venv:
 	python3 -m venv venv
+	venv/bin/pip3 install -e .
 
 dist:
 	python3 setup.py sdist bdist_wheel
