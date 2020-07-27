@@ -2,11 +2,12 @@
 
 .PHONY: check
 check:
+	mypy anodb
 	cd tests && pytest-3 test-anodb.py
 
 .PHONY: clean
 clean:
-	$(RM) -r venv __pycache__ anodb.egg-info dist build anodb/__pycache__
+	$(RM) -r venv __pycache__ anodb.egg-info dist build */__pycache__ .mypy_cache .pytest_cache
 
 .PHONY: install
 install:
