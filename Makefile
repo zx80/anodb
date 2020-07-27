@@ -14,6 +14,7 @@ install:
 
 venv:
 	python3 -m venv venv
+	venv/bin/pip3 install wheel psycopg2
 	venv/bin/pip3 install -e .
 
 dist:
