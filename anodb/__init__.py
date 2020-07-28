@@ -4,6 +4,7 @@
 
 import typing
 import logging
+import functools
 import anosql as sql # type: ignore
 
 
@@ -39,9 +40,8 @@ class DB:
 		self._queries = sql.from_path(queries, self._db)
 		# forward queries with inserted database connection
 		# self.some_query(args) -> self._queries.some_query(self._conn, args)
-		from functools import partial
 		for q in self._queries.available_queries:
-			setattr(self, q, partial(self._call_query, q))
+			setattr(self, q, functools.partial(self._call_query, q))
 			self._count[q] = 0
 
 	def _call_query(self, query, *args, **kwargs): 
