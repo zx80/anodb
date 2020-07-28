@@ -15,7 +15,7 @@ class DB:
 	and SQL execution methods from anosql.
 	"""
 
-	def __init__(self, db: str, conn: str, queries: str, auto_reconnect=True, debug=False):
+	def __init__(self, db: str, conn: str, queries: str, auto_reconnect=True, debug=False, **conn_options):
 		"""DB constructor
 
 		- db: database engine, `sqlite` or `postgres`
@@ -30,13 +30,13 @@ class DB:
 		if self._db is None:
 			raise Exception(f"database {db} is not supported")
 		self._conn_str = conn
+		self._conn_options = conn_options
 		self._queries_file = queries
 		self._debug = debug
 		self._auto_reconnect = auto_reconnect
-		self._conn = self._connect()
 		self._reconn = False
 		self._count = {}
-        # SQL queries
+		self._conn = self._connect()
 		self._queries = sql.from_path(queries, self._db)
 		# forward queries with inserted database connection
 		# self.some_query(args) -> self._queries.some_query(self._conn, args)
@@ -79,10 +79,10 @@ class DB:
 		logging.info(f"DB {self._db}: connecting")
 		if self._db == 'sqlite3':
 			import sqlite3 as db
-			return db.connect(self._conn_str, check_same_thread=False)
+			return db.connect(self._conn_str, **self._conn_options)
 		elif self._db == 'psycopg2':
 			import psycopg2 as db # type: ignore
-			return db.connect(self._conn_str)
+			return db.connect(self._conn_str, **sleF._conn_options)
 		else:
 			# note: anosql currently supports sqlite & postgres
 			raise Exception(f"unexpected db {self._db}")

@@ -32,8 +32,20 @@ def test_anodb():
 	db.close()
 	db.connect()
 	cur = db.cursor()
-	cur.execute('SELECT 42 as fourtytwo')
+	cur.execute('SELECT 42 AS fourtytwo')
 	assert cur.description[0][0] == 'fourtytwo'
 	assert cur.fetchone()[0] == 42
 	cur.close()
+	db.close()
+
+def test_anodb_options():
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+				  timeout=10, check_same_thread=False, isolation_level=None)
+	assert db is not None
+	cur = db.cursor()
+	cur.execute('SELECT 42 AS fourtytwo')
+	assert cur.description[0][0] == 'fourtytwo'
+	assert cur.fetchone()[0] == 42
+	db.close()
+	db.connect()
 	db.close()
