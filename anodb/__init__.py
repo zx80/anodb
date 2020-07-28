@@ -82,7 +82,7 @@ class DB:
 			return db.connect(self._conn_str, **self._conn_options)
 		elif self._db == 'psycopg2':
 			import psycopg2 as db # type: ignore
-			return db.connect(self._conn_str, **sleF._conn_options)
+			return db.connect(self._conn_str, **self._conn_options)
 		else:
 			# note: anosql currently supports sqlite & postgres
 			raise Exception(f"unexpected db {self._db}")
