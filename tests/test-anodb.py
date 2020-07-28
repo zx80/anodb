@@ -22,7 +22,9 @@ def test_anodb():
 	db.commit()
 	assert db.count_foo()[0][0] == 0
 	db.insert_foo(pk=3, val='three')
-	assert db.count_foo()[0][0] == 1
+	db.insert_foo(pk=4, val='four')
+	db.insert_foo(pk=5, val='five')
+	assert db.count_foo()[0][0] == 3
 	db.rollback()
 	assert db.count_foo()[0][0] == 0
 	db.drop_foo()

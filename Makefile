@@ -2,7 +2,8 @@
 
 .PHONY: check
 check: venv
-	source venv/bin/activate
+	. venv/bin/activate
+	type python3
 	mypy anodb
 	cd tests && pytest-3 test-anodb.py
 
