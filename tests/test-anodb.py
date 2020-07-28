@@ -3,7 +3,7 @@ import anodb
 import re
 
 def test_anodb():
-	db = anodb.DB('sqlite', '', 'test-anodb.sql')
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql')
 	assert db is not None
 	db.create_foo()
 	assert db.count_foo()[0][0] == 0
