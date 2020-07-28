@@ -104,6 +104,10 @@ class DB:
 		if self._conn is None:
 			self._conn = self._connect()
 
+	def cursor(self):
+		"""Get a cursor on the current connection."""
+		return self._conn.cursor()
+
 	def commit(self):
 		"""Commit database transaction."""
 		self._conn.commit()

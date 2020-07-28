@@ -31,5 +31,9 @@ def test_anodb():
 	db.commit()
 	db.close()
 	db.connect()
-	db.drop_foo()
+	cur = db.cursor()
+	cur.execute('SELECT 42 as fourtytwo')
+	assert cur.description[0][0] == 'fourtytwo'
+	assert cur.fetchone()[0] == 42
+	cur.close()
 	db.close()
