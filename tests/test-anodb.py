@@ -2,8 +2,7 @@ import pytest
 import anodb
 import re
 
-def test_anodb():
-	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql', '{"check_same_thread":False}')
+def run_stuff(db: anodb.DB):
 	assert db is not None
 	db.create_foo()
 	assert db.count_foo()[0][0] == 0
@@ -12,12 +11,12 @@ def test_anodb():
 	db.insert_foo(pk=2, val='two')
 	db.commit()
 	assert db.count_foo()[0][0] == 2
-	assert re.search(r'two', db.select_foo_pk(2)[0][0])
+	assert re.search(r'two', db.select_foo_pk(pk=2)[0][0])
 	db.update_foo_pk(pk=2, val='deux')
 	db.delete_foo_pk(pk=1)
 	db.commit()
 	assert db.count_foo()[0][0] == 1
-	assert re.search(r'deux', db.select_foo_pk(2)[0][0])
+	assert re.search(r'deux', db.select_foo_pk(pk=2)[0][0])
 	db.delete_foo_all()
 	db.commit()
 	assert db.count_foo()[0][0] == 0
@@ -38,7 +37,11 @@ def test_anodb():
 	cur.close()
 	db.close()
 
-def test_anodb_options():
+def test_sqlite():
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql', '{"check_same_thread":False}')
+	run_stuff(db)
+
+def test_options():
 	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
 				  timeout=10, check_same_thread=False, isolation_level=None)
 	assert db is not None
@@ -49,3 +52,14 @@ def test_anodb_options():
 	db.close()
 	db.connect()
 	db.close()
+
+@pytest.fixture
+def pg_conn(postgresql):
+	with postgresql as pg:
+		p = pg.get_dsn_parameters()
+		return "postgres://{user}@{host}:{port}/{dbname}".format(**p)
+
+def test_postgres(pg_conn):
+	assert re.match("postgres://", pg_conn)
+	db = anodb.DB('postgres', pg_conn, 'test-anodb.sql')
+	run_stuff(db)
