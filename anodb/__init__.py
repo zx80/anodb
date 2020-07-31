@@ -6,6 +6,7 @@ import typing
 import logging
 import functools
 import anosql as sql # type: ignore
+import json
 
 
 class DB:
@@ -15,12 +16,14 @@ class DB:
 	and SQL execution methods from anosql.
 	"""
 
-	def __init__(self, db: str, conn: str, queries: str, auto_reconnect=True, debug=False, **conn_options):
+	def __init__(self, db: str, conn: str, queries: str, options: str = '{}',
+				 auto_reconnect: bool = True, debug: bool = False, **conn_options):
 		"""DB constructor
 
 		- db: database engine, `sqlite` or `postgres`
 		- conn: connection string
 		- queries: file holding queries for `anosql`
+		- options: database-specific options as a json string
 		- auto_reconnect: whether reconnecting on connection errors
 		- debug: debug mode generate more logs
 		- conn_options: database-specific `kwargs` constructor options
@@ -33,7 +36,8 @@ class DB:
 		if self._db is None:
 			raise Exception(f"database {db} is not supported")
 		self._conn_str = conn
-		self._conn_options = conn_options
+		self._conn_options = json.loads(options)
+		self._conn_options.update(conn_options)
 		self._queries_file = queries
 		self._debug = debug
 		self._auto_reconnect = auto_reconnect
