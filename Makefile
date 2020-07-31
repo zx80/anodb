@@ -2,7 +2,6 @@
 
 .PHONY: check
 check: venv
-	mypy anodb
 	. venv/bin/activate
 	type python3
 	mypy anodb
