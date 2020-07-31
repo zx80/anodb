@@ -21,6 +21,9 @@ class DB:
 		- db: database engine, `sqlite` or `postgres`
 		- conn: connection string
 		- queries: file holding queries for `anosql`
+		- auto_reconnect: whether reconnecting on connection errors
+		- debug: debug mode generate more logs
+		- conn_options: database-specific `kwargs` constructor options
 		"""
 		logging.info(f"creating DB for {db}")
         # database connection
