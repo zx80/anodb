@@ -6,7 +6,7 @@ import typing
 import logging
 import functools
 import anosql as sql # type: ignore
-import json
+import ast
 
 
 class DB:
@@ -36,7 +36,7 @@ class DB:
 		if self._db is None:
 			raise Exception(f"database {db} is not supported")
 		self._conn_str = conn
-		self._conn_options = json.loads(options)
+		self._conn_options = ast.literal_eval(options)
 		self._conn_options.update(conn_options)
 		self._queries_file = queries
 		self._debug = debug
