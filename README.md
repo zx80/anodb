@@ -14,8 +14,8 @@ SQL queries from a file.
 import anodb
 db = anodb.DB('sqlite3', 'test.db', 'test.sql')
 
-db.do_some_stuff(key=1, val='hello world')
-res = db.do_some_more(key=2, val='hello world')
+db.do_some_insert(key=1, val='hello')
+res = db.do_some_update(key=1, val='world')
 db.commit()
 
 db.close()
