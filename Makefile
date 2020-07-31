@@ -24,5 +24,5 @@ dist:
 	python3 setup.py sdist bdist_wheel
 
 .PHONY: publish
-publish:
+publish: dist
 	twine upload dist/*
