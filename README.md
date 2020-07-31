@@ -20,3 +20,19 @@ db.commit()
 
 db.close()
 ```
+
+## Versions
+
+### 1.2
+
+Add `options` string parameter to constructor.
+
+### 1.1
+
+Add `**conn_options` parameter to constructor.
+
+Add `cursor()` method.
+
+### 1.0
+
+Initial release.
