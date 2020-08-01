@@ -37,7 +37,7 @@ class DB:
 		self._conn_str = conn
 		self._queries_file = queries
 		# accept connection options as they are
-		self._conn_options: dict = {}
+		self._conn_options = {}
 		if options is None:
 			pass
 		elif isinstance(options, str):
