@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="anodb",
-    version="1.2.0",
+    version="1.3.0",
     packages=find_packages(),
     author="Fabien Coelho",
     author_email="ano.db@coelho.net",
@@ -14,11 +14,13 @@ setup(
     description="Convenient Wrapper around AnoSQL and a Database Connection",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    classifiers=["Development Status :: 4 - Beta",
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
         "Programming Language :: Python",
         "Programming Language :: SQL",
         "Topic :: Database :: Front-Ends",
-        "Topic :: Software Development :: Libraries :: Python Modules"]
+        "Topic :: Software Development :: Libraries :: Python Modules"
+    ]
 )

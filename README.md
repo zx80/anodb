@@ -23,6 +23,10 @@ db.close()
 
 ## Versions
 
+### 1.3
+
+Make `options` accept different types.
+
 ### 1.2
 
 Add `options` string parameter to constructor.
