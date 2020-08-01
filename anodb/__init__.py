@@ -86,7 +86,7 @@ class DB:
 			raise error
 
 	def _create_fns(self):
-		"""Create call forwarding for current queries
+		"""Create call forwarding for current queries.
 
 		A database connection is inserted.
 
@@ -97,10 +97,12 @@ class DB:
 			self._count[q] = 0
 
 	def set_queries_from_file(self, fn: str):
+		"""Load queries from a file."""
 		self._queries = sql.from_path(fn, self._db)
 		self._create_fns()
 
 	def set_queries_from_str(self, qs: str):
+		"""Load queries from a string."""
 		self._queries = sql.from_str(qs, self._db)
 		self._create_fns()
 
