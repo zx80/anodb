@@ -72,3 +72,10 @@ def test_postgres(pg_conn):
 	db = anodb.DB('postgres', pg_conn, 'test-anodb.sql')
 	run_stuff(db)
 	db.close()
+
+def test_misc():
+	try:
+		db = anodb.DB('foodb', 'anodb', 'test-anodb.sql')
+		assert False, "there is no foodb"
+	except Exception as err:
+		assert True, "foodb is not supported"
