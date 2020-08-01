@@ -2,11 +2,10 @@
 # This marvelous code is Public Domain.
 #
 
-import typing
+from typing import Any
 import logging
 import functools
 import anosql as sql # type: ignore
-import ast
 
 
 class DB:
@@ -16,16 +15,16 @@ class DB:
 	and SQL execution methods from anosql.
 	"""
 
-	def __init__(self, db: str, conn: str, queries: str, options: str = '{}',
+	def __init__(self, db: str, conn: str, queries: str, options: Any = None,
 				 auto_reconnect: bool = True, debug: bool = False, **conn_options):
 		"""DB constructor
 
 		- db: database engine, `sqlite` or `postgres`
 		- conn: connection string
 		- queries: file holding queries for `anosql`
-		- options: database-specific options as a json string
+		- options: database-specific options in various forms
 		- auto_reconnect: whether reconnecting on connection errors
-		- debug: debug mode generate more logs
+		- debug: debug mode generate more logs through `logging`
 		- conn_options: database-specific `kwargs` constructor options
 		"""
 		logging.info(f"creating DB for {db}")
@@ -36,9 +35,19 @@ class DB:
 		if self._db is None:
 			raise Exception(f"database {db} is not supported")
 		self._conn_str = conn
-		self._conn_options = ast.literal_eval(options)
-		self._conn_options.update(conn_options)
 		self._queries_file = queries
+		# accept connection options as they are
+		self._conn_options: dict = {}
+		if options is None:
+			pass
+		elif isinstance(options, str):
+			import ast
+			self._conn_options.update(ast.literal_eval(options))
+		elif isinstance(options, dict):
+			self._conn_options.update(options)
+		else:
+			raise Exception(f"unexpected type for options: {type(options)}")
+		self._conn_options.update(conn_options)
 		self._debug = debug
 		self._auto_reconnect = auto_reconnect
 		self._reconn = False
