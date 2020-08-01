@@ -20,7 +20,7 @@ class DB:
 		"""DB constructor
 
 		- db: database engine, `sqlite` or `postgres`
-		- conn: connection string
+		- conn: database-specific connection string
 		- queries: file holding queries for `anosql`
 		- options: database-specific options in various forms
 		- auto_reconnect: whether reconnecting on connection errors
@@ -32,8 +32,7 @@ class DB:
 		self._db = 'sqlite3' if db in ('sqlite3', 'sqlite') else \
 			'psycopg2' if db in ('pg', 'postgres', 'postgresql', 'psycopg2') else \
 			None
-		if self._db is None:
-			raise Exception(f"database {db} is not supported")
+		assert self._db is not None, f"database {db} is supported"
 		self._conn_str = conn
 		self._queries_file = queries
 		# accept connection options as they are
