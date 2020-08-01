@@ -153,3 +153,7 @@ class DB:
 
 	def __str__(self):
 		return f"connection to {self._db} database ({self._conn_str})"
+
+	def __del__(self):
+		if self._conn is not None:
+			self.close()
