@@ -2,6 +2,15 @@ import pytest
 import anodb
 import re
 
+def run_42(db: anodb.DB):
+	assert db is not None
+	cur = db.cursor()
+	cur.execute('SELECT 42 AS fourtytwo')
+	assert cur.description[0][0] == 'fourtytwo'
+	assert cur.fetchone()[0] == 42
+	db.close()
+	db.connect()
+
 def run_stuff(db: anodb.DB):
 	assert db is not None
 	db.create_foo()
@@ -30,27 +39,25 @@ def run_stuff(db: anodb.DB):
 	db.commit()
 	db.close()
 	db.connect()
-	cur = db.cursor()
-	cur.execute('SELECT 42 AS fourtytwo')
-	assert cur.description[0][0] == 'fourtytwo'
-	assert cur.fetchone()[0] == 42
-	cur.close()
-	db.close()
+	run_42(db)
 
 def test_sqlite():
 	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql', '{"check_same_thread":False}')
 	run_stuff(db)
+	db.close()
 
 def test_options():
 	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
 				  timeout=10, check_same_thread=False, isolation_level=None)
-	assert db is not None
-	cur = db.cursor()
-	cur.execute('SELECT 42 AS fourtytwo')
-	assert cur.description[0][0] == 'fourtytwo'
-	assert cur.fetchone()[0] == 42
+	run_42(db)
 	db.close()
-	db.connect()
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+				  {"timeout":10, "check_same_thread":False, "isolation_level":None})
+	run_42(db)
+	db.close()
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+				  '{"timeout":10, "check_same_thread":False, "isolation_level":None}')
+	run_42(db)
 	db.close()
 
 @pytest.fixture
@@ -63,3 +70,4 @@ def test_postgres(pg_conn):
 	assert re.match("postgres://", pg_conn)
 	db = anodb.DB('postgres', pg_conn, 'test-anodb.sql')
 	run_stuff(db)
+	db.close()
