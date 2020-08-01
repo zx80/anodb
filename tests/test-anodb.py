@@ -60,6 +60,7 @@ def test_options():
 	run_42(db)
 	db.close()
 
+# trick taken from anosql tests
 @pytest.fixture
 def pg_conn(postgresql):
 	with postgresql as pg:
