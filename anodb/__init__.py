@@ -11,7 +11,7 @@ import anosql as sql # type: ignore
 class DB:
 	"""Hides database connection and queries in here.
 
-	The class provides the commit, rollback and close methods,
+	The class provides the DB-API 2.0 connection methods,
 	and SQL execution methods from anosql.
 	"""
 
