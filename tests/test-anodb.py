@@ -77,7 +77,13 @@ def test_from_str():
 	db = anodb.DB('sqlite', ':memory:')
 	db.set_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
 	assert db.next(arg=1)[0][0] == 2
-	assert db.next(arg=41)[0][0] == 42
+	db.set_queries_from_str("-- name: previous\nSELECT :arg - 1 AS prev;\n")
+	try:
+		assert db.next(arg=41)[0][0] == 42
+		assert False, "next should not be there"
+	except Exception as err:
+		assert True, "next is not available anymore"
+	assert db.previous(arg=42)[0][0] == 41
 	db.close()
 
 def test_misc():
