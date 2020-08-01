@@ -27,6 +27,8 @@ db.close()
 
 Make `options` accept different types.
 
+Make `queries` optional, and allow to load from a file or a string.
+
 ### 1.2
 
 Add `options` string parameter to constructor.
