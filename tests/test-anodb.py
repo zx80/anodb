@@ -73,6 +73,13 @@ def test_postgres(pg_conn):
 	run_stuff(db)
 	db.close()
 
+def test_from_str():
+	db = anodb.DB('sqlite', ':memory:')
+	db.set_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
+	assert db.next(arg=1)[0][0] == 2
+	assert db.next(arg=41)[0][0] == 42
+	db.close()
+
 def test_misc():
 	try:
 		db = anodb.DB('foodb', 'anodb', 'test-anodb.sql')

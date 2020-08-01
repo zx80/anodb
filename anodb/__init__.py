@@ -15,7 +15,7 @@ class DB:
 	and SQL execution methods from anosql.
 	"""
 
-	def __init__(self, db: str, conn: str, queries: str, options: Any = None,
+	def __init__(self, db: str, conn: str, queries: str = None, options: Any = None,
 				 auto_reconnect: bool = True, debug: bool = False, **conn_options):
 		"""DB constructor
 
@@ -50,14 +50,10 @@ class DB:
 		self._debug = debug
 		self._auto_reconnect = auto_reconnect
 		self._reconn = False
-		self._count = {}
+		self._count: Dict[str,int] = {}
 		self._conn = self._connect()
-		self._queries = sql.from_path(queries, self._db)
-		# forward queries with inserted database connection
-		# self.some_query(args) -> self._queries.some_query(self._conn, args)
-		for q in self._queries.available_queries:
-			setattr(self, q, functools.partial(self._call_query, q))
-			self._count[q] = 0
+		if queries is not None:
+			self.set_queries_from_file(queries)
 
 	def _call_query(self, query, *args, **kwargs): 
 		"""Forward method call to anosql query
@@ -88,6 +84,25 @@ class DB:
 			if hasattr(self._conn, 'closed') and self._conn.closed == 2 and self._auto_reconnect:
 				self._reconn = True
 			raise error
+
+	def _create_fns(self):
+		"""Create call forwarding for current queries
+
+		A database connection is inserted.
+
+		    self.some_query(args) -> self._queries.some_query(self._conn, args)
+		"""
+		for q in self._queries.available_queries:
+			setattr(self, q, functools.partial(self._call_query, q))
+			self._count[q] = 0
+
+	def set_queries_from_file(self, fn: str):
+		self._queries = sql.from_path(fn, self._db)
+		self._create_fns()
+
+	def set_queries_from_str(self, qs: str):
+		self._queries = sql.from_str(qs, self._db)
+		self._create_fns()
 
 	def _connect(self):
 		"""Create a database connection."""
