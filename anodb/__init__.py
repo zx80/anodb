@@ -158,4 +158,3 @@ class DB:
 	def __del__(self):
 		if self._conn is not None:
 			self.close()
-			self._conn = None
