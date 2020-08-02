@@ -27,7 +27,7 @@ db.close()
 
 Make `options` accept different types.
 
-Make `queries` optional, and allow to load from a file or a string.
+Make `queries` optional, and allow to load from files or strings.
 
 ### 1.2
 

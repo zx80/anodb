@@ -75,15 +75,19 @@ def test_postgres(pg_conn):
 
 def test_from_str():
 	db = anodb.DB('sqlite', ':memory:')
-	db.set_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
+	db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
 	assert db.next(arg=1)[0][0] == 2
-	db.set_queries_from_str("-- name: previous\nSELECT :arg - 1 AS prev;\n")
-	try:
-		assert db.next(arg=41)[0][0] == 42
-		assert False, "next should not be there"
-	except Exception as err:
-		assert True, "next is not available anymore"
-	assert db.previous(arg=42)[0][0] == 41
+	db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
+	assert db.next(arg=41)[0][0] == 42
+	assert db.prev(arg=42)[0][0] == 41
+	# override previous definition
+	db.add_queries_from_str("-- name: foo\nSELECT :arg + 42 AS foo;\n")
+	assert db.foo(0)[0][0] == 42
+	db.add_queries_from_str("-- name: foo\nSELECT :arg - 42 AS foo;\n")
+	assert db.foo(42)[0][0] == 0
+	assert db.next(arg=42)[0][0] == 43
+	assert db.prev(arg=43)[0][0] == 42
+	assert sorted(db._available_queries) == ['foo', 'foo_cursor', 'next', 'next_cursor', 'prev', 'prev_cursor']
 	db.close()
 
 def test_misc():

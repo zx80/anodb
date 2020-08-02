@@ -2,7 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
-from typing import Any, Dict
+from typing import Any, Dict, Set, List
 import logging
 import functools
 import anosql as sql # type: ignore
@@ -52,10 +52,12 @@ class DB:
 		self._reconn = False
 		self._count: Dict[str,int] = {}
 		self._conn = self._connect()
+		self._queries: List[sql.core.Queries] = []
+		self._available_queries: Set[str] = set()
 		if queries is not None:
-			self.set_queries_from_file(queries)
+			self.add_queries_from_path(queries)
 
-	def _call_query(self, query, *args, **kwargs): 
+	def _call_fn(self, query, fn, *args, **kwargs):
 		"""Forward method call to anosql query
 
 		On connection failure, it will try to reconnect on the next call
@@ -71,7 +73,7 @@ class DB:
 			self._reconnect()
 		try:
 			self._count[query] += 1
-			return getattr(self._queries, query)(self._conn, *args, **kwargs)
+			return fn(self._conn, *args, **kwargs)
 		except Exception as error:
 			logging.info(f"DB {self._db} query {query} failed: {error}")
 			# coldly rollback on any error
@@ -85,26 +87,23 @@ class DB:
 				self._reconn = True
 			raise error
 
-	def _create_fns(self):
-		"""Create call forwarding for current queries.
+	def _create_fns(self, queries: sql.core.Queries):
+		"""Create call forwarding to insert the database connection."""
+		self._queries.append(queries)
+		for q in queries.available_queries:
+			f = getattr(queries, q)
+			if callable(f):
+				setattr(self, q, functools.partial(self._call_fn, q, getattr(queries, q)))
+				self._available_queries.add(q)
+				self._count[q] = 0
 
-		A database connection is inserted.
-
-		    self.some_query(args) -> self._queries.some_query(self._conn, args)
-		"""
-		for q in self._queries.available_queries:
-			setattr(self, q, functools.partial(self._call_query, q))
-			self._count[q] = 0
-
-	def set_queries_from_file(self, fn: str):
+	def add_queries_from_path(self, fn: str):
 		"""Load queries from a file."""
-		self._queries = sql.from_path(fn, self._db)
-		self._create_fns()
+		self._create_fns(sql.from_path(fn, self._db))
 
-	def set_queries_from_str(self, qs: str):
+	def add_queries_from_str(self, qs: str):
 		"""Load queries from a string."""
-		self._queries = sql.from_str(qs, self._db)
-		self._create_fns()
+		self._create_fns(sql.from_str(qs, self._db))
 
 	def _connect(self):
 		"""Create a database connection."""
