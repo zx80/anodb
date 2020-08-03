@@ -3,7 +3,7 @@
 #
 
 from typing import Any, Dict, Set, List
-import logging
+import logging as log
 import functools as ft
 import anosql as sql  # type: ignore
 
@@ -28,7 +28,7 @@ class DB:
         - debug: debug mode generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
-        logging.info(f"creating DB for {db}")
+        log.info(f"creating DB for {db}")
         # database connection
         SQLITE = ('sqlite3', 'sqlite')
         POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg2')
@@ -71,19 +71,19 @@ class DB:
         the next call should be on a different request.
         """
         if self._debug:
-            logging.debug(f"DB y: {query}({args}, {kwargs})")
+            log.debug(f"DB y: {query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
         try:
             self._count[query] += 1
             return fn(self._conn, *args, **kwargs)
         except Exception as error:
-            logging.info(f"DB {self._db} query {query} failed: {error}")
+            log.info(f"DB {self._db} query {query} failed: {error}")
             # coldly rollback on any error
             try:
                 self._conn.rollback()
             except Exception as rolerr:
-                logging.warning(f"DB {self._db} rollback failed: {rolerr}")
+                log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg2, to attempt a reconnection
             # should more cases be handled?
             if hasattr(self._conn, 'closed') and self._conn.closed == 2 and \
@@ -112,7 +112,7 @@ class DB:
 
     def _connect(self):
         """Create a database connection."""
-        logging.info(f"DB {self._db}: connecting")
+        log.info(f"DB {self._db}: connecting")
         if self._db == 'sqlite3':
             import sqlite3 as db
             return db.connect(self._conn_str, **self._conn_options)
@@ -125,13 +125,13 @@ class DB:
 
     def _reconnect(self):
         """Try to reconnect to database."""
-        logging.info(f"DB {self._db}: reconnecting")
+        log.info(f"DB {self._db}: reconnecting")
         if self._conn is not None:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
             except Exception as error:
-                logging.error(f"DB {self._db} close: {error}")
+                log.error(f"DB {self._db} close: {error}")
         self._conn = self._connect()
         self._reconn = False
 
