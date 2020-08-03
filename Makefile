@@ -5,6 +5,7 @@ check: venv
 	. venv/bin/activate
 	type python3
 	mypy anodb
+	flake8 anodb
 	cd tests && pytest test-anodb.py
 
 .PHONY: clean
