@@ -103,7 +103,7 @@ class DB:
                 self._count[q] = 0
 
     def add_queries_from_path(self, fn: str):
-        """Load queries from a file."""
+        """Load queries from a file or directory."""
         self._create_fns(sql.from_path(fn, self._db))
 
     def add_queries_from_str(self, qs: str):
