@@ -24,7 +24,7 @@ class DB:
         - conn: database-specific connection string
         - queries: file holding queries for `anosql`
         - options: database-specific options in various forms
-        - auto_reconnect: whether reconnecting on connection errors
+        - auto_reconnect: whether to reconnect on connection errors
         - debug: debug mode generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
