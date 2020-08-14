@@ -4,9 +4,9 @@
 check: venv
 	. venv/bin/activate
 	type python3
-	mypy anodb
-	flake8 anodb
-	cd tests && pytest test-anodb.py
+	mypy aiodb
+	flake8 aiodb
+	cd tests && pytest test-aiodb.py
 
 .PHONY: clean
 clean:

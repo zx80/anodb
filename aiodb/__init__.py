@@ -5,14 +5,14 @@
 from typing import Any, Dict, Set, List
 import logging as log
 import functools as ft
-import anosql as sql  # type: ignore
+import aiosql as sql  # type: ignore
 
 
 class DB:
     """Hides database connection and queries in here.
 
     The class provides the DB-API 2.0 connection methods,
-    and SQL execution methods from anosql.
+    and SQL execution methods from aiosql.
     """
 
     def __init__(self, db: str, conn: str, queries: str = None,
@@ -22,7 +22,7 @@ class DB:
 
         - db: database engine, `sqlite` or `postgres`
         - conn: database-specific connection string
-        - queries: file holding queries for `anosql`
+        - queries: file holding queries for `aiosql`
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
         - debug: debug mode generate more logs through `logging`
@@ -55,7 +55,7 @@ class DB:
         self._reconn = False
         self._count: Dict[str, int] = {}
         self._conn = self._connect()
-        self._queries: List[sql.core.Queries] = []
+        self._queries: List[sql.aiosql.Queries] = []
         self._available_queries: Set[str] = set()
         if queries is not None:
             self.add_queries_from_path(queries)
@@ -91,7 +91,7 @@ class DB:
                 self._reconn = True
             raise error
 
-    def _create_fns(self, queries: sql.core.Queries):
+    def _create_fns(self, queries: sql.aiosql.Queries):
         """Create call forwarding to insert the database connection."""
         self._queries.append(queries)
         for q in queries.available_queries:
