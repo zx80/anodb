@@ -10,7 +10,7 @@ check: venv
 
 .PHONY: clean
 clean:
-	$(RM) -r venv __pycache__ anodb.egg-info dist build */__pycache__ .mypy_cache .pytest_cache
+	$(RM) -r venv __pycache__ aiodb.egg-info dist build */__pycache__ .mypy_cache .pytest_cache
 
 .PHONY: install
 install:
