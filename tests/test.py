@@ -82,9 +82,9 @@ def test_from_str():
 	assert db.prev(arg=42)[0][0] == 41
 	# override previous definition
 	db.add_queries_from_str("-- name: foo\nSELECT :arg + 42 AS foo;\n")
-	assert db.foo(0)[0][0] == 42
+	assert db.foo(arg=0)[0][0] == 42
 	db.add_queries_from_str("-- name: foo\nSELECT :arg - 42 AS foo;\n")
-	assert db.foo(42)[0][0] == 0
+	assert db.foo(arg=42)[0][0] == 0
 	assert db.next(arg=42)[0][0] == 43
 	assert db.prev(arg=43)[0][0] == 42
 	assert sorted(db._available_queries) == ['foo', 'foo_cursor', 'next', 'next_cursor', 'prev', 'prev_cursor']
