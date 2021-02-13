@@ -1,13 +1,13 @@
 -- name: create-foo!
 CREATE TABLE Foo(pk INT PRIMARY KEY, val TEXT NOT NULL);
 
--- name: drop-foo!
+-- name: drop-foo! 
 DROP TABLE IF EXISTS Foo;
 
--- name: count-foo
+-- name: count-foo 
 SELECT COUNT(*) FROM Foo;
 
--- name: insert-foo!
+-- name: insert-foo!		
 INSERT INTO Foo(pk, val) VALUES (:pk, :val);
 
 -- name: select-foo-pk
