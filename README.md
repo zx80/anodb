@@ -10,7 +10,7 @@ SQL queries from a file.
 
 If the connection is broken, a new connection is attempted.
 
-Compared do aiosql, the point is not to need to pass connection
+Compared do aiosql, the point is not to need to pass a connection
 as an argument on each call.
 
 ## Example
