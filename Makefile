@@ -6,7 +6,7 @@ check: venv
 	type python3
 	mypy anodb
 	flake8 anodb
-	cd tests && pytest test-anodb.py
+	cd tests && pytest test.py
 
 .PHONY: clean
 clean:

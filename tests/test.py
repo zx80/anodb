@@ -42,20 +42,20 @@ def run_stuff(db: anodb.DB):
 	run_42(db)
 
 def test_sqlite():
-	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql', '{"check_same_thread":False}')
+	db = anodb.DB('sqlite', ':memory:', 'test.sql', '{"check_same_thread":False}')
 	run_stuff(db)
 	db.close()
 
 def test_options():
-	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test.sql',
 				  timeout=10, check_same_thread=False, isolation_level=None)
 	run_42(db)
 	db.close()
-	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test.sql',
 				  {"timeout":10, "check_same_thread":False, "isolation_level":None})
 	run_42(db)
 	db.close()
-	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test.sql',
 				  '{"timeout":10, "check_same_thread":False, "isolation_level":None}')
 	run_42(db)
 	db.close()
@@ -69,7 +69,7 @@ def pg_conn(postgresql):
 
 def test_postgres(pg_conn):
 	assert re.match("postgres://", pg_conn)
-	db = anodb.DB('postgres', pg_conn, 'test-anodb.sql')
+	db = anodb.DB('postgres', pg_conn, 'test.sql')
 	run_stuff(db)
 	db.close()
 
@@ -92,7 +92,7 @@ def test_from_str():
 
 def test_misc():
 	try:
-		db = anodb.DB('foodb', 'anodb', 'test-anodb.sql')
+		db = anodb.DB('foodb', 'anodb', 'test.sql')
 		assert False, "there is no foodb"
 	except Exception as err:
 		assert True, "foodb is not supported"
