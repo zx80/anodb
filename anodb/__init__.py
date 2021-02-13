@@ -99,8 +99,7 @@ class DB:
         for q in queries.available_queries:
             f = getattr(queries, q)
             if callable(f):
-                setattr(self, q,
-                        ft.partial(self._call_fn, q, getattr(queries, q)))
+                setattr(self, q, ft.partial(self._call_fn, q, f))
                 self._available_queries.add(q)
                 self._count[q] = 0
 
