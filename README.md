@@ -21,6 +21,16 @@ db.commit()
 db.close()
 ```
 
+With file `test.sql` containing something like:
+
+```SQL
+-- name: do_some_insert!
+INSERT INTO Stuff(key, val) VALUES (:key, :val);
+
+-- name: do_some_update!
+UPDATE Stuff SET val = :val WHERE key = :key;
+```
+
 ## Versions
 
 ### 2.0
