@@ -10,7 +10,7 @@ setup(
     author="Fabien Coelho",
     author_email="ano.db@coelho.net",
     url="https://github.com/zx80/anodb",
-    install_requires=["aiosql>=3.1.2"],
+    install_requires=["aiosql>=3.2.0"],
     description="Convenient Wrapper around AioSQL and a Database Connection",
     long_description=long_description,
     long_description_content_type="text/markdown",
