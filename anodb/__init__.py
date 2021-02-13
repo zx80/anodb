@@ -54,11 +54,13 @@ class DB:
         self._auto_reconnect = auto_reconnect
         self._reconn = False
         self._count: Dict[str, int] = {}
-        self._conn = self._connect()
+        self._conn = None
         self._queries: List[sql.aiosql.Queries] = []
         self._available_queries: Set[str] = set()
         if queries is not None:
             self.add_queries_from_path(queries)
+        # last thing is to create the connection, which may fail
+        self._conn = self._connect()
 
     def _call_fn(self, query, fn, *args, **kwargs):
         """Forward method call to anosql query
@@ -137,7 +139,7 @@ class DB:
 
     def connect(self):
         """Create database connection if needed."""
-        if self._conn is None:
+        if '_conn' not in self.__dict__ or self._conn is None:
             self._conn = self._connect()
 
     def cursor(self):
@@ -161,5 +163,5 @@ class DB:
         return f"connection to {self._db} database ({self._conn_str})"
 
     def __del__(self):
-        if self._conn is not None:
+        if '_conn' in self.__dict__ and self._conn is not None:
             self.close()

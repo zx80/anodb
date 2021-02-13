@@ -1,8 +1,8 @@
 import pytest
-import aiodb
+import anodb
 import re
 
-def run_42(db: aiodb.DB):
+def run_42(db: anodb.DB):
 	assert db is not None
 	cur = db.cursor()
 	cur.execute('SELECT 42 AS fourtytwo')
@@ -11,7 +11,7 @@ def run_42(db: aiodb.DB):
 	db.close()
 	db.connect()
 
-def run_stuff(db: aiodb.DB):
+def run_stuff(db: anodb.DB):
 	assert db is not None
 	db.create_foo()
 	assert db.count_foo()[0][0] == 0
@@ -42,20 +42,20 @@ def run_stuff(db: aiodb.DB):
 	run_42(db)
 
 def test_sqlite():
-	db = aiodb.DB('sqlite', ':memory:', 'test-aiodb.sql', '{"check_same_thread":False}')
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql', '{"check_same_thread":False}')
 	run_stuff(db)
 	db.close()
 
 def test_options():
-	db = aiodb.DB('sqlite', ':memory:', 'test-aiodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
 				  timeout=10, check_same_thread=False, isolation_level=None)
 	run_42(db)
 	db.close()
-	db = aiodb.DB('sqlite', ':memory:', 'test-aiodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
 				  {"timeout":10, "check_same_thread":False, "isolation_level":None})
 	run_42(db)
 	db.close()
-	db = aiodb.DB('sqlite', ':memory:', 'test-aiodb.sql',
+	db = anodb.DB('sqlite', ':memory:', 'test-anodb.sql',
 				  '{"timeout":10, "check_same_thread":False, "isolation_level":None}')
 	run_42(db)
 	db.close()
@@ -69,12 +69,12 @@ def pg_conn(postgresql):
 
 def test_postgres(pg_conn):
 	assert re.match("postgres://", pg_conn)
-	db = aiodb.DB('postgres', pg_conn, 'test-aiodb.sql')
+	db = anodb.DB('postgres', pg_conn, 'test-anodb.sql')
 	run_stuff(db)
 	db.close()
 
 def test_from_str():
-	db = aiodb.DB('sqlite', ':memory:')
+	db = anodb.DB('sqlite', ':memory:')
 	db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
 	assert db.next(arg=1)[0][0] == 2
 	db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
@@ -92,7 +92,7 @@ def test_from_str():
 
 def test_misc():
 	try:
-		db = aiodb.DB('foodb', 'aiodb', 'test-aiodb.sql')
+		db = anodb.DB('foodb', 'anodb', 'test-anodb.sql')
 		assert False, "there is no foodb"
 	except Exception as err:
 		assert True, "foodb is not supported"

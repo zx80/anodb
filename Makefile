@@ -4,13 +4,13 @@
 check: venv
 	. venv/bin/activate
 	type python3
-	mypy aiodb
-	flake8 aiodb
-	cd tests && pytest test-aiodb.py
+	mypy anodb
+	flake8 anodb
+	cd tests && pytest test-anodb.py
 
 .PHONY: clean
 clean:
-	$(RM) -r venv __pycache__ aiodb.egg-info dist build */__pycache__ .mypy_cache .pytest_cache
+	$(RM) -r venv __pycache__ anodb.egg-info dist build */__pycache__ .mypy_cache .pytest_cache
 
 .PHONY: install
 install:
