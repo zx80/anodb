@@ -8,6 +8,8 @@ and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 This class creates a persistent database connection and imports
 SQL queries from a file.
 
+If the connection is broken, a new connection is attempted.
+
 ## Example
 
 ```Python
