@@ -2,6 +2,7 @@ import pytest
 import anodb
 import re
 
+# check that the db connection cursor works
 def run_42(db: anodb.DB):
 	assert db is not None
 	cur = db.cursor()
@@ -11,6 +12,7 @@ def run_42(db: anodb.DB):
 	db.close()
 	db.connect()
 
+# do various stuff, common to sqlite & pg tests
 def run_stuff(db: anodb.DB):
 	assert db is not None
 	db.create_foo()
@@ -41,11 +43,13 @@ def run_stuff(db: anodb.DB):
 	db.connect()
 	run_42(db)
 
+# sqlite memory test
 def test_sqlite():
 	db = anodb.DB('sqlite', ':memory:', 'test.sql', '{"check_same_thread":False}')
 	run_stuff(db)
 	db.close()
 
+# sqlite memory test with options
 def test_options():
 	db = anodb.DB('sqlite', ':memory:', 'test.sql',
 				  timeout=10, check_same_thread=False, isolation_level=None)
@@ -67,12 +71,14 @@ def pg_conn(postgresql):
 		p = pg.get_dsn_parameters()
 		return "postgres://{user}@{host}:{port}/{dbname}".format(**p)
 
+# postgres basic test
 def test_postgres(pg_conn):
 	assert re.match("postgres://", pg_conn)
 	db = anodb.DB('postgres', pg_conn, 'test.sql')
 	run_stuff(db)
 	db.close()
 
+# test from-string queries
 def test_from_str():
 	db = anodb.DB('sqlite', ':memory:')
 	db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
@@ -90,6 +96,7 @@ def test_from_str():
 	assert sorted(db._available_queries) == ['foo', 'foo_cursor', 'next', 'next_cursor', 'prev', 'prev_cursor']
 	db.close()
 
+# test non existing database
 def test_misc():
 	try:
 		db = anodb.DB('foodb', 'anodb', 'test.sql')
