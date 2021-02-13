@@ -73,7 +73,7 @@ class DB:
         the next call should be on a different request.
         """
         if self._debug:
-            log.debug(f"DB y: {query}({args}, {kwargs})")
+            log.debug(f"DB: {query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
         try:
