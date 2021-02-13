@@ -26,4 +26,5 @@ dist:
 
 .PHONY: publish
 publish: dist
+	# provide pypi login/pw…
 	twine upload dist/*
