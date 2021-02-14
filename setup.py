@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="anodb",
-    version="2.0.0",
+    version="2.1.0",
     packages=find_packages(),
     author="Fabien Coelho",
     author_email="ano.db@coelho.net",

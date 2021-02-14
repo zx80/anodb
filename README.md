@@ -40,6 +40,12 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 2.1
+
+Make `cursor` reconnect if needed.
+
+Add automatic reconnection tests.
+
 ### 2.0
 
 Swith from AnoSQL to AioSQL.
