@@ -91,13 +91,16 @@ class DB:
             if hasattr(self._conn, 'closed') and self._conn.closed == 2 and \
                self._auto_reconnect:
                 self._reconn = True
+            # re-raise error
             raise error
 
+    # this could probably be done dynamic by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):
         """Create call forwarding to insert the database connection."""
         self._queries.append(queries)
         for q in queries.available_queries:
             f = getattr(queries, q)
+            # we skip internal *_cursor attributes
             if callable(f):
                 setattr(self, q, ft.partial(self._call_fn, q, f))
                 self._available_queries.add(q)
