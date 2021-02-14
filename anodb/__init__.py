@@ -2,7 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
-from typing import Any, Dict, Set, List
+from typing import Any, Dict, Set, List, Union
 import logging as log
 import functools as ft
 import aiosql as sql  # type: ignore
@@ -16,8 +16,10 @@ class DB:
     """
 
     def __init__(self, db: str, conn: str, queries: str = None,
-                 options: Any = None, auto_reconnect: bool = True,
-                 debug: bool = False, **conn_options):
+                 options: Union[None, str, Dict[str, Any]] = None,
+                 auto_reconnect: bool = True,
+                 debug: bool = False,
+                 **conn_options):
         """DB constructor
 
         - db: database engine, `sqlite` or `postgres`
