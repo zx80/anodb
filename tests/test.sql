@@ -4,7 +4,7 @@ CREATE TABLE Foo(pk INT PRIMARY KEY, val TEXT NOT NULL);
 -- name: drop-foo! 
 DROP TABLE IF EXISTS Foo;
 
--- name: count-foo 
+-- name: count-foo^ 
 SELECT COUNT(*) FROM Foo;
 
 -- name: insert-foo!		
@@ -24,3 +24,9 @@ DELETE FROM Foo WHERE pk = :pk;
 
 -- name: delete-foo-all!
 DELETE FROM Foo WHERE TRUE;
+
+-- name: hello-world^
+SELECT 'hello world!';
+
+-- name: kill-me-pg!
+SELECT pg_terminate_backend(pg_backend_pid());

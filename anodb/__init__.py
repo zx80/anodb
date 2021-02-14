@@ -146,6 +146,8 @@ class DB:
 
     def cursor(self):
         """Get a cursor on the current connection."""
+        if self._reconn and self._auto_reconnect:
+            self._reconnect()
         return self._conn.cursor()
 
     def commit(self):
