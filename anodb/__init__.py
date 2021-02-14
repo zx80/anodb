@@ -93,7 +93,7 @@ class DB:
             if hasattr(self._conn, 'closed') and self._conn.closed == 2 and \
                self._auto_reconnect:
                 self._reconn = True
-            # re-raise error
+            # re-raise initial error
             raise error
 
     # this could probably be done dynamic by overriding __getattribute__
