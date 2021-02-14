@@ -97,7 +97,6 @@ def test_postgres(pg_conn):
     # should reconnect automatically
     assert db.hello_world()[0] == 'hello world!'
     # again from cursor
-    db.connect()
     try:
         db.kill_me_pg()
         assert False, "2. backend should have been killed"
