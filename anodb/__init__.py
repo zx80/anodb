@@ -24,7 +24,7 @@ class DB:
 
         - db: database engine, `sqlite` or `postgres`
         - conn: database-specific connection string
-        - queries: file holding queries for `aiosql`
+        - queries: file holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
         - debug: debug mode generate more logs through `logging`
