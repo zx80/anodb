@@ -31,16 +31,16 @@ class DB:
         - conn_options: database-specific `kwargs` constructor options
         """
         log.info(f"creating DB for {db}")
-        # database connection
+        # database connection driver
         SQLITE = ('sqlite3', 'sqlite')
         POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg2')
         self._db = 'sqlite3' if db in SQLITE else \
             'psycopg2' if db in POSTGRES else \
             None
         assert self._db is not None, f"database {db} is supported"
+        # connection…
+        self._conn = None
         self._conn_str = conn
-        self._queries_file = queries
-        # accept connection options as they are
         self._conn_options: Dict[str, Any] = {}
         if options is None:
             pass
@@ -52,16 +52,18 @@ class DB:
         else:
             raise Exception(f"unexpected type for options: {type(options)}")
         self._conn_options.update(conn_options)
+        # various boolean flags
         self._debug = debug
         self._auto_reconnect = auto_reconnect
         self._reconn = False
-        self._count: Dict[str, int] = {}
-        self._conn = None
+        # queries… keep track of calls
+        self._queries_file = queries
         self._queries: List[sql.aiosql.Queries] = []
+        self._count: Dict[str, int] = {}
         self._available_queries: Set[str] = set()
         if queries is not None:
             self.add_queries_from_path(queries)
-        # last thing is to create the connection, which may fail
+        # last thing is to actually create the connection, which may fail
         self._conn = self._connect()
 
     def _call_fn(self, query, fn, *args, **kwargs):
