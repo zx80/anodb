@@ -3,9 +3,11 @@
 #
 
 from typing import Any, Dict, Set, List, Union
-import logging as log
+import logging
 import functools as ft
 import aiosql as sql  # type: ignore
+
+log = logging.getLogger("anodb")
 
 
 class DB:

@@ -44,6 +44,10 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 2.2
+
+Setup explicit logger instead of relying on default.
+
 ### 2.1
 
 Make `cursor()` reconnect if needed.
