@@ -15,6 +15,9 @@ as an argument on each call.
 
 ## Example
 
+Install the module with `pip install anodb` or whatever method you like.
+Once available, you can use it:
+
 ```Python
 import anodb
 db = anodb.DB('sqlite3', 'test.db', 'test.sql')
