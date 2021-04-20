@@ -51,7 +51,7 @@ class DB:
             self._conn_options.update(ast.literal_eval(options))
         elif isinstance(options, dict):
             self._conn_options.update(options)
-        else:
+        else:  # pragma: no cover
             raise Exception(f"unexpected type for options: {type(options)}")
         self._conn_options.update(conn_options)
         # various boolean flags
@@ -78,7 +78,7 @@ class DB:
         raises an exception which should abort the current request, so that
         the next call should be on a different request.
         """
-        if self._debug:
+        if self._debug:  # pragma: no cover
             log.debug(f"DB: {query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
@@ -129,7 +129,7 @@ class DB:
         elif self._db == 'psycopg2':
             import psycopg2 as db  # type: ignore
             return db.connect(self._conn_str, **self._conn_options)
-        else:
+        else:  # pragma: no cover
             # note: aiosql currently supports sqlite & postgres
             raise Exception(f"unexpected db {self._db}")
 
@@ -140,7 +140,7 @@ class DB:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
-            except Exception as error:
+            except Exception as error:  # pragma: no cover
                 log.error(f"DB {self._db} close: {error}")
         self._conn = self._connect()
         self._reconn = False

@@ -47,6 +47,13 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 3.0
+
+Package as a simple module.
+Use simpler `setup.cfg` packaging.
+Include tests in package.
+Add coverage test and make test coverage reach 100%.
+
 ### 2.2
 
 Setup explicit logger instead of relying on default.
@@ -59,7 +66,7 @@ Add automatic reconnection tests.
 
 ### 2.0
 
-Swith from AnoSQL to AioSQL.
+Swith from `AnoSQL` to `AioSQL`.
 
 ### 1.3
 
@@ -80,3 +87,7 @@ Add `cursor()` method.
 ### 1.0
 
 Initial release.
+
+## TODO
+
+- add support for other drivers? eg. pg8000, pygresql

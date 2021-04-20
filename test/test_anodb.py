@@ -78,6 +78,7 @@ def test_options():
 def pg_conn(postgresql):
     with postgresql as pg:
         p = pg.get_dsn_parameters()
+        # yield?
         return "postgres://{user}@{host}:{port}/{dbname}".format(**p)
 
 # postgres basic test
@@ -108,6 +109,7 @@ def test_postgres(pg_conn):
 # test from-string queries
 def test_from_str():
     db = anodb.DB('sqlite', ':memory:')
+    assert "connection to sqlite" in str(db)
     db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
     assert db.next(arg=1)[0][0] == 2
     db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
@@ -121,7 +123,7 @@ def test_from_str():
     assert db.next(arg=42)[0][0] == 43
     assert db.prev(arg=43)[0][0] == 42
     assert sorted(db._available_queries) == ['foo', 'foo_cursor', 'next', 'next_cursor', 'prev', 'prev_cursor']
-    db.close()
+    db.__del__()
 
 # test non existing database
 def test_misc():

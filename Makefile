@@ -4,9 +4,9 @@
 check: venv
 	. venv/bin/activate
 	type python3
-	mypy anodb
-	flake8 anodb
-	cd tests && pytest test.py
+	mypy anodb.py
+	flake8 anodb.py
+	cd test && make check
 
 .PHONY: clean
 clean:
@@ -18,7 +18,7 @@ install:
 
 venv:
 	python3 -m venv venv
-	venv/bin/pip3 install wheel pytest pytest-postgresql psycopg2
+	venv/bin/pip3 install wheel pytest pytest-postgresql psycopg2 coverage
 	venv/bin/pip3 install -e .
 
 dist:
