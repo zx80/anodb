@@ -27,4 +27,4 @@ dist:
 .PHONY: publish
 publish: dist
 	# provide pypi login/pw…
-	twine --repository anodb upload dist/*
+	twine upload --repository anodb dist/*
