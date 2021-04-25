@@ -44,7 +44,7 @@ class DB:
         self._conn = None
         self._conn_str = conn
         self._conn_options: Dict[str, Any] = {}
-        if options is None:
+        if not options:
             pass
         elif isinstance(options, str):
             import ast
@@ -147,7 +147,7 @@ class DB:
 
     def connect(self):
         """Create database connection if needed."""
-        if '_conn' not in self.__dict__ or self._conn is None:
+        if '_conn' not in self.__dict__ or not self._conn:
             self._conn = self._connect()
 
     def cursor(self):
