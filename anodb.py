@@ -39,7 +39,7 @@ class DB:
         self._db = 'sqlite3' if db in SQLITE else \
             'psycopg2' if db in POSTGRES else \
             None
-        assert self._db is not None, f"database {db} is supported"
+        assert self._db, f"database {db} is supported"
         # connection…
         self._conn = None
         self._conn_str = conn
@@ -63,7 +63,7 @@ class DB:
         self._queries: List[sql.aiosql.Queries] = []
         self._count: Dict[str, int] = {}
         self._available_queries: Set[str] = set()
-        if queries is not None:
+        if queries:
             self.add_queries_from_path(queries)
         # last thing is to actually create the connection, which may fail
         self._conn = self._connect()
@@ -136,7 +136,7 @@ class DB:
     def _reconnect(self):
         """Try to reconnect to database."""
         log.info(f"DB {self._db}: reconnecting")
-        if self._conn is not None:
+        if self._conn:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
@@ -173,5 +173,5 @@ class DB:
         return f"connection to {self._db} database ({self._conn_str})"
 
     def __del__(self):
-        if '_conn' in self.__dict__ and self._conn is not None:
+        if '_conn' in self.__dict__ and self._conn:
             self.close()
