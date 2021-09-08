@@ -18,8 +18,9 @@ install:
 
 venv:
 	python3 -m venv venv
-	venv/bin/pip3 install wheel pytest pytest-postgresql psycopg2 coverage
-	venv/bin/pip3 install -e .
+	venv/bin/pip install wheel pytest pytest-postgresql psycopg2 coverage
+	venv/bin/pip install --pre psycopg[binary,pool] psycopg-c
+	venv/bin/pip install -e .
 
 dist:
 	python3 setup.py sdist bdist_wheel

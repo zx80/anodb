@@ -35,9 +35,10 @@ class DB:
         log.info(f"creating DB for {db}")
         # database connection driver
         SQLITE = ('sqlite3', 'sqlite')
-        POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg2')
+        POSTGRES = ('pg', 'postgres', 'postgresql')
         self._db = 'sqlite3' if db in SQLITE else \
-            'psycopg2' if db in POSTGRES else \
+            'psycopg2' if db == 'psycopg2' or db in POSTGRES else \
+            'psycopg' if db == 'psycopg' or db == 'psycopg3' else \
             None
         assert self._db, f"database {db} is supported"
         # connection…
@@ -94,8 +95,11 @@ class DB:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg2, to attempt a reconnection
             # should more cases be handled?
-            if hasattr(self._conn, 'closed') and self._conn.closed == 2 and \
-               self._auto_reconnect:
+            if self._db == "psycopg2" and hasattr(self._conn, 'closed') and \
+               self._conn.closed == 2 and self._auto_reconnect:
+                self._reconn = True
+            elif self._db == "psycopg" and hasattr(self._conn, 'closed') and \
+               self._conn.closed and self._auto_reconnect:
                 self._reconn = True
             # re-raise initial error
             raise error
@@ -112,13 +116,17 @@ class DB:
                 self._available_queries.add(q)
                 self._count[q] = 0
 
+    # FIXME remove when aiosql knows about psycopg3
+    def _aiosql_driver(self):
+        return self._db if self._db != "psycopg" else "psycopg2"
+
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
-        self._create_fns(sql.from_path(fn, self._db))
+        self._create_fns(sql.from_path(fn, self._aiosql_driver()))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
-        self._create_fns(sql.from_str(qs, self._db))
+        self._create_fns(sql.from_str(qs, self._aiosql_driver()))
 
     def _connect(self):
         """Create a database connection."""
@@ -128,6 +136,9 @@ class DB:
             return db.connect(self._conn_str, **self._conn_options)
         elif self._db == 'psycopg2':
             import psycopg2 as db  # type: ignore
+            return db.connect(self._conn_str, **self._conn_options)
+        elif self._db == 'psycopg':
+            import psycopg as db  # type: ignore
             return db.connect(self._conn_str, **self._conn_options)
         else:  # pragma: no cover
             # note: aiosql currently supports sqlite & postgres
