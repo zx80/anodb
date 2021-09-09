@@ -24,7 +24,7 @@ class DB:
                  **conn_options):
         """DB constructor
 
-        - db: database engine, `sqlite` or `postgres`
+        - db: database engine, `sqlite` or `postgres` (or `psycopg[23]`)
         - conn: database-specific connection string
         - queries: file holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
@@ -38,7 +38,7 @@ class DB:
         POSTGRES = ('pg', 'postgres', 'postgresql')
         self._db = 'sqlite3' if db in SQLITE else \
             'psycopg2' if db == 'psycopg2' or db in POSTGRES else \
-            'psycopg' if db == 'psycopg' or db == 'psycopg3' else \
+            'psycopg' if db in ('psycopg', 'psycopg3') else \
             None
         assert self._db, f"database {db} is supported"
         # connection…
@@ -93,7 +93,7 @@ class DB:
                 self._conn.rollback()
             except Exception as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
-            # detect a connection error for psycopg2, to attempt a reconnection
+            # detect a connection error for psycopg[23], to attempt a reconnection
             # should more cases be handled?
             if self._db == "psycopg2" and hasattr(self._conn, 'closed') and \
                self._conn.closed == 2 and self._auto_reconnect:
@@ -116,7 +116,7 @@ class DB:
                 self._available_queries.add(q)
                 self._count[q] = 0
 
-    # FIXME remove when aiosql knows about psycopg3
+    # FIXME remove when aiosql knows about psycopg3?
     def _aiosql_driver(self):
         return self._db if self._db != "psycopg" else "psycopg2"
 
