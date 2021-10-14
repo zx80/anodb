@@ -80,15 +80,20 @@ def test_options():
 def pg_conn(postgresql):
     with postgresql as pg:
         p = pg.get_dsn_parameters()
-        # yield?
-        return "postgres://{user}@{host}:{port}/{dbname}".format(**p)
+        yield "postgres://{user}@{host}:{port}/{dbname}".format(**p)
 
 # postgres basic test
 # pg_conn is the string returned by the above fixture
 def test_postgres(pg_conn):
-    assert re.match("postgres://", pg_conn)
-    driver = ENV.get("PSYCOPG", "psycopg2")
+    assert re.match(r"postgres://", pg_conn)
+    driver = ENV.get("PSYCOPG", "psycopg")  # default to psycopg 3
     db = anodb.DB(driver, pg_conn, "test.sql")
+    if driver == "psycopg":
+        assert re.match(r"3\.", db._db_version)
+    elif driver == "psycopg2":
+        assert re.match(r"2\.", db._db_version)
+    else:
+        assert False, f"unsupported db version: {db._db} {db._db_version}"
     run_stuff(db)
     db.close()
     # check auto-reconnect

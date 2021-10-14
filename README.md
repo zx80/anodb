@@ -48,9 +48,10 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
-### dev
+### 4.0
 
-Add `psycopg3` support.
+Add [psycopg 3](https://www.psycopg.org/psycopg3/) support, and make it the
+default for Postgres.
 
 ### 3.0
 

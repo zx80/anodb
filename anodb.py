@@ -35,10 +35,10 @@ class DB:
         log.info(f"creating DB for {db}")
         # database connection driver
         SQLITE = ('sqlite3', 'sqlite')
-        POSTGRES = ('pg', 'postgres', 'postgresql')
+        POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg', 'psycopg3')
         self._db = 'sqlite3' if db in SQLITE else \
-            'psycopg2' if db == 'psycopg2' or db in POSTGRES else \
-            'psycopg' if db in ('psycopg', 'psycopg3') else \
+            'psycopg' if db in POSTGRES else \
+            'psycopg2' if db == 'psycopg2' else \
             None
         assert self._db, f"database {db} is supported"
         # connection…
@@ -93,13 +93,14 @@ class DB:
                 self._conn.rollback()
             except Exception as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
-            # detect a connection error for psycopg[23], to attempt a reconnection
-            # should more cases be handled?
-            if self._db == "psycopg2" and hasattr(self._conn, 'closed') and \
-               self._conn.closed == 2 and self._auto_reconnect:
-                self._reconn = True
-            elif self._db == "psycopg" and hasattr(self._conn, 'closed') and \
+            # detect a connection error for psycopg[23], to attempt a
+            # reconnection should more cases be handled?
+            if self._db == "psycopg" and hasattr(self._conn, 'closed') and \
                self._conn.closed and self._auto_reconnect:
+                self._reconn = True
+            elif self._db == "psycopg2" and \
+               hasattr(self._conn, 'closed') and \
+               self._conn.closed == 2 and self._auto_reconnect:
                 self._reconn = True
             # re-raise initial error
             raise error
@@ -133,12 +134,15 @@ class DB:
         log.info(f"DB {self._db}: connecting")
         if self._db == 'sqlite3':
             import sqlite3 as db
-            return db.connect(self._conn_str, **self._conn_options)
-        elif self._db == 'psycopg2':
-            import psycopg2 as db  # type: ignore
+            self._db_vervion = db.version
             return db.connect(self._conn_str, **self._conn_options)
         elif self._db == 'psycopg':
             import psycopg as db  # type: ignore
+            self._db_version = db.__version__
+            return db.connect(self._conn_str, **self._conn_options)
+        elif self._db == 'psycopg2':
+            import psycopg2 as db  # type: ignore
+            self._db_version = db.__version__
             return db.connect(self._conn_str, **self._conn_options)
         else:  # pragma: no cover
             # note: aiosql currently supports sqlite & postgres

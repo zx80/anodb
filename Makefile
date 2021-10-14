@@ -5,7 +5,7 @@ check: venv
 	. venv/bin/activate
 	type python3
 	mypy anodb.py
-	flake8 anodb.py
+	flake8 --ignore=E127 anodb.py
 	cd test && make check
 
 .PHONY: clean
@@ -18,8 +18,8 @@ install:
 
 venv:
 	python3 -m venv venv
-	venv/bin/pip install wheel pytest pytest-postgresql psycopg2 coverage
-	venv/bin/pip install --pre psycopg[binary,pool] psycopg-c
+	venv/bin/pip install wheel pytest coverage
+	venv/bin/pip install pytest-postgresql psycopg2 psycopg
 	venv/bin/pip install -e .
 
 dist:
