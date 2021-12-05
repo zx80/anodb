@@ -97,3 +97,4 @@ Initial release.
 ## TODO
 
 - add support for other drivers? eg. pg8000, pygresql
+- add support for psycopg3 connection pool?
