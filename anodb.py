@@ -9,7 +9,14 @@ import aiosql as sql  # type: ignore
 
 log = logging.getLogger("anodb")
 
+# get package version
+import pkg_resources as pkg
+__version__ = pkg.require("anodb")[0].version
 
+
+#
+# DB (Database) class
+#
 class DB:
     """Hides database connection and queries in here.
 

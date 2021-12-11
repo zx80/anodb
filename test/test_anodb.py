@@ -79,7 +79,12 @@ def test_options():
 @pytest.fixture
 def pg_conn(postgresql):
     with postgresql as pg:
-        p = pg.get_dsn_parameters()
+        if hasattr(pg, 'get_dsn_parameters'):  # psycopg 2
+            p = pg.get_dsn_parameters()
+        elif hasattr(pg, "info") and hasattr(pg.info, 'get_parameters'):  # psycopg 3
+            p = pg.info.get_parameters()
+        else:
+            raise Exception("cannot get parameters from postgres fixture")
         yield "postgres://{user}@{host}:{port}/{dbname}".format(**p)
 
 # postgres basic test
