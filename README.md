@@ -48,6 +48,11 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 4.0.1
+
+Add package `__version__`.
+Minor update for `pytest_postgresql` 4.0.0.
+
 ### 4.0
 
 Add [psycopg 3](https://www.psycopg.org/psycopg3/) support, and make it the
