@@ -10,8 +10,10 @@ import aiosql as sql  # type: ignore
 log = logging.getLogger("anodb")
 
 # get package version
-import pkg_resources as pkg  # type: ignore
-__version__ = pkg.require("anodb")[0].version
+__version__ = "4.0.2"
+# FIXME currently broken because of aiosql dependency on typing_extension<4
+# import pkg_resources as pkg  # type: ignore
+# __version__ = pkg.require("anodb")[0].version
 
 
 #
@@ -40,12 +42,14 @@ class DB:
         - conn_options: database-specific `kwargs` constructor options
         """
         log.info(f"creating DB for {db}")
-        # database connection driver
+        # database connection driver, with a little hardcoding
         SQLITE = ('sqlite3', 'sqlite')
         POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg', 'psycopg3')
+        MYSQL = ('mysql', 'pymysql')
         self._db = 'sqlite3' if db in SQLITE else \
             'psycopg' if db in POSTGRES else \
             'psycopg2' if db == 'psycopg2' else \
+            'pymysql' if db in MYSQL else \
             None
         assert self._db, f"database {db} is supported"
         # connection…
@@ -124,9 +128,13 @@ class DB:
                 self._available_queries.add(q)
                 self._count[q] = 0
 
-    # FIXME remove when aiosql knows about psycopg3?
     def _aiosql_driver(self):
-        return self._db if self._db != "psycopg" else "psycopg2"
+        if self._db == "pymysql":
+            from aiosql_mysql import PyMySQLAdaptor  # type: ignore
+            return PyMySQLAdaptor
+        else:
+            # FIXME aiosql does not know yet about psycopg?
+            return self._db if self._db != "psycopg" else "psycopg2"
 
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
@@ -150,6 +158,9 @@ class DB:
         elif self._db == 'psycopg2':
             import psycopg2 as db  # type: ignore
             self._db_version = db.__version__
+            return db.connect(self._conn_str, **self._conn_options)
+        elif self._db == 'pymysql':
+            import pymysql as db  # type: ignore
             return db.connect(self._conn_str, **self._conn_options)
         else:  # pragma: no cover
             # note: aiosql currently supports sqlite & postgres
