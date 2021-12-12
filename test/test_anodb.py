@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 import anodb
 import re
 from os import environ as ENV

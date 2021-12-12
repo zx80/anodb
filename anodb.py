@@ -10,7 +10,7 @@ import aiosql as sql  # type: ignore
 log = logging.getLogger("anodb")
 
 # get package version
-import pkg_resources as pkg
+import pkg_resources as pkg  # type: ignore
 __version__ = pkg.require("anodb")[0].version
 
 
