@@ -72,27 +72,20 @@ def test_options():
     run_42(db)
     db.close()
 
-# trick taken from aiosql tests
-# pytest-postgresql creates and starts a local temporary postgres instance
-# this fixture extract the connection information to be used by other tests
-# pytest probably uses psycopg2 internally
+
 @pytest.fixture
-def pg_conn(postgresql):
-    with postgresql as pg:
-        if hasattr(pg, 'get_dsn_parameters'):  # psycopg 2
-            p = pg.get_dsn_parameters()
-        elif hasattr(pg, "info") and hasattr(pg.info, 'get_parameters'):  # psycopg 3
-            p = pg.info.get_parameters()
-        else:
-            raise Exception("cannot get parameters from postgres fixture")
-        yield "postgres://{user}@{host}:{port}/{dbname}".format(**p)
+def pg_dsn(postgresql_proc):
+    p = postgresql_proc
+    # NOTE pg.dbname is not created, use postgres own database instead
+    yield f"postgres://{p.user}:{p.password}@{p.host}:{p.port}/{p.user}"
+
 
 # postgres basic test
-# pg_conn is the string returned by the above fixture
-def test_postgres(pg_conn):
-    assert re.match(r"postgres://", pg_conn)
+# pg_dsn is the string returned by the above fixture
+def test_postgres(pg_dsn):
+    assert re.match(r"postgres://", pg_dsn)
     driver = ENV.get("PSYCOPG", "psycopg")  # default to psycopg 3
-    db = anodb.DB(driver, pg_conn, "test.sql")
+    db = anodb.DB(driver, pg_dsn, "test.sql")
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
     elif driver == "psycopg2":
