@@ -73,6 +73,8 @@ def test_options():
     db.close()
 
 
+# NOTE We do not want to use the postgresql fixture because we want to test
+# that anodb creates and recreates its own connections.
 @pytest.fixture
 def pg_dsn(postgresql_proc):
     p = postgresql_proc
