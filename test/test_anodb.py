@@ -73,6 +73,13 @@ def test_options():
     db.close()
 
 
+def run_test_sql(driver, dsn):
+    db = anodb.DB(driver, dsn, "test.sql")
+    run_stuff(db)
+    db.close()
+    return db
+
+
 # NOTE We do not want to use the postgresql fixture because we want to test
 # that anodb creates and recreates its own connections.
 @pytest.fixture
@@ -84,19 +91,20 @@ def pg_dsn(postgresql_proc):
 
 # postgres basic test
 # pg_dsn is the string returned by the above fixture
+# test may use psycopg or psycopg2 driver depending on $PSYCOPG
 def test_postgres(pg_dsn):
     assert re.match(r"postgres://", pg_dsn)
     driver = ENV.get("PSYCOPG", "psycopg")  # default to psycopg 3
-    db = anodb.DB(driver, pg_dsn, "test.sql")
+    assert driver in ("psycopg", "psycopg2")
+    db = run_test_sql(driver, pg_dsn)
+    # further checks on the db object:
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
     elif driver == "psycopg2":
         assert re.match(r"2\.", db._db_version)
     else:
         assert False, f"unsupported db version: {db._db} {db._db_version}"
-    run_stuff(db)
-    db.close()
-    # check auto-reconnect
+    # check auto-reconnect for postgres
     db.connect()
     try:
         db.kill_me_pg()
@@ -112,6 +120,19 @@ def test_postgres(pg_dsn):
     except:
         assert True, "2. backend was killed"
     run_42(db)
+    db.close()
+
+# mysql tests
+@pytest.fixture
+def my_dsn(mysql_proc):
+    p = mysql_proc
+    yield { "user": p.user, "host": p.host, "port": p.port }
+
+@pytest.mark.skip("wip")
+def test_mysql(my_dsn):
+    driver = ENV.get("MYSQL", "mysqldb")
+    assert driver in ("mysqldb", "pymysql")
+    db = run_test_sql(driver, my_dsn)
     db.close()
 
 # test from-string queries
