@@ -49,6 +49,12 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 4.2.0 on 2021-01-16
+
+Put back `__version__` automatic extraction from package.
+Add `__version__` attribute to DB class.
+Refactor tests.
+
 ### 4.1.0 on 2021-12-12
 
 Add untested support for MySQL through `aiosql_mysql`.
