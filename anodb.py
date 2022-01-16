@@ -26,6 +26,11 @@ class DB:
     and SQL execution methods from aiosql.
     """
 
+    # database connection driver, with a little hardcoding
+    SQLITE = ('sqlite3', 'sqlite')
+    POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg', 'psycopg3')
+    MYSQL = ('mysql', 'pymysql')
+
     def __init__(self, db: str, conn: str, queries: str = None,
                  options: Union[None, str, Dict[str, Any]] = None,
                  auto_reconnect: bool = True,
@@ -41,15 +46,12 @@ class DB:
         - debug: debug mode generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
+        self.__version__ = __version__
         log.info(f"creating DB for {db}")
-        # database connection driver, with a little hardcoding
-        SQLITE = ('sqlite3', 'sqlite')
-        POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg', 'psycopg3')
-        MYSQL = ('mysql', 'pymysql')
-        self._db = 'sqlite3' if db in SQLITE else \
-            'psycopg' if db in POSTGRES else \
+        self._db = 'sqlite3' if db in self.SQLITE else \
+            'psycopg' if db in self.POSTGRES else \
             'psycopg2' if db == 'psycopg2' else \
-            'pymysql' if db in MYSQL else \
+            'pymysql' if db in self.MYSQL else \
             None
         assert self._db, f"database {db} is supported"
         # connection…
