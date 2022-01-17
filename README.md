@@ -49,6 +49,10 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### dev
+
+Get `aiosql` version.
+
 ### 4.2.1 on 2022-01-16
 
 Just fix doc date.

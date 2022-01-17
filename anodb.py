@@ -45,6 +45,7 @@ class DB:
         - conn_options: database-specific `kwargs` constructor options
         """
         self.__version__ = __version__
+        self.__aiosql_version__ = pkg.require("aiosql")[0].version
         log.info(f"creating DB for {db}")
         self._db = 'sqlite3' if db in self.SQLITE else \
             'psycopg' if db in self.POSTGRES else \
