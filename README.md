@@ -126,4 +126,5 @@ Initial release.
 ## TODO
 
 - add support for other drivers? eg. pg8000, pygresql
-- add support for psycopg3 connection pool?
+- add support for psycopg3 connection pool? is it usefull?
+- add an output function, like `json`?
