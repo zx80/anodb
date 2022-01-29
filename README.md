@@ -128,3 +128,4 @@ Initial release.
 - add support for other drivers? eg. pg8000, pygresql
 - add support for psycopg3 connection pool? is it usefull?
 - add an output function, like `json`?
+- add something about caching?
