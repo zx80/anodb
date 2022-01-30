@@ -1,11 +1,16 @@
+SHELL	= /bin/bash
 .ONESHELL:
 
+MODULE	= anodb
+PYTHON	= python
+PIP		= venv/bin/pip
+
 .PHONY: check
-check: venv
+check: install
 	. venv/bin/activate
-	type python3
-	mypy anodb.py
-	flake8 --ignore=E127 anodb.py
+	type $(PYTHON)
+	mypy $(MODULE).py
+	flake8 --ignore=E127 $(MODULE).py
 	cd test && make check
 
 .PHONY: clean clean-venv
@@ -16,19 +21,20 @@ clean-venv:
 	$(RM) -r venv
 
 .PHONY: install
-install:
-	pip3 install -e .
+install: $(MODULE).egg-info
+
+$(MODULE).egg-info: venv
+	$(PIP) install -e .
 
 venv:
-	python3 -m venv venv
-	venv/bin/pip install wheel pytest coverage
-	venv/bin/pip install pytest-postgresql psycopg2 psycopg pymysql
-	venv/bin/pip install -e .
+	$(PYTHON) -m venv venv
+	$(PIP) install wheel pytest coverage
+	$(PIP) install pytest-postgresql psycopg2 psycopg pymysql
 
 dist:
-	python3 setup.py sdist bdist_wheel
+	$(PYTHON) setup.py sdist bdist_wheel
 
 .PHONY: publish
 publish: dist
 	# provide pypi login/pw…
-	twine upload --repository anodb dist/*
+	twine upload --repository $(MODULE) dist/*
