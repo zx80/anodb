@@ -17,7 +17,7 @@ check: install
 clean:
 	$(RM) -r __pycache__ */__pycache__ *.egg-info dist build .mypy_cache .pytest_cache
 
-clean-venv:
+clean-venv: clean
 	$(RM) -r venv
 
 .PHONY: install
