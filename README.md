@@ -53,6 +53,7 @@ Sources are available on [GitHub](https://github.com/zx80/anodb).
 
 Get `aiosql` version.
 Improve `Makefile`.
+Simplify code.
 
 ### 4.2.1 on 2022-01-16
 

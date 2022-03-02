@@ -207,5 +207,5 @@ class DB:
         return f"connection to {self._db} database ({self._conn_str})"
 
     def __del__(self):
-        if '_conn' in self.__dict__ and self._conn:
+        if hasattr(self, "_conn") and self._conn:
             self.close()
