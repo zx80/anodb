@@ -5,19 +5,26 @@ MODULE	= anodb
 PYTHON	= python
 PIP		= venv/bin/pip
 
-.PHONY: check
-check: install
-	. venv/bin/activate
-	type $(PYTHON)
-	mypy $(MODULE).py
-	flake8 --ignore=E127 $(MODULE).py
-	cd test && make check
+.PHONY: check check.mypy check.flake8 check.pytest
+check: check.mypy check.flake8 check.pytest
 
-.PHONY: clean clean-venv
+check.mypy: $(MODULE).egg-info
+	. venv/bin/activate
+	mypy $(MODULE).py
+
+check.flake8: $(MODULE).egg-info
+	. venv/bin/activate
+	flake8 --ignore=E127 $(MODULE).py
+
+check.pytest: $(MODULE).egg-info
+	. venv/bin/activate
+	make -C test check
+
+.PHONY: clean clean.venv
 clean:
 	$(RM) -r __pycache__ */__pycache__ *.egg-info dist build .mypy_cache .pytest_cache
 
-clean-venv: clean
+clean.venv: clean
 	$(RM) -r venv
 
 .PHONY: install
