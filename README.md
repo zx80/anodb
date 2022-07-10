@@ -3,27 +3,30 @@
 Convenient Wrapper around [aiosql](https://github.com/nackjicholson/aiosql)
 and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 
+
 ## Description
 
 This class creates a persistent database connection and imports
-SQL queries from a file.
+SQL queries from a file as simple Python functions.
 
 If the connection is broken, a new connection is attempted.
 
 Compared to `aiosql`, the point is not to need to pass a connection
 as an argument on each call: The `DB` class embeds both connection
-and query methods.
+*and* query methods.
 
 For concurrent programming (threads, greenlets…), a relevant setup
-should also consider thread-locals and pooling issues at some level.
+should also consider thread-locals and pooling issues at some higher level.
+
 
 ## Example
 
 Install the module with `pip install anodb` or whatever method you like.
-Once available, you can use it:
+Once available:
 
 ```Python
 import anodb
+# parameters: driver, connection string, SQL file
 db = anodb.DB('sqlite3', 'test.db', 'test.sql')
 
 db.do_some_insert(key=1, val='hello')
@@ -133,6 +136,7 @@ Add `cursor()` method.
 ### 1.0 on 2020-07-27
 
 Initial release.
+
 
 ## TODO
 
