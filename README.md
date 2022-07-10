@@ -137,5 +137,4 @@ Initial release.
 ## TODO
 
 - add support for other drivers? eg. pg8000, pygresql, py-postgresql
-- add support for psycopg3 connection pool? is it usefull?
 - add something about caching?
