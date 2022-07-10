@@ -49,11 +49,13 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
-### dev
+### 5.0 on 2022-07-10
 
-Get `aiosql` version.
 Improve `Makefile`.
+Get `aiosql` version.
 Simplify code.
+Sync driver support with aiosql 4.0.
+Require 100% coverage.
 
 ### 4.2.1 on 2022-01-16
 
@@ -129,5 +131,4 @@ Initial release.
 
 - add support for other drivers? eg. pg8000, pygresql, py-postgresql
 - add support for psycopg3 connection pool? is it usefull?
-- add an output function, like `json`?
 - add something about caching?
