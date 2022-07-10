@@ -14,7 +14,7 @@ check.mypy: $(MODULE).egg-info
 
 check.flake8:
 	source venv/bin/activate
-	flake8 --ignore=E127,E402 $(MODULE).py
+	flake8 --ignore=E127,E402,E501,W503 $(MODULE).py
 
 check.black:
 	source venv/bin/activate
