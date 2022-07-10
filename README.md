@@ -10,9 +10,12 @@ SQL queries from a file.
 
 If the connection is broken, a new connection is attempted.
 
-Compared do aiosql, the point is not to need to pass a connection
+Compared to `aiosql`, the point is not to need to pass a connection
 as an argument on each call: The `DB` class embeds both connection
 and query methods.
+
+For concurrent programming (threads, greenlets…), a relevant setup
+should also consider thread-locals and pooling issues at some level.
 
 ## Example
 
@@ -48,6 +51,10 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 ## Versions
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
+
+### dev on later
+
+Improved documentation.
 
 ### 5.0 on 2022-07-10
 
