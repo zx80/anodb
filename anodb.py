@@ -24,19 +24,23 @@ class DB:
     and SQL execution methods from aiosql.
     """
 
-    # database connection driver, with a little hardcoding
-    SQLITE = ('sqlite3', 'sqlite')
-    POSTGRES = ('pg', 'postgres', 'postgresql', 'psycopg', 'psycopg3')
-    MYSQL = ('mysql', 'pymysql')
+    # database connection driver and variants, with a little hardcoding
+    SQLITE = ("sqlite3", "sqlite")
+    POSTGRES = ("psycopg", "pg", "postgres", "postgresql", "psycopg3")
 
-    def __init__(self, db: str, conn: str, queries: str = None,
-                 options: Union[None, str, Dict[str, Any]] = None,
-                 auto_reconnect: bool = True,
-                 debug: bool = False,
-                 **conn_options):
+    def __init__(
+        self,
+        db: str,
+        conn: str,
+        queries: str = None,
+        options: Union[None, str, Dict[str, Any]] = None,
+        auto_reconnect: bool = True,
+        debug: bool = False,
+        **conn_options,
+    ):
         """DB constructor
 
-        - db: database engine, `sqlite` or `postgres` (or `psycopg[23]`)
+        - db: database engine/driver)
         - conn: database-specific connection string
         - queries: file holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
@@ -47,12 +51,10 @@ class DB:
         self.__version__ = __version__
         self.__aiosql_version__ = pkg.require("aiosql")[0].version
         log.info(f"creating DB for {db}")
-        self._db = 'sqlite3' if db in self.SQLITE else \
-            'psycopg' if db in self.POSTGRES else \
-            'psycopg2' if db == 'psycopg2' else \
-            'pymysql' if db in self.MYSQL else \
-            None
-        assert self._db, f"database {db} is supported"
+        self._db = "sqlite3" if db in self.SQLITE else \
+            "psycopg" if db in self.POSTGRES else \
+            db  # keep as is
+        assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
         # connection…
         self._conn = None
         self._conn_str = conn
@@ -61,6 +63,7 @@ class DB:
             pass
         elif isinstance(options, str):
             import ast
+
             self._conn_options.update(ast.literal_eval(options))
         elif isinstance(options, dict):
             self._conn_options.update(options)
@@ -107,12 +110,19 @@ class DB:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg[23], to attempt a
             # reconnection should more cases be handled?
-            if self._db == "psycopg" and hasattr(self._conn, 'closed') and \
-               self._conn.closed and self._auto_reconnect:
+            if (
+                self._db == "psycopg"
+                and hasattr(self._conn, "closed")
+                and self._conn.closed
+                and self._auto_reconnect
+            ):
                 self._reconn = True
-            elif self._db == "psycopg2" and \
-               hasattr(self._conn, 'closed') and \
-               self._conn.closed == 2 and self._auto_reconnect:
+            elif (
+                self._db == "psycopg2"
+                and hasattr(self._conn, "closed")
+                and self._conn.closed == 2
+                and self._auto_reconnect
+            ):
                 self._reconn = True
             # re-raise initial error
             raise error
@@ -129,43 +139,44 @@ class DB:
                 self._available_queries.add(q)
                 self._count[q] = 0
 
-    def _aiosql_driver(self):
-        if self._db == "pymysql":
-            from aiosql_mysql import PyMySQLAdaptor  # type: ignore
-            return PyMySQLAdaptor
-        else:
-            # FIXME aiosql does not know yet about psycopg?
-            return self._db if self._db != "psycopg" else "psycopg2"
-
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
-        self._create_fns(sql.from_path(fn, self._aiosql_driver()))
+        self._create_fns(sql.from_path(fn, self._db))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
-        self._create_fns(sql.from_str(qs, self._aiosql_driver()))
+        self._create_fns(sql.from_str(qs, self._db))
 
     def _connect(self):
+        # FIXME could/should be more generic?
         """Create a database connection."""
         log.info(f"DB {self._db}: connecting")
-        if self._db == 'sqlite3':
+        # load module
+        if self._db == "sqlite3":
             import sqlite3 as db
-            self._db_vervion = db.version
-            return db.connect(self._conn_str, **self._conn_options)
-        elif self._db == 'psycopg':
+
+            self._db_version = db.version
+        # skip apsw as DB API support is really partial
+        elif self._db == "psycopg":
             import psycopg as db  # type: ignore
-            self._db_version = db.__version__
-            return db.connect(self._conn_str, **self._conn_options)
-        elif self._db == 'psycopg2':
+        elif self._db == "psycopg2":
             import psycopg2 as db  # type: ignore
-            self._db_version = db.__version__
-            return db.connect(self._conn_str, **self._conn_options)
-        elif self._db == 'pymysql':
+        elif self._db == "pymysql":  # pragma: no cover
             import pymysql as db  # type: ignore
-            return db.connect(self._conn_str, **self._conn_options)
+        elif self._db == "mysqldb":  # pragma: no cover
+            import MySQLdb as db  # type: ignore
+        elif self._db == "mysql-connector":  # pragma: no cover
+            import mysql.connector as db  # type: ignore
         else:  # pragma: no cover
-            # note: aiosql currently supports sqlite & postgres
             raise Exception(f"unexpected db {self._db}")
+        # get version if needed
+        if not hasattr(self, "_db_version"):
+            if hasattr(db, "__version__"):
+                self._db_version = db.__version__
+            else:  # pragma: no cover
+                self._db_version = pkg.require(self._db)[0].version
+        # do connect
+        return db.connect(self._conn_str, **self._conn_options)
 
     def _reconnect(self):
         """Try to reconnect to database."""
@@ -181,7 +192,7 @@ class DB:
 
     def connect(self):
         """Create database connection if needed."""
-        if '_conn' not in self.__dict__ or not self._conn:
+        if "_conn" not in self.__dict__ or not self._conn:
             self._conn = self._connect()
 
     def cursor(self):
