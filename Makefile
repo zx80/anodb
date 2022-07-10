@@ -5,20 +5,28 @@ MODULE	= anodb
 PYTHON	= python
 PIP		= venv/bin/pip
 
-.PHONY: check check.mypy check.flake8 check.pytest
-check: check.mypy check.flake8 check.pytest
+.PHONY: check check.mypy check.flake8 check.black check.pytest check.coverage
+check: check.mypy check.flake8 check.black check.pytest check.coverage
 
 check.mypy: $(MODULE).egg-info
-	. venv/bin/activate
+	source venv/bin/activate
 	mypy $(MODULE).py
 
-check.flake8: $(MODULE).egg-info
-	. venv/bin/activate
-	flake8 --ignore=E127 $(MODULE).py
+check.flake8:
+	source venv/bin/activate
+	flake8 --ignore=E127,E402 $(MODULE).py
+
+check.black:
+	source venv/bin/activate
+	black --check $(MODULE).py
 
 check.pytest: $(MODULE).egg-info
-	. venv/bin/activate
-	make -C test check
+	source venv/bin/activate
+	$(MAKE) -C test check
+
+check.coverage: $(MODULE).egg-info
+	source venv/bin/activate
+	$(MAKE) -C test coverage
 
 .PHONY: clean clean.venv
 clean:
@@ -35,7 +43,7 @@ $(MODULE).egg-info: venv
 
 venv:
 	$(PYTHON) -m venv venv
-	$(PIP) install wheel pytest coverage
+	$(PIP) install wheel pytest coverage flake8 black
 	$(PIP) install pytest-postgresql psycopg2 psycopg pymysql
 
 dist:

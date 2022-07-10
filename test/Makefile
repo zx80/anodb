@@ -1,15 +1,16 @@
 .ONESHELL:
 
 PYTEST	= pytest --log-level=debug --capture=tee-sys
+PYTOPT	=
 
 .PHONY: check check-pg check-pg2
 check-pg:
 	export PSYCOPG=psycopg
-	$(PYTEST)
+	$(PYTEST) $(PYTOPT)
 
 check-pg2:
 	export PSYCOPG=psycopg2
-	$(PYTEST)
+	$(PYTEST) $(PYTOPT)
 
 check:
 	$(MAKE) check-pg
@@ -17,8 +18,12 @@ check:
 
 .PHONY: coverage
 coverage:
-	coverage run -m $(PYTEST)
+	export PSYCOPG=psycopg
+	coverage run -m $(PYTEST) $(PYTOPT)
+	export PSYCOPG=psycopg2
+	coverage run -m $(PYTEST) $(PYTOPT)
 	coverage html anodb.py
+	coverage report --fail-under=100
 
 .PHONY: clean
 clean:
