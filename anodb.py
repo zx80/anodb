@@ -11,6 +11,7 @@ log = logging.getLogger("anodb")
 
 # get package version
 import pkg_resources as pkg  # type: ignore
+
 __version__ = pkg.require("anodb")[0].version
 
 
@@ -51,9 +52,9 @@ class DB:
         self.__version__ = __version__
         self.__aiosql_version__ = pkg.require("aiosql")[0].version
         log.info(f"creating DB for {db}")
-        self._db = "sqlite3" if db in self.SQLITE else \
-            "psycopg" if db in self.POSTGRES else \
-            db  # keep as is
+        self._db = (
+            "sqlite3" if db in self.SQLITE else "psycopg" if db in self.POSTGRES else db
+        )
         assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
         # connection…
         self._conn = None
