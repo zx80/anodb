@@ -55,7 +55,7 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
-### dev on later
+### 6.0 on later
 
 Improved documentation.
 
@@ -140,5 +140,5 @@ Initial release.
 
 ## TODO
 
-- add support for other drivers? eg. pg8000, pygresql, py-postgresql
+- add support for other drivers? eg. pygresql, py-postgresql
 - add something about caching?

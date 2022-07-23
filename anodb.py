@@ -28,6 +28,7 @@ class DB:
     # database connection driver and variants, with a little hardcoding
     SQLITE = ("sqlite3", "sqlite")
     POSTGRES = ("psycopg", "pg", "postgres", "postgresql", "psycopg3")
+    # other stay as-is: psycopg2 pg8000…
 
     def __init__(
         self,
