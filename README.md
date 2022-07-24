@@ -140,5 +140,6 @@ Initial release.
 
 ## TODO
 
-- add support for other drivers? eg. pygresql, py-postgresql
+- sync drivers with aiosql?
 - add something about caching?
+- sync version numbering with aiosql?
