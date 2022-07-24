@@ -143,3 +143,4 @@ Initial release.
 - sync drivers with aiosql?
 - add something about caching?
 - sync version numbering with aiosql?
+- add tests with pg8000 and pygresql?
