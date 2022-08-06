@@ -3,6 +3,13 @@
 Convenient Wrapper around [aiosql](https://github.com/nackjicholson/aiosql)
 and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 
+![Tests](https://img.shields.io/badge/tests-6%20✓-success)
+![Coverage](https://img.shields.io/badge/coverage-100%25-success)
+![Python](https://img.shields.io/badge/python-3-informational)
+![Version](https://img.shields.io/pypi/v/anodb)
+![Badges](https://img.shields.io/badge/badges-6-informational)
+![License](https//img.shields.io/pypi/l/anodb?style=flat)
+
 
 ## Description
 
