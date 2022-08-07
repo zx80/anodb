@@ -45,12 +45,13 @@ $(MODULE).egg-info: venv
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install wheel pytest coverage flake8 black
-	$(PIP) install pytest-postgresql psycopg2 psycopg pymysql
+	$(PIP) install pytest-postgresql psycopg2 psycopg pygresql
+	$(PIP) install pytest-mysql mysqlclient pymysql mysql-connector
 
 dist:
 	$(PYTHON) setup.py sdist bdist_wheel
 
 .PHONY: publish
 publish: dist
-	# provide pypi login/pw…
+	# provide pypi ids in ~/.pypirc
 	twine upload --repository $(MODULE) dist/*

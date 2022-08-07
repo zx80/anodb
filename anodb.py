@@ -2,7 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
-from typing import Any, Dict, Set, List, Union
+from typing import Any, Dict, Set, List, Union, Optional
 import logging
 import functools as ft
 import aiosql as sql  # type: ignore
@@ -33,7 +33,7 @@ class DB:
     def __init__(
         self,
         db: str,
-        conn: str,
+        conn: Optional[str],
         queries: str = None,
         options: Union[None, str, Dict[str, Any]] = None,
         auto_reconnect: bool = True,
@@ -53,15 +53,16 @@ class DB:
         self.__version__ = __version__
         self.__aiosql_version__ = pkg.require("aiosql")[0].version
         log.info(f"creating DB for {db}")
+        # this is the class name
         self._db = (
             "sqlite3" if db in self.SQLITE else "psycopg" if db in self.POSTGRES else db
         )
-        assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
+        assert self._db.lower() in sql.aiosql._ADAPTERS, f"database {db} is supported"
         # connection…
         self._conn = None
         self._conn_str = conn
         self._conn_options: Dict[str, Any] = {}
-        if not options:
+        if options is None:
             pass
         elif isinstance(options, str):
             import ast
@@ -69,7 +70,7 @@ class DB:
             self._conn_options.update(ast.literal_eval(options))
         elif isinstance(options, dict):
             self._conn_options.update(options)
-        else:  # pragma: no cover
+        else:
             raise Exception(f"unexpected type for options: {type(options)}")
         self._conn_options.update(conn_options)
         # various boolean flags
@@ -151,9 +152,14 @@ class DB:
 
     def _connect(self):
         # FIXME could/should be more generic?
-        """Create a database connection."""
+        """Create a database connection.
+
+        This is kind of a main because PEP249 does not impose a unified
+        signature for connect:-(
+        """
         log.info(f"DB {self._db}: connecting")
         # load module
+        module = self._db
         if self._db == "sqlite3":
             import sqlite3 as db
 
@@ -166,23 +172,33 @@ class DB:
         elif self._db == "pg8000":  # pragma: no cover
             import pg80000 as db  # type: ignore
         elif self._db == "pygresql":  # pragma: no cover
-            import pygresql as db  # type: ignore
-        elif self._db == "pymysql":  # pragma: no cover
+            import pgdb as db  # type: ignore
+
+            module = "pgdb"
+        elif self._db == "pymysql":
             import pymysql as db  # type: ignore
-        elif self._db == "mysqldb":  # pragma: no cover
+        elif self._db == "MySQLdb":
             import MySQLdb as db  # type: ignore
-        elif self._db == "mysql-connector":  # pragma: no cover
+
+            module = "mysqlclient"
+        elif self._db == "mysql-connector":
             import mysql.connector as db  # type: ignore
+
+            module = "mysql.connector"
         else:  # pragma: no cover
             raise Exception(f"unexpected db {self._db}")
         # get version if needed
         if not hasattr(self, "_db_version"):
             if hasattr(db, "__version__"):
                 self._db_version = db.__version__
-            else:  # pragma: no cover
-                self._db_version = pkg.require(self._db)[0].version
+            else:
+                self._db_version = pkg.require(module)[0].version
         # do connect
-        return db.connect(self._conn_str, **self._conn_options)
+        return (
+            db.connect(self._conn_str, **self._conn_options)
+            if self._conn_str
+            else db.connect(**self._conn_options)
+        )
 
     def _reconnect(self):
         """Try to reconnect to database."""

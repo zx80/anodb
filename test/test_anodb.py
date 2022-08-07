@@ -2,6 +2,9 @@ import pytest  # type: ignore
 import anodb
 import re
 from os import environ as ENV
+import logging
+
+log = logging.getLogger(__name__)
 
 # check that the db connection cursor works
 def run_42(db: anodb.DB):
@@ -74,7 +77,13 @@ def test_options():
 
 
 def run_test_sql(driver, dsn):
-    db = anodb.DB(driver, dsn, "test.sql")
+    log.debug(f"driver={driver} dsn={dsn}")
+    if isinstance(dsn, str):
+        db = anodb.DB(driver, dsn, "test.sql")
+    elif isinstance(dsn, dict):
+        db = anodb.DB(driver, None, "test.sql", **dsn)
+    else:
+        raise Exception(f"unexpected dsn type: {type(dsn)}")
     run_stuff(db)
     db.close()
     return db
@@ -92,16 +101,17 @@ def pg_dsn(postgresql_proc):
 # postgres basic test
 # pg_dsn is the string returned by the above fixture
 # test may use psycopg or psycopg2 driver depending on $PSYCOPG
-def test_postgres(pg_dsn):
+def run_postgres(driver, pg_dsn):
     assert re.match(r"postgres://", pg_dsn)
-    driver = ENV.get("PSYCOPG", "psycopg")  # default to psycopg 3
-    assert driver in ("psycopg", "psycopg2")
+    assert driver in ("psycopg", "psycopg2", "pygresql")
     db = run_test_sql(driver, pg_dsn)
     # further checks on the db object:
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
     elif driver == "psycopg2":
         assert re.match(r"2\.", db._db_version)
+    elif driver == "pygresql":
+        pass
     else:
         assert False, f"unsupported db version: {db._db} {db._db_version}"
     # check auto-reconnect for postgres
@@ -122,18 +132,65 @@ def test_postgres(pg_dsn):
     run_42(db)
     db.close()
 
+
+def has_module(name):
+    try:
+        __import__(name)
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(not has_module("psycopg"), reason="missing psycopg for test")
+def test_psycopg(pg_dsn):
+    run_postgres("psycopg", pg_dsn)
+
+
+@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(not has_module("psycopg2"), reason="missing psycopg2 for test")
+def test_psycopg2(pg_dsn):
+    run_postgres("psycopg2", pg_dsn)
+
+
+@pytest.mark.skip("work in progress…")
+@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(not has_module("pgdb"), reason="missing pgdb for test")
+def test_pygresql(pg_dsn):
+    run_postgres("pygresql", pg_dsn)
+
+
 # mysql tests
 @pytest.fixture
 def my_dsn(mysql_proc):
     p = mysql_proc
-    yield { "user": p.user, "host": p.host, "port": p.port }
+    log.debug(f"unix socket={p.unixsocket} port={p.port}")
+    yield { "user": p.user, "host": p.host, "port": p.port, "password": "" }
 
-@pytest.mark.skip("wip")
-def test_mysql(my_dsn):
-    driver = ENV.get("MYSQL", "mysqldb")
-    assert driver in ("mysqldb", "pymysql")
-    db = run_test_sql(driver, my_dsn)
-    db.close()
+
+@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
+@pytest.mark.skipif(not has_module("MySQLdb"), reason="missing MySQLdb for test")
+def test_mysqldb(my_dsn, mysql, mysql_proc):
+    my_dsn["database"] = "test"
+    if mysql_proc.unixsocket:
+        my_dsn["unix_socket"] = mysql_proc.unixsocket
+        del my_dsn["port"]
+    db = run_test_sql("MySQLdb", my_dsn)
+
+
+@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
+@pytest.mark.skipif(not has_module("pymysql"), reason="missing pymysql for test")
+def test_pymysql(my_dsn, mysql):
+    my_dsn["database"] = "test"
+    db = run_test_sql("pymysql", my_dsn)
+
+
+@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
+@pytest.mark.skipif(not has_module("mysql.connector"), reason="missing mysql.connector for test")
+def test_myco(my_dsn, mysql):
+    my_dsn["database"] = "test"
+    db = run_test_sql("mysql-connector", my_dsn)
+
 
 # test from-string queries
 def test_from_str():
@@ -154,10 +211,15 @@ def test_from_str():
     assert sorted(db._available_queries) == ["foo", "foo_cursor", "next", "next_cursor", "prev", "prev_cursor"]
     db.__del__()
 
-# test non existing database
+# test non existing database and other miscellanous errors
 def test_misc():
     try:
         db = anodb.DB("foodb", "anodb", "test.sql")
         assert False, "there is no foodb"
     except Exception as err:
         assert True, "foodb is not supported"
+    try:
+        db = anodb.DB("psycopg", None, "test.sql", options=False)
+        assert False, "bad type for options"
+    except Exception as err:
+        assert True, f"oops: {err}"

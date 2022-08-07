@@ -3,25 +3,13 @@
 PYTEST	= pytest --log-level=debug --capture=tee-sys
 PYTOPT	=
 
-.PHONY: check check-pg check-pg2
-check-pg:
-	export PSYCOPG=psycopg
-	$(PYTEST) $(PYTOPT)
-
-check-pg2:
-	export PSYCOPG=psycopg2
-	$(PYTEST) $(PYTOPT)
-
+.PHONY: check
 check:
-	$(MAKE) check-pg
-	$(MAKE) check-pg2
+	$(PYTEST) $(PYTOPT)
 
 .PHONY: coverage
 coverage:
-	export PSYCOPG=psycopg
 	coverage run -m $(PYTEST) $(PYTOPT)
-	export PSYCOPG=psycopg2
-	coverage run -a -m $(PYTEST) $(PYTOPT)
 	coverage html anodb.py
 	coverage report --fail-under=100 anodb.py
 
