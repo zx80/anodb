@@ -5,10 +5,12 @@ PYTOPT	=
 
 .PHONY: check
 check:
+	export PGCLIENTENCODING="UTF8"
 	$(PYTEST) $(PYTOPT)
 
 .PHONY: coverage
 coverage:
+	export PGCLIENTENCODING="UTF8"
 	coverage run -m $(PYTEST) $(PYTOPT)
 	coverage html anodb.py
 	coverage report --fail-under=100 anodb.py

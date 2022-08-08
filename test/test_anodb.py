@@ -101,10 +101,11 @@ def pg_dsn(postgresql_proc):
 # postgres basic test
 # pg_dsn is the string returned by the above fixture
 # test may use psycopg or psycopg2 driver depending on $PSYCOPG
-def run_postgres(driver, pg_dsn):
-    assert re.match(r"postgres://", pg_dsn)
+def run_postgres(driver, dsn, skip_kill=False):
+    if driver in ("psycopg", "psycopg2"):
+        assert re.match(r"postgres://", dsn)
     assert driver in ("psycopg", "psycopg2", "pygresql")
-    db = run_test_sql(driver, pg_dsn)
+    db = run_test_sql(driver, dsn)
     # further checks on the db object:
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
@@ -116,6 +117,9 @@ def run_postgres(driver, pg_dsn):
         assert False, f"unsupported db version: {db._db} {db._db_version}"
     # check auto-reconnect for postgres
     db.connect()
+    if skip_kill:
+        log.warning(f"skipping kill test for {driver}")
+        return
     try:
         db.kill_me_pg()
         assert False, "1. backend should have been killed"
@@ -153,11 +157,18 @@ def test_psycopg2(pg_dsn):
     run_postgres("psycopg2", pg_dsn)
 
 
-@pytest.mark.skip("work in progress…")
 @pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
 @pytest.mark.skipif(not has_module("pgdb"), reason="missing pgdb for test")
-def test_pygresql(pg_dsn):
-    run_postgres("pygresql", pg_dsn)
+def test_pygresql(postgresql_proc):
+    pp = postgresql_proc
+    dsn = {
+        "host": f"{pp.host}:{pp.port}",
+        "user": pp.user,
+        "password": pp.password,
+        "database": pp.user,
+    }
+    log.debug(f"dsn={dsn}")
+    run_postgres("pygresql", dsn, skip_kill=True)
 
 
 # mysql tests

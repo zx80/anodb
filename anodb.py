@@ -56,8 +56,8 @@ class DB:
         # this is the class name
         self._db = (
             "sqlite3" if db in self.SQLITE else "psycopg" if db in self.POSTGRES else db
-        )
-        assert self._db.lower() in sql.aiosql._ADAPTERS, f"database {db} is supported"
+        ).lower()
+        assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
         # connection…
         self._conn = None
         self._conn_str = conn
@@ -171,13 +171,13 @@ class DB:
             import psycopg2 as db  # type: ignore
         elif self._db == "pg8000":  # pragma: no cover
             import pg80000 as db  # type: ignore
-        elif self._db == "pygresql":  # pragma: no cover
+        elif self._db == "pygresql":
             import pgdb as db  # type: ignore
 
             module = "pgdb"
         elif self._db == "pymysql":
             import pymysql as db  # type: ignore
-        elif self._db == "MySQLdb":
+        elif self._db in ("MySQLdb", "mysqldb"):
             import MySQLdb as db  # type: ignore
 
             module = "mysqlclient"
