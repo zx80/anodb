@@ -64,7 +64,7 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
-### 6.0 on later
+### 6.0 on 2022-08-08
 
 Make connection string parameter optional, as some drivers do not need it.
 Add support for MySQL drivers: `pymysql`, `mysqlclient`, `mysql-connector`.
