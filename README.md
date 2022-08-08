@@ -7,7 +7,7 @@ and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Python](https://img.shields.io/badge/python-3-informational)
 ![Databases](https://img.shields.io/badge/databases-3-informational)
-![Drivers](https://img.shields.io/badge/drivers-10-informational)
+![Drivers](https://img.shields.io/badge/drivers-8-informational)
 ![Version](https://img.shields.io/pypi/v/anodb)
 ![Badges](https://img.shields.io/badge/badges-8-informational)
 ![License](https//img.shields.io/pypi/l/anodb?style=flat)
