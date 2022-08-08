@@ -3,7 +3,7 @@
 Convenient Wrapper around [aiosql](https://github.com/nackjicholson/aiosql)
 and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 
-![Tests](https://img.shields.io/badge/tests-10%20✓-success)
+![Tests](https://img.shields.io/badge/tests-11%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Python](https://img.shields.io/badge/python-3-informational)
 ![Version](https://img.shields.io/pypi/v/anodb)
@@ -64,9 +64,9 @@ Sources are available on [GitHub](https://github.com/zx80/anodb).
 
 ### 6.0 on later
 
-Make connection string parameter optional, as some drivers do not want it.
+Make connection string parameter optional, as some drivers do not need it.
 Add support for MySQL drivers: `pymysql`, `mysqlclient`, `mysql-connector`.
-Add support for Postgres driver: `pygresql`.
+Add support for Postgres drivers: `pygresql`, `pg8000`.
 Improved documentation.
 Improved tests.
 

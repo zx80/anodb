@@ -169,8 +169,8 @@ class DB:
             import psycopg as db  # type: ignore
         elif self._db == "psycopg2":
             import psycopg2 as db  # type: ignore
-        elif self._db == "pg8000":  # pragma: no cover
-            import pg80000 as db  # type: ignore
+        elif self._db == "pg8000":
+            import pg8000 as db  # type: ignore
         elif self._db == "pygresql":
             import pgdb as db  # type: ignore
 

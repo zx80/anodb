@@ -104,14 +104,14 @@ def pg_dsn(postgresql_proc):
 def run_postgres(driver, dsn, skip_kill=False):
     if driver in ("psycopg", "psycopg2"):
         assert re.match(r"postgres://", dsn)
-    assert driver in ("psycopg", "psycopg2", "pygresql")
+    assert driver in ("psycopg", "psycopg2", "pygresql", "pg8000")
     db = run_test_sql(driver, dsn)
     # further checks on the db object:
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
     elif driver == "psycopg2":
         assert re.match(r"2\.", db._db_version)
-    elif driver == "pygresql":
+    elif driver in ("pygresql", "pg8000"):
         pass
     else:
         assert False, f"unsupported db version: {db._db} {db._db_version}"
@@ -169,6 +169,21 @@ def test_pygresql(postgresql_proc):
     }
     log.debug(f"dsn={dsn}")
     run_postgres("pygresql", dsn, skip_kill=True)
+
+
+@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(not has_module("pg8000"), reason="missing pg8000 for test")
+def test_pg8000(postgresql_proc):
+    pp = postgresql_proc
+    dsn = {
+        "host": pp.host,
+        "port": pp.port,
+        "user": pp.user,
+        "password": pp.password,
+        "database": pp.user,
+    }
+    log.debug(f"dsn={dsn}")
+    run_postgres("pg8000", dsn, skip_kill=True)
 
 
 # mysql tests

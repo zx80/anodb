@@ -45,7 +45,7 @@ $(MODULE).egg-info: venv
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install wheel pytest coverage flake8 black
-	$(PIP) install pytest-postgresql psycopg2 psycopg pygresql
+	$(PIP) install pytest-postgresql psycopg2 psycopg pygresql pg8000
 	$(PIP) install pytest-mysql mysqlclient pymysql mysql-connector
 
 dist:
