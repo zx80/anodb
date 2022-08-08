@@ -10,7 +10,7 @@ and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 ![Drivers](https://img.shields.io/badge/drivers-8-informational)
 ![Version](https://img.shields.io/pypi/v/anodb)
 ![Badges](https://img.shields.io/badge/badges-8-informational)
-![License](https//img.shields.io/pypi/l/anodb?style=flat)
+![License](https://img.shields.io/pypi/l/anodb?style=flat)
 
 
 ## Description
