@@ -3,8 +3,14 @@ import anodb
 import re
 from os import environ as ENV
 import logging
+from pathlib import Path
 
 log = logging.getLogger(__name__)
+
+for f in ["test.sql", "test/test.sql"]:
+    if Path(f).exists():
+        TEST_SQL = f
+assert TEST_SQL
 
 # check that the db connection cursor works
 def run_42(db: anodb.DB):
@@ -58,7 +64,7 @@ def run_stuff(db: anodb.DB):
 
 # sqlite memory test
 def test_sqlite():
-    db = anodb.DB("sqlite", ":memory:", "test.sql", '{"check_same_thread":False}')
+    db = anodb.DB("sqlite", ":memory:", TEST_SQL, '{"check_same_thread":False}')
     run_stuff(db)
     db.close()
 
@@ -68,7 +74,7 @@ def test_options():
     db = anodb.DB(
         "sqlite",
         ":memory:",
-        "test.sql",
+        TEST_SQL,
         timeout=10,
         check_same_thread=False,
         isolation_level=None,
@@ -78,7 +84,7 @@ def test_options():
     db = anodb.DB(
         "sqlite",
         ":memory:",
-        "test.sql",
+        TEST_SQL,
         {"timeout": 10, "check_same_thread": False, "isolation_level": None},
     )
     run_42(db)
@@ -86,7 +92,7 @@ def test_options():
     db = anodb.DB(
         "sqlite",
         ":memory:",
-        "test.sql",
+        TEST_SQL,
         '{"timeout":10, "check_same_thread":False, "isolation_level":None}',
     )
     run_42(db)
@@ -96,9 +102,9 @@ def test_options():
 def run_test_sql(driver, dsn):
     log.debug(f"driver={driver} dsn={dsn}")
     if isinstance(dsn, str):
-        db = anodb.DB(driver, dsn, "test.sql")
+        db = anodb.DB(driver, dsn, TEST_SQL)
     elif isinstance(dsn, dict):
-        db = anodb.DB(driver, None, "test.sql", **dsn)
+        db = anodb.DB(driver, None, TEST_SQL, **dsn)
     else:
         raise Exception(f"unexpected dsn type: {type(dsn)}")
     run_stuff(db)
@@ -281,12 +287,12 @@ def test_from_str():
 # test non existing database and other miscellanous errors
 def test_misc():
     try:
-        db = anodb.DB("foodb", "anodb", "test.sql")
+        db = anodb.DB("foodb", "anodb", TEST_SQL)
         assert False, "there is no foodb"
     except Exception as err:
         assert True, "foodb is not supported"
     try:
-        db = anodb.DB("psycopg", None, "test.sql", options=False)
+        db = anodb.DB("psycopg", None, TEST_SQL, options=False)
         assert False, "bad type for options"
     except Exception as err:
         assert True, f"oops: {err}"
