@@ -62,10 +62,10 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
-### 7.0 on 2022-09-11
+### 6.1 on 2022-09-11
 
 Add GitHub CI configuration.
-Add Marldown checks
+Add Markdown checks
 More badges.
 
 ### 6.0 on 2022-08-08
