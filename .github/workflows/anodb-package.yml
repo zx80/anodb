@@ -1,0 +1,62 @@
+name: AnoDB Package
+
+on:
+  push:
+    branches: [ master ]
+  # pull_request: branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # NOTE asyncpg does not compile with pypy 3.7 & 3.8
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11-dev"]
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # GitHub Docker Images: https://github.com/docker-library/official-images/blob/master/library/postgres
+        image: postgres:alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r dev-requirements.txt
+        python -m pip install .
+    - name: Check types with mypy
+      run: mypy --install-types --non-interactive anodb
+    - name: Lint with black
+      run: black anodb.py test/test_anodb.py --check
+    - name: Lint with flake8
+      run: flake8 aiosql
+    - name: Test with pytest and databases
+      run: |
+        cd test
+        pytest
+    - name: Coverage tests
+      run: |
+        cd test
+        coverage run -m pytest --log-level=debug --capture=tee-sys
+        coverage report --fail-under=100 --include=anodb.py
+    - name: Check markdown
+      run: pymarkdown scan *.md

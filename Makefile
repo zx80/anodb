@@ -18,7 +18,7 @@ check.flake8:
 
 check.black:
 	source venv/bin/activate
-	black --check $(MODULE).py
+	black --check $(MODULE).py test/test_anodb.py
 
 check.pytest: $(MODULE).egg-info
 	source venv/bin/activate

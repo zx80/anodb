@@ -16,6 +16,7 @@ def run_42(db: anodb.DB):
     db.close()
     db.connect()
 
+
 # do various stuff, common to sqlite & pg tests
 def run_stuff(db: anodb.DB):
     assert db is not None
@@ -54,24 +55,40 @@ def run_stuff(db: anodb.DB):
     db.connect()
     run_42(db)
 
+
 # sqlite memory test
 def test_sqlite():
     db = anodb.DB("sqlite", ":memory:", "test.sql", '{"check_same_thread":False}')
     run_stuff(db)
     db.close()
 
+
 # sqlite memory test with options
 def test_options():
-    db = anodb.DB("sqlite", ":memory:", "test.sql",
-                  timeout=10, check_same_thread=False, isolation_level=None)
+    db = anodb.DB(
+        "sqlite",
+        ":memory:",
+        "test.sql",
+        timeout=10,
+        check_same_thread=False,
+        isolation_level=None,
+    )
     run_42(db)
     db.close()
-    db = anodb.DB("sqlite", ":memory:", "test.sql",
-                  {"timeout":10, "check_same_thread":False, "isolation_level":None})
+    db = anodb.DB(
+        "sqlite",
+        ":memory:",
+        "test.sql",
+        {"timeout": 10, "check_same_thread": False, "isolation_level": None},
+    )
     run_42(db)
     db.close()
-    db = anodb.DB("sqlite", ":memory:", "test.sql",
-                  '{"timeout":10, "check_same_thread":False, "isolation_level":None}')
+    db = anodb.DB(
+        "sqlite",
+        ":memory:",
+        "test.sql",
+        '{"timeout":10, "check_same_thread":False, "isolation_level":None}',
+    )
     run_42(db)
     db.close()
 
@@ -145,19 +162,25 @@ def has_module(name):
         return False
 
 
-@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test"
+)
 @pytest.mark.skipif(not has_module("psycopg"), reason="missing psycopg for test")
 def test_psycopg(pg_dsn):
     run_postgres("psycopg", pg_dsn)
 
 
-@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test"
+)
 @pytest.mark.skipif(not has_module("psycopg2"), reason="missing psycopg2 for test")
 def test_psycopg2(pg_dsn):
     run_postgres("psycopg2", pg_dsn)
 
 
-@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test"
+)
 @pytest.mark.skipif(not has_module("pgdb"), reason="missing pgdb for test")
 def test_pygresql(postgresql_proc):
     pp = postgresql_proc
@@ -171,7 +194,9 @@ def test_pygresql(postgresql_proc):
     run_postgres("pygresql", dsn, skip_kill=True)
 
 
-@pytest.mark.skipif(not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test"
+)
 @pytest.mark.skipif(not has_module("pg8000"), reason="missing pg8000 for test")
 def test_pg8000(postgresql_proc):
     pp = postgresql_proc
@@ -191,10 +216,12 @@ def test_pg8000(postgresql_proc):
 def my_dsn(mysql_proc):
     p = mysql_proc
     log.debug(f"unix socket={p.unixsocket} port={p.port}")
-    yield { "user": p.user, "host": p.host, "port": p.port, "password": "" }
+    yield {"user": p.user, "host": p.host, "port": p.port, "password": ""}
 
 
-@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
+)
 @pytest.mark.skipif(not has_module("MySQLdb"), reason="missing MySQLdb for test")
 def test_mysqldb(my_dsn, mysql, mysql_proc):
     my_dsn["database"] = "test"
@@ -204,15 +231,21 @@ def test_mysqldb(my_dsn, mysql, mysql_proc):
     db = run_test_sql("MySQLdb", my_dsn)
 
 
-@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
+@pytest.mark.skipif(
+    not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
+)
 @pytest.mark.skipif(not has_module("pymysql"), reason="missing pymysql for test")
 def test_pymysql(my_dsn, mysql):
     my_dsn["database"] = "test"
     db = run_test_sql("pymysql", my_dsn)
 
 
-@pytest.mark.skipif(not has_module("pytest_mysql"), reason="missing pytest_mysql for test")
-@pytest.mark.skipif(not has_module("mysql.connector"), reason="missing mysql.connector for test")
+@pytest.mark.skipif(
+    not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
+)
+@pytest.mark.skipif(
+    not has_module("mysql.connector"), reason="missing mysql.connector for test"
+)
 def test_myco(my_dsn, mysql):
     my_dsn["database"] = "test"
     db = run_test_sql("mysql-connector", my_dsn)
@@ -234,8 +267,16 @@ def test_from_str():
     assert db.foo(arg=42)[0][0] == 0
     assert db.next(arg=42)[0][0] == 43
     assert db.prev(arg=43)[0][0] == 42
-    assert sorted(db._available_queries) == ["foo", "foo_cursor", "next", "next_cursor", "prev", "prev_cursor"]
+    assert sorted(db._available_queries) == [
+        "foo",
+        "foo_cursor",
+        "next",
+        "next_cursor",
+        "prev",
+        "prev_cursor",
+    ]
     db.__del__()
+
 
 # test non existing database and other miscellanous errors
 def test_misc():
