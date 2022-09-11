@@ -61,4 +61,4 @@ dist:
 .PHONY: publish
 publish: dist
 	# provide pypi ids in ~/.pypirc
-	twine upload --repository $(MODULE) dist/*
+	echo twine upload --repository $(MODULE) dist/*
