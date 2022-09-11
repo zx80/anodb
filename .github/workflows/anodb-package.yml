@@ -45,7 +45,7 @@ jobs:
         python -m pip install -r dev-requirements.txt
         python -m pip install .
     - name: Check types with mypy
-      run: mypy --install-types --non-interactive anodb
+      run: mypy --non-interactive anodb
     - name: Lint with black
       run: black anodb.py test/test_anodb.py --check
     - name: Lint with flake8
