@@ -12,7 +12,6 @@ and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 ![Badges](https://img.shields.io/badge/badges-8-informational)
 ![License](https://img.shields.io/pypi/l/anodb?style=flat)
 
-
 ## Description
 
 This class creates a persistent database connection and imports
@@ -26,7 +25,6 @@ as an argument on each call: The `DB` class embeds both connection
 
 For concurrent programming (threads, greenlets…), a relevant setup
 should also consider thread-locals and pooling issues at some higher level.
-
 
 ## Example
 
@@ -58,7 +56,6 @@ INSERT INTO Stuff(key, val) VALUES (:key, :val);
 -- name: do_some_update!
 UPDATE Stuff SET val = :val WHERE key = :key;
 ```
-
 
 ## Versions
 
@@ -149,7 +146,6 @@ Add `cursor()` method.
 ### 1.0 on 2020-07-27
 
 Initial release.
-
 
 ## TODO
 

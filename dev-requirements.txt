@@ -1,0 +1,18 @@
+# wheel
+mypy
+flake8
+black
+pytest
+coverage
+pymarkdownlnt
+# local tests with postgres
+pytest-postgresql
+psycopg2
+psycopg
+pygresql
+pg8000
+# local tests with mysql
+pytest-mysql
+mysqlclient
+pymysql
+mysql-connector
