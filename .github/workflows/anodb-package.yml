@@ -13,7 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         # NOTE asyncpg does not compile with pypy 3.7 & 3.8
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11-dev"]
+        # cannot use pymarkdown on 3.7
+        python-version: ["3.8", "3.9", "3.10", "3.11-dev"]
 
     services:
       # Label used to access the service container
