@@ -62,6 +62,12 @@ UPDATE Stuff SET val = :val WHERE key = :key;
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 7.0 on 2022-09-11
+
+Add GitHub CI configuration.
+Add Marldown checks
+More badges.
+
 ### 6.0 on 2022-08-08
 
 Make connection string parameter optional, as some drivers do not need it.
