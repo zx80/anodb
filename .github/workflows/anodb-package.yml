@@ -45,11 +45,11 @@ jobs:
         python -m pip install -r dev-requirements.txt
         python -m pip install .
     - name: Check types with mypy
-      run: mypy anodb
+      run: mypy anodb.py
     - name: Lint with black
-      run: black anodb.py test/test_anodb.py --check
+      run: black --check anodb.py test/test_anodb.py
     - name: Lint with flake8
-      run: flake8 aiosql
+      run: flake8 anodb.py
     - name: Test with pytest and databases
       run: |
         cd test
