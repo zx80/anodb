@@ -58,7 +58,6 @@ jobs:
       run: |
         cd test
         coverage run -m pytest --log-level=debug --capture=tee-sys test_anodb.py
-        coverage report --fail-under=100
-        # --include="*/anodb.py"
+        coverage report --fail-under=100 --include="*/anodb*"
     - name: Check markdown
       run: pymarkdown scan *.md
