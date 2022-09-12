@@ -70,12 +70,13 @@ path (`add_queries_from_path`).
 
 The `DB` constructor parameters are:
 
-- `db` the name of the database driver (`sqlite3`, `psycopg`, `pymysql`,
+- `db` the name of the database driver: `sqlite3`, `psycopg`, `pymysql`,
   see [aiosql documentation](https://nackjicholson.github.io/aiosql/database-driver-adapters.html)
   for a list of supported drivers.
 - `conn` an optional connection string used to initiate a connection with the driver.
-  For instance, `psycopg` accepts a `libpq` connection string such as:
-  `"host=db1.my.org port=5432 dbname=acme user=calvin …"`.
+  For instance, `psycopg` accepts a
+  [libpq connection string](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
+  such as: `"host=db1.my.org port=5432 dbname=acme user=calvin …"`.
 - `queries` an optional path name from which to read query definitions.
 - `options` an optional dictionary or string to pass additional connection
   parameters.
@@ -95,6 +96,10 @@ db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
 ## Versions
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
+
+### ??? on ???
+
+Improved documentation.
 
 ### 6.1 on 2022-09-11
 
