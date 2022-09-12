@@ -34,7 +34,7 @@ class DB:
         self,
         db: str,
         conn: Optional[str],
-        queries: str = None,
+        queries: Optional[str] = None,
         options: Union[None, str, Dict[str, Any]] = None,
         auto_reconnect: bool = True,
         debug: bool = False,
