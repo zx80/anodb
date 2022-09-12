@@ -35,10 +35,10 @@ Once available:
 ```Python
 import anodb
 # parameters: driver, connection string, SQL file
-db = anodb.DB('sqlite3', 'test.db', 'test.sql')
+db = anodb.DB("sqlite3", "test.db", "test.sql")
 
-db.do_some_insert(key=1, val='hello')
-db.do_some_update(key=1, val='world')
+db.do_some_insert(key=1, val="hello")
+db.do_some_update(key=1, val="world")
 print("data", db.do_some_select(key=1))
 db.commit()
 
