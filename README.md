@@ -195,6 +195,7 @@ Initial release.
 
 ## TODO
 
+- make it work with "with", i.e. provide relevant __enter__ and __exit__
 - sync drivers with aiosql?
 - add something about caching?
 - sync version numbering with aiosql?
