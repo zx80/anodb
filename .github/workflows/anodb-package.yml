@@ -13,8 +13,9 @@ jobs:
       fail-fast: false
       matrix:
         # NOTE asyncpg does not compile with pypy 3.7 & 3.8
-        # cannot use pymarkdown on 3.7
-        python-version: ["3.8", "3.9", "3.10", "3.11-dev"]
+        # FIXME cannot use pymarkdown on 3.7
+        # TODO add 3.12-dev when available
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     services:
       # Label used to access the service container
