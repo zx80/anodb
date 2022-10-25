@@ -154,7 +154,7 @@ class DB:
         # FIXME could/should be more generic?
         """Create a database connection.
 
-        This is kind of a main because PEP249 does not impose a unified
+        This is kind of a pain because PEP249 does not impose a unified
         signature for connect:-(
         """
         log.info(f"DB {self._db}: connecting")
@@ -213,9 +213,10 @@ class DB:
         self._reconn = False
 
     def connect(self):
-        """Create database connection if needed."""
+        """Create (if needed) and return the database connection."""
         if "_conn" not in self.__dict__ or not self._conn:
             self._conn = self._connect()
+        return self._conn
 
     def cursor(self):
         """Get a cursor on the current connection."""

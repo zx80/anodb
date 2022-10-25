@@ -100,6 +100,7 @@ Sources are available on [GitHub](https://github.com/zx80/anodb).
 ### ??? on ???
 
 Improved documentation.
+Make `connect` return the connection.
 
 ### 6.1 on 2022-09-11
 
