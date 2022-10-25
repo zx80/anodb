@@ -181,7 +181,7 @@ class DB:
             import MySQLdb as db  # type: ignore
 
             module = "mysqlclient"
-        elif self._db == "mysql-connector":
+        elif self._db in ("mysql-connector", "mysql.connector"):
             import mysql.connector as db  # type: ignore
 
             module = "mysql.connector"
