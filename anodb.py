@@ -185,6 +185,8 @@ class DB:
             import mysql.connector as db  # type: ignore
 
             module = "mysql.connector"
+        elif self.db == "mariadb":
+            import mariadb as db  # type: ignore
         else:  # pragma: no cover
             raise Exception(f"unexpected db {self._db}")
         # get version if needed
