@@ -97,6 +97,10 @@ db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+### 7.1 on 2022-11-12
+
+Test with Python *3.12*.
+
 ### 7.0 on 2022-10-26
 
 Add support for MariaDB driver: `mariadb`.
