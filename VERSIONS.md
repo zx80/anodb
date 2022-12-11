@@ -2,6 +2,11 @@
 
 Sources are available on [GitHub](https://github.com/zx80/anodb).
 
+## 7.2 on 2022-12-11
+
+Fix issue with `mariadb`.
+Improve documentation for `github.io`.
+
 ## 7.1 on 2022-11-12
 
 Test with Python *3.12*.
