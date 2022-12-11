@@ -95,7 +95,10 @@ db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
 
 ## Versions
 
-Sources are available on [GitHub](https://github.com/zx80/anodb).
+[Sources](https://github.com/zx80/anodb),
+[documentation](https://zx80.github.io/anodb/) and
+[issues](https://github.com/zx80/anodb/issues)
+are available on [GitHub](https://github.com/).
 
 Latest version is *7.2* on 2022-11-12.
 
