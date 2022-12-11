@@ -32,7 +32,7 @@ should also consider thread-locals and pooling issues at some higher level.
 Install the module with `pip install anodb` or whatever method you like.
 Once available:
 
-```Python
+```python
 import anodb
 # parameters: driver, connection string, SQL file
 db = anodb.DB("sqlite3", "test.db", "test.sql")
