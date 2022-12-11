@@ -47,7 +47,7 @@ db.close()
 
 With file `test.sql` containing something like:
 
-```SQL
+```sql
 -- name: do_some_select
 SELECT * FROM Stuff WHERE key = :key;
 
