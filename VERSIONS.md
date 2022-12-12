@@ -1,6 +1,16 @@
 # AnoDB Versions
 
-Sources are available on [GitHub](https://github.com/zx80/anodb).
+[Sources](https://github.com/zx80/anodb),
+[documentation](https://zx80.github.io/anodb/) and
+[issues](https://github.com/zx80/anodb/issues)
+are available on [GitHub](https://github.com/).
+
+## TODO
+
+- make it work with "with", i.e. provide relevant __enter__ and __exit__?
+- sync drivers with aiosql?
+- add something about caching?
+- sync version numbering with aiosql?
 
 ## 7.2 on 2022-12-11
 

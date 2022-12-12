@@ -103,10 +103,3 @@ are available on [GitHub](https://github.com/).
 Latest version is *7.2* on 2022-12-11.
 
 See [all versions](VERSIONS.md)
-
-## TODO
-
-- make it work with "with", i.e. provide relevant __enter__ and __exit__
-- sync drivers with aiosql?
-- add something about caching?
-- sync version numbering with aiosql?
