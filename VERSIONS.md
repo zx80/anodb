@@ -12,7 +12,7 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 7.3 on 2023-01-21
 
 Drop `None` from `DB` initialization default values.
 Allow `queries` to be a list of files.
