@@ -34,8 +34,8 @@ class DB:
         self,
         db: str,
         conn: Optional[str],
-        queries: Optional[str] = None,
-        options: Union[None, str, Dict[str, Any]] = None,
+        queries: Union[str, List[str]] = [],
+        options: Union[str, Dict[str, Any]] = {},
         auto_reconnect: bool = True,
         debug: bool = False,
         **conn_options,
@@ -44,7 +44,7 @@ class DB:
 
         - db: database engine/driver)
         - conn: database-specific connection string
-        - queries: file holding queries for `aiosql`, may be empty
+        - queries: file(s) holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
         - debug: debug mode generate more logs through `logging`
@@ -62,9 +62,7 @@ class DB:
         self._conn = None
         self._conn_str = conn
         self._conn_options: Dict[str, Any] = {}
-        if options is None:
-            pass
-        elif isinstance(options, str):
+        if isinstance(options, str):
             import ast
 
             self._conn_options.update(ast.literal_eval(options))
@@ -78,12 +76,12 @@ class DB:
         self._auto_reconnect = auto_reconnect
         self._reconn = False
         # queries… keep track of calls
-        self._queries_file = queries
+        self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: List[sql.aiosql.Queries] = []
         self._count: Dict[str, int] = {}
         self._available_queries: Set[str] = set()
-        if queries:
-            self.add_queries_from_path(queries)
+        for fn in self._queries_file:
+            self.add_queries_from_path(fn)
         # last thing is to actually create the connection, which may fail
         self._conn = self._connect()
 

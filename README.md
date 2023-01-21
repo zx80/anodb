@@ -77,9 +77,8 @@ The `DB` constructor parameters are:
   For instance, `psycopg` accepts a
   [libpq connection string](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
   such as: `"host=db1.my.org port=5432 dbname=acme user=calvin …"`.
-- `queries` an optional path name from which to read query definitions.
-- `options` an optional dictionary or string to pass additional connection
-  parameters.
+- `queries` a path name or list of path names from which to read query definitions.
+- `options` a dictionary or string to pass additional connection parameters.
 - `auto_reconnect` whether to attempt a reconnection if the connection is lost.
   Default is `True`.
 - `debug` whether to generate debugging messages.

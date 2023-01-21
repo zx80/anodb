@@ -12,6 +12,11 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## ? on ?
+
+Drop `None` from `DB` initialization default values.
+Allow `queries` to be a list of files.
+
 ## 7.2 on 2022-12-11
 
 Fix issue with `mariadb`.
