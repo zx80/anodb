@@ -173,13 +173,13 @@ class DB:
             import pgdb as db  # type: ignore
 
             module = "pgdb"
-        elif self._db == "pymysql":
+        elif self._db == "pymysql":  # pragma: no cover
             import pymysql as db  # type: ignore
-        elif self._db in ("MySQLdb", "mysqldb"):
+        elif self._db in ("MySQLdb", "mysqldb"):  # pragma: no cover
             import MySQLdb as db  # type: ignore
 
             module = "mysqlclient"
-        elif self._db in ("mysql-connector", "mysql.connector"):
+        elif self._db in ("mysql-connector", "mysql.connector"):  # pragma: no cover
             import mysql.connector as db  # type: ignore
 
             module = "mysql.connector"
@@ -191,7 +191,7 @@ class DB:
         if not hasattr(self, "_db_version"):
             if hasattr(db, "__version__"):
                 self._db_version = db.__version__
-            else:
+            else:  # pragma: no cover
                 self._db_version = pkg.require(module)[0].version
         # do connect
         return (

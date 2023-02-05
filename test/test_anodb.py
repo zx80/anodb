@@ -4,6 +4,7 @@ import re
 from os import environ as ENV
 import logging
 from pathlib import Path
+import shutil
 
 log = logging.getLogger(__name__)
 
@@ -11,6 +12,7 @@ for f in ["test.sql", "test/test.sql"]:
     if Path(f).exists():
         TEST_SQL = f
 assert TEST_SQL
+
 
 # check that the db connection cursor works
 def run_42(db: anodb.DB):
@@ -168,6 +170,10 @@ def has_module(name):
         return False
 
 
+def has_command(cmd):
+    return shutil.which(cmd) is not None
+
+
 @pytest.mark.skipif(
     not has_module("pytest_postgresql"), reason="missing pytest_postgresql for test"
 )
@@ -225,6 +231,7 @@ def my_dsn(mysql_proc):
     yield {"user": p.user, "host": p.host, "port": p.port, "password": ""}
 
 
+@pytest.mark.skipif(not has_command("mysqld"), reason="missing mysqd for test")
 @pytest.mark.skipif(
     not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
 )
@@ -237,6 +244,7 @@ def test_mysqldb(my_dsn, mysql, mysql_proc):
     db = run_test_sql("MySQLdb", my_dsn)
 
 
+@pytest.mark.skipif(not has_command("mysqld"), reason="missing mysqd for test")
 @pytest.mark.skipif(
     not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
 )
@@ -246,6 +254,7 @@ def test_pymysql(my_dsn, mysql):
     db = run_test_sql("pymysql", my_dsn)
 
 
+@pytest.mark.skipif(not has_command("mysqld"), reason="missing mysqd for test")
 @pytest.mark.skipif(
     not has_module("pytest_mysql"), reason="missing pytest_mysql for test"
 )

@@ -1,3 +1,4 @@
+-e file:.
 wheel
 mypy
 flake8
