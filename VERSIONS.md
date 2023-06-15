@@ -17,6 +17,7 @@ are available on [GitHub](https://github.com/).
 Rename `master` to `main`.
 Use `pyproject.toml`
 Fix tests for `aiosql` *8.0* which returns generators.
+Drop support for Python *3.8* and *3.9* for simpler typing.
 
 ## 7.3 on 2023-01-21
 

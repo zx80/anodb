@@ -2,7 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
-from typing import Any, Dict, Set, List, Union, Optional
+from typing import Any
 import logging
 import functools as ft
 import aiosql as sql  # type: ignore
@@ -33,9 +33,9 @@ class DB:
     def __init__(
         self,
         db: str,
-        conn: Optional[str],
-        queries: Union[str, List[str]] = [],
-        options: Union[str, Dict[str, Any]] = {},
+        conn: str|None,
+        queries: str|list[str] = [],
+        options: str|dict[str, Any] = {},
         auto_reconnect: bool = True,
         debug: bool = False,
         **conn_options,
@@ -61,7 +61,7 @@ class DB:
         # connection…
         self._conn = None
         self._conn_str = conn
-        self._conn_options: Dict[str, Any] = {}
+        self._conn_options: dict[str, Any] = {}
         if isinstance(options, str):
             import ast
 
@@ -77,9 +77,9 @@ class DB:
         self._reconn = False
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
-        self._queries: List[sql.aiosql.Queries] = []
-        self._count: Dict[str, int] = {}
-        self._available_queries: Set[str] = set()
+        self._queries: list[sql.aiosql.Queries] = []
+        self._count: dict[str, int] = {}
+        self._available_queries: set[str] = set()
         for fn in self._queries_file:
             self.add_queries_from_path(fn)
         # last thing is to actually create the connection, which may fail

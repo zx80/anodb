@@ -50,7 +50,7 @@ jobs:
     - name: Lint with black
       run: black --check anodb.py test/test_anodb.py
     - name: Lint with flake8
-      run: flake8 --ignore=E127,E402,E501,W503 anodb.py
+      run: flake8 --ignore=E127,E227,E402,E501,W503 anodb.py
     - name: Test with pytest and databases
       run: |
         cd test
