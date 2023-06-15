@@ -3,7 +3,7 @@ SHELL	= /bin/bash
 
 MODULE	= anodb
 PYTHON	= python
-PIP		= venv/bin/pip
+PIP		= pip
 
 .PHONY: check check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
 check: check.mypy check.flake8 check.pytest check.coverage check.pymarkdown
@@ -41,14 +41,15 @@ clean.venv: clean
 	$(RM) -r venv *.egg-info
 
 # venv
-$(MODULE).egg-info: venv
 venv:
 	$(PYTHON) -m venv venv
+	source venv/bin/activate
 	$(PIP) install -U pip
 	$(PIP) install -e .[dev,pub,postgres]
 
 # distribution
-dist: $(MODULE).egg-info
+dist: venv
+	source venv/bin/activate
 	$(PYTHON) -m build
 
 .PHONY: publish
