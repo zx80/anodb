@@ -12,8 +12,8 @@ check:
 coverage:
 	export PGCLIENTENCODING="UTF8"
 	coverage run -m $(PYTEST) $(PYTOPT)
-	coverage html anodb.py
-	coverage report --fail-under=100 anodb.py
+	coverage html ../anodb.py
+	coverage report --fail-under=100 ../anodb.py
 
 .PHONY: clean
 clean:

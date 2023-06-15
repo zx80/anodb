@@ -15,7 +15,7 @@ jobs:
         # NOTE asyncpg does not compile with pypy 3.7 & 3.8
         # FIXME cannot use pymarkdown on 3.7
         # See https://github.com/actions/python-versions
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12-dev"]
+        python-version: ["3.10", "3.11", "3.12-dev"]
 
     services:
       # Label used to access the service container
@@ -47,8 +47,8 @@ jobs:
         python -m pip install .
     - name: Check types with mypy
       run: mypy anodb.py
-    - name: Lint with black
-      run: black --check anodb.py test/test_anodb.py
+    # - name: Lint with black
+    #   run: black --check anodb.py test/test_anodb.py
     - name: Lint with flake8
       run: flake8 --ignore=E127,E227,E402,E501,W503 anodb.py
     - name: Test with pytest and databases

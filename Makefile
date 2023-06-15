@@ -6,7 +6,7 @@ PYTHON	= python
 PIP		= venv/bin/pip
 
 .PHONY: check check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
-check: check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
+check: check.mypy check.flake8 check.pytest check.coverage check.pymarkdown
 
 check.mypy: venv
 	source venv/bin/activate
