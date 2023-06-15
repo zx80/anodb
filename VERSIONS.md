@@ -12,9 +12,11 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 8.0 on ?
 
 Rename `master` to `main`.
+Use `pyproject.toml`
+Fix tests for `aiosql` *8.0* which returns generators.
 
 ## 7.3 on 2023-01-21
 

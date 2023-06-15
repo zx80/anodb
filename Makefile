@@ -45,11 +45,11 @@ $(MODULE).egg-info: venv
 venv:
 	$(PYTHON) -m venv venv
 	$(PIP) install -U pip
-	$(PIP) install -r dev-requirements.txt
+	$(PIP) install -e .[dev,pub,postgres]
 
 # distribution
 dist: $(MODULE).egg-info
-	$(PYTHON) setup.py sdist bdist_wheel
+	$(PYTHON) -m build
 
 .PHONY: publish
 publish: dist

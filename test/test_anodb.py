@@ -31,30 +31,30 @@ def run_stuff(db: anodb.DB):
     # create table Foo
     db.create_foo()
     # with some data
-    assert db.count_foo()[0] == 0
+    assert list(db.count_foo())[0] == 0
     db.insert_foo(pk=1, val="one")
-    assert db.count_foo()[0] == 1
+    assert list(db.count_foo())[0] == 1
     db.insert_foo(pk=2, val="two")
     db.commit()
     # more checks
-    assert db.count_foo()[0] == 2
-    assert re.search(r"two", db.select_foo_pk(pk=2)[0][0])
+    assert list(db.count_foo())[0] == 2
+    assert re.search(r"two", list(db.select_foo_pk(pk=2))[0][0])
     db.update_foo_pk(pk=2, val="deux")
     db.delete_foo_pk(pk=1)
     db.commit()
-    assert db.count_foo()[0] == 1
-    assert re.search(r"deux", db.select_foo_pk(pk=2)[0][0])
+    assert list(db.count_foo())[0] == 1
+    assert re.search(r"deux", list(db.select_foo_pk(pk=2))[0][0])
     # data cleanup
     db.delete_foo_all()
     db.commit()
-    assert db.count_foo()[0] == 0
+    assert list(db.count_foo())[0] == 0
     # check rollback
     db.insert_foo(pk=3, val="three")
     db.insert_foo(pk=4, val="four")
     db.insert_foo(pk=5, val="five")
-    assert db.count_foo()[0] == 3
+    assert list(db.count_foo())[0] == 3
     db.rollback()
-    assert db.count_foo()[0] == 0
+    assert list(db.count_foo())[0] == 0
     # table cleanup
     db.drop_foo()
     db.commit()
@@ -271,17 +271,17 @@ def test_from_str():
     db = anodb.DB("sqlite", ":memory:")
     assert "connection to sqlite" in str(db)
     db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
-    assert db.next(arg=1)[0][0] == 2
+    assert list(db.next(arg=1))[0][0] == 2
     db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
-    assert db.next(arg=41)[0][0] == 42
-    assert db.prev(arg=42)[0][0] == 41
+    assert list(db.next(arg=41))[0][0] == 42
+    assert list(db.prev(arg=42))[0][0] == 41
     # override previous definition
     db.add_queries_from_str("-- name: foo\nSELECT :arg + 42 AS foo;\n")
-    assert db.foo(arg=0)[0][0] == 42
+    assert list(db.foo(arg=0))[0][0] == 42
     db.add_queries_from_str("-- name: foo\nSELECT :arg - 42 AS foo;\n")
-    assert db.foo(arg=42)[0][0] == 0
-    assert db.next(arg=42)[0][0] == 43
-    assert db.prev(arg=43)[0][0] == 42
+    assert list(db.foo(arg=42))[0][0] == 0
+    assert list(db.next(arg=42))[0][0] == 43
+    assert list(db.prev(arg=43))[0][0] == 42
     assert sorted(db._available_queries) == [
         "foo",
         "foo_cursor",
