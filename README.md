@@ -90,6 +90,12 @@ import anodb
 
 db = anodb.DB("sqlite3", ":memory:", "acme-queries.sql")
 db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
+db = anodb.DB("psycopg2", "host=localhost dbname=acme", "acme-queries.sql")
+db = anodb.DB("pygresql", None, "acme-queries.sql", host="localhost:5432", user="calvin", password="...", database="acme")
+db = anodb.DB("pg8000", None, "acme-queries.sql", host="localhost", port=5432, user="calvin", password="...", database="acme")
+db = anodb.DB("MySQLdb", None, "acme-queries.sql", host="localhost", port=5432, user="calvin", password="...", database="acme")
+db = anodb.DB("pymysql", None, "acme-queries.sql", host="localhost", port=5432, user="calvin", password="...", database="acme")
+db = anodb.DB("mysql-connector", None, "acme-queries.sql", host="localhost", port=5432, user="calvin", password="...", database="acme")
 ```
 
 ## Versions
