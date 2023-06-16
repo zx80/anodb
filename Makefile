@@ -55,4 +55,4 @@ dist: venv
 .PHONY: publish
 publish: dist
 	# provide pypi ids in ~/.pypirc
-	echo twine upload --repository $(MODULE) dist/*
+	echo twine upload dist/*
