@@ -88,8 +88,10 @@ The `DB` constructor parameters are:
 ```python
 import anodb
 
-db = anodb.DB("sqlite3", ":memory:", "acme-queries.sql")
+db = anodb.DB("sqlite3", "acme.db", "acme-queries.sql")
+db = anodb.DB("duckdb", "acme.db", "acme-queries.sql")
 db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
+db = anodb.DB("psycopg", None, "acme-queries.sql", host="localhost", user="calvin", password="...", dbname="acme")
 db = anodb.DB("psycopg2", "host=localhost dbname=acme", "acme-queries.sql")
 db = anodb.DB("pygresql", None, "acme-queries.sql", host="localhost:5432", user="calvin", password="...", database="acme")
 db = anodb.DB("pg8000", None, "acme-queries.sql", host="localhost", port=5432, user="calvin", password="...", database="acme")
