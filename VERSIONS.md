@@ -14,7 +14,8 @@ are available on [GitHub](https://github.com/).
 
 ## 8.1 on 2023-06-16
 
-Fix typo.
+Fix empty driver name.
+Add version dates.
 
 ## 8.0 on 2023-06-16
 

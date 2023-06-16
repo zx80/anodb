@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anodb"
-version = "8.0"
+version = "8.1"
 authors = [ { name = "Fabien Coelho", email = "ano.db@coelho.net" } ]
 description = "Convenient Wrapper around AioSQL and a Database Connection"
 readme = "README.md"
