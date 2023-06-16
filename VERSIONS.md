@@ -12,12 +12,17 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## 8.0 on ?
+## 8.1 on 2023-06-16
+
+Fix typo.
+
+## 8.0 on 2023-06-16
 
 Rename `master` to `main`.
 Use `pyproject.toml`
 Fix tests for `aiosql` *8.0* which returns generators.
 Drop support for Python *3.8* and *3.9* for simpler typing.
+Add support for `duckdb`
 
 ## 7.3 on 2023-01-21
 
