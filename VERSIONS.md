@@ -11,6 +11,7 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add something about caching?
 - sync version numbering with aiosql?
+- improve doc wrt connection creation
 
 ## 8.1 on 2023-06-16
 
