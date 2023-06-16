@@ -10,9 +10,8 @@ import aiosql as sql  # type: ignore
 log = logging.getLogger("anodb")
 
 # get package version
-import pkg_resources as pkg  # type: ignore
-
-__version__ = pkg.require("anodb")[0].version
+from importlib.metadata import version as pkg_version
+__version__ = pkg_version("anodb")
 
 
 #
@@ -51,7 +50,7 @@ class DB:
         - conn_options: database-specific `kwargs` constructor options
         """
         self.__version__ = __version__
-        self.__aiosql_version__ = pkg.require("aiosql")[0].version
+        self.__aiosql_version__ = pkg_version("aiosql")
         log.info(f"creating DB for {db}")
         # this is the class name
         self._db = (
@@ -194,7 +193,7 @@ class DB:
             if hasattr(db, "__version__"):
                 self._db_version = db.__version__
             else:  # pragma: no cover
-                self._db_version = pkg.require(module)[0].version
+                self._db_version = pkg_version(module)
         # do connect
         return (
             db.connect(self._conn_str, **self._conn_options)
