@@ -96,6 +96,7 @@ db = anodb.DB("pg8000", None, "acme-queries.sql", host="localhost", port=5432, u
 db = anodb.DB("MySQLdb", None, "acme-queries.sql", host="localhost", port=3306, user="calvin", password="...", database="acme")
 db = anodb.DB("pymysql", None, "acme-queries.sql", host="localhost", port=3306, user="calvin", password="...", database="acme")
 db = anodb.DB("mysql-connector", None, "acme-queries.sql", host="localhost", port=3306, user="calvin", password="...", database="acme")
+db = anodb.DB("mariadb", None, "acme-queries.sql", host="localhost", port=3306, user="calvin", password="...", database="acme")
 ```
 
 ## Versions
