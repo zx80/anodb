@@ -64,20 +64,23 @@ The `anodb` module provides the `DB` class which embeds both a
 [PEP 249](https://peps.python.org/pep-0249/) database connection
 (providing methods `commit`, `rollback`, `cursor`, `close` and
 its `connect` counterpart to re-connect) *and* SQL queries wrapped
-into dynamically generated functions by [aiosql](https://pypi.org/project/aiosql/).
+into dynamically generated functions by
+[aiosql](https://pypi.org/project/aiosql/).
 Such functions may be loaded from a string (`add_queries_from_str`) or a
 path (`add_queries_from_path`).
 
 The `DB` constructor parameters are:
 
-- `db` the name of the database driver: `sqlite3`, `psycopg`, `pymysql`,
-  see [aiosql documentation](https://nackjicholson.github.io/aiosql/database-driver-adapters.html)
+- `db` the name of the database driver: `sqlite3`, `psycopg`, `pymysql`, see
+  [aiosql documentation](https://nackjicholson.github.io/aiosql/database-driver-adapters.html)
   for a list of supported drivers.
-- `conn` an optional connection string used to initiate a connection with the driver.
+- `conn` an optional connection string used to initiate a connection with the
+  driver.
   For instance, `psycopg` accepts a
   [libpq connection string](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
   such as: `"host=db1.my.org port=5432 dbname=acme user=calvin …"`.
-- `queries` a path name or list of path names from which to read query definitions.
+- `queries` a path name or list of path names from which to read query
+   definitions.
 - `options` a dictionary or string to pass additional connection parameters.
 - `auto_reconnect` whether to attempt a reconnection if the connection is lost.
   Default is `True`.

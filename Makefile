@@ -30,7 +30,7 @@ check.coverage: venv
 
 check.pymarkdown: venv
 	source venv/bin/activate
-	pymarkdown scan *.md
+	pymarkdown -d MD013 scan *.md
 
 .PHONY: clean clean.venv
 clean:
