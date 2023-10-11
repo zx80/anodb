@@ -1,5 +1,6 @@
 # AnoDB Versions
 
+Package distributed from [Pypi](https://pypi.org/project/anodb/).
 [Sources](https://github.com/zx80/anodb),
 [documentation](https://zx80.github.io/anodb/) and
 [issues](https://github.com/zx80/anodb/issues)
