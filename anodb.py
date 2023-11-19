@@ -176,7 +176,7 @@ class DB:
         # record db package
         try:
             self._db_pkg = importlib.import_module(package)
-        except ImportError:
+        except ImportError:  # pragma: no cover
             log.error(f"cannot import {package} for {self._db}")
             raise
 
@@ -191,7 +191,8 @@ class DB:
         # get exception class
         if hasattr(self._db_pkg, "Error"):
             self._db_error = self._db_pkg.Error
-        else:  # myco does not need to follow the standard?
+        else:  # pragma: no cover
+            # myco does not need to follow the standard?
             log.error(f"missing Error class in {package}, falling back to Exception")
             self._db_error = Exception
 
