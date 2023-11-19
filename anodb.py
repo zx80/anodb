@@ -4,6 +4,7 @@
 
 from typing import Any
 import logging
+import importlib
 import functools as ft
 import datetime as dt
 import time
@@ -174,7 +175,7 @@ class DB:
 
         # record db package
         try:
-            self._db_pkg = __import__(package)
+            self._db_pkg = importlib.import_module(package)
         except ImportError:
             log.error(f"cannot import {package} for {self._db}")
             raise
