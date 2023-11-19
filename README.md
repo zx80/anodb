@@ -18,7 +18,8 @@ and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 This class creates a persistent database connection and imports
 SQL queries from a file as simple Python functions.
 
-If the connection is broken, a new connection is attempted.
+If the connection is broken, a new connection is attempted with increasing
+throttling delays.
 
 Compared to `aiosql`, the point is not to need to pass a connection
 as an argument on each call: The `DB` class embeds both connection
