@@ -344,4 +344,4 @@ def test_reconnect_delays():
     assert errors == 9
     end = dt.datetime.now()
     # 0, 1 and 2 ms delays, 3 times
-    assert (end - start).total_seconds() >= 0.009
+    assert (end - start).total_seconds() >= 0.09
