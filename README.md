@@ -83,7 +83,8 @@ The `DB` constructor parameters are:
    definitions.
 - `options` a dictionary or string to pass additional connection parameters.
 - `auto_reconnect` whether to attempt a reconnection if the connection is lost.
-  Default is `True`.
+  Default is `True`. Reconnection attempts are throttled exponentially from
+  *0.001* to *30.0* seconds.
 - `debug` whether to generate debugging messages.
   Default is `False`.
 - other named parameters are passed as additional connection parameters.
