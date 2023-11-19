@@ -112,12 +112,12 @@ class DB:
         try:
             self._count[query] += 1
             return fn(self._conn, *args, **kwargs)
-        except self._db_pkg.Error as error:
+        except self._db_error as error:
             log.info(f"DB {self._db} query {query} failed: {error}")
             # coldly rollback on any error
             try:
                 self._conn.rollback()
-            except self._db_pkg.Error as rolerr:
+            except self._db_error as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg[23], to attempt a
             # reconnection should more cases be handled?
@@ -187,6 +187,13 @@ class DB:
         else:  # pragma: no cover
             self._db_version = pkg_version(module)
 
+        # get exception class
+        if hasattr(self._db_pkg, "Error"):
+            self._db_error = self._db_pkg.Error
+        else:  # myco does not need to follow the standard?
+            log.error(f"missing Error class in {package}, falling back to Exception")
+            self._db_error = Exception
+
     def _connect(self):
         """Create a database connection."""
         log.info(f"DB {self._db}: connecting")
@@ -213,7 +220,7 @@ class DB:
             self._conn_attempts = 0
             self._conn_last_fail = None
             self._conn_delay = None
-        except self._db_pkg.Error as e:
+        except self._db_error as e:
             self._conn_failures += 1
             self._conn_last_fail = dt.datetime.now(dt.timezone.utc)
             if self._conn_delay is None:
@@ -230,7 +237,7 @@ class DB:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
-            except self._db_pkg.Error as error:  # pragma: no cover
+            except self._db_error as error:  # pragma: no cover
                 log.error(f"DB {self._db} close: {error}")
         self._do_connect()
         self._reconn = False
