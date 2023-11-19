@@ -4,7 +4,7 @@ Convenient Wrapper around [aiosql](https://github.com/nackjicholson/aiosql)
 and a [Database Connection](https://www.python.org/dev/peps/pep-0249).
 
 ![Status](https://github.com/zx80/anodb/actions/workflows/anodb-package.yml/badge.svg?branch=master&style=flat)
-![Tests](https://img.shields.io/badge/tests-11%20✓-success)
+![Tests](https://img.shields.io/badge/tests-12%20✓-success)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
 ![Python](https://img.shields.io/badge/python-3-informational)
 ![Databases](https://img.shields.io/badge/databases-5-informational)
