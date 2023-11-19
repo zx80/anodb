@@ -13,7 +13,7 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 9.0 on 2023-11-19
 
 Throttle reconnection attempts from 0.001 to 30.0 seconds.
 Use database exceptions instead of generic `Exception`.
