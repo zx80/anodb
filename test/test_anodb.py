@@ -6,6 +6,7 @@ from os import environ as ENV
 import logging
 from pathlib import Path
 import shutil
+import datetime as dt
 
 log = logging.getLogger(__name__)
 
@@ -327,16 +328,20 @@ class ThriceFail:
 
 # NOTE this tests has an unlikely race condition for coverage
 def test_reconnect_delays():
+    start = dt.datetime.now()
     db = anodb.DB("sqlite", ":memory:", TEST_SQL)
     db.close()
     # replace some stuff for testing
     db._CONNECTION_MIN_DELAY = 0.01
     db._db_pkg = ThriceFail()
     errors = 0
-    for _ in range(10):
+    for _ in range(12):
         try:
             db.connect()
             db.close()
         except sqlite3.Error:
             errors += 1
-    assert errors == 8
+    assert errors == 9
+    end = dt.datetime.now()
+    # 0, 1 and 2 ms delays, 3 times
+    assert (end - start).total_seconds() >= 0.009
