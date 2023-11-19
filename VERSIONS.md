@@ -17,6 +17,7 @@ are available on [GitHub](https://github.com/).
 
 Throttle reconnection attempts from 0.001 to 30.0 seconds.
 Use database exceptions instead of generic `Exception`.
+Generic package loading.
 
 ## 8.2 on 2023-07-15
 

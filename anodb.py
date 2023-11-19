@@ -160,47 +160,32 @@ class DB:
 
     def _set_db_pkg(self):
         """Load database package."""
-        module = self._db
-        if self._db == "sqlite3":
-            import sqlite3 as db
+        package, module = self._db, self._db
 
-            self._db_version = db.version
-        # skip apsw as DB API support is really partial
-        elif self._db == "psycopg":
-            import psycopg as db  # type: ignore
-        elif self._db == "psycopg2":
-            import psycopg2 as db  # type: ignore
-        elif self._db == "pg8000":
-            import pg8000 as db  # type: ignore
-        elif self._db == "pygresql":
-            import pgdb as db  # type: ignore
-
-            module = "pgdb"
-        elif self._db == "pymysql":  # pragma: no cover
-            import pymysql as db  # type: ignore
+        # skip apsw as DB API support is really partial?
+        if self._db == "pygresql":
+            package, module = "pgdb", "pgdb"
         elif self._db in ("MySQLdb", "mysqldb"):  # pragma: no cover
-            import MySQLdb as db  # type: ignore
-
-            module = "mysqlclient"
+            package, module = "MySQLdb", "mysqlclient"
         elif self._db in ("mysql-connector", "mysql.connector"):  # pragma: no cover
-            import mysql.connector as db  # type: ignore
+            package, module = "mysql.connector", "mysql.connector"
+        else:
+            pass
 
-            module = "mysql.connector"
-        elif self._db == "mariadb":  # pragma: no cover
-            import mariadb as db  # type: ignore
-        elif self._db == "duckdb":  # pragma: no cover
-            import duckdb as db  # type: ignore
-        else:  # pragma: no cover
-            self._db_pkg = None
-            raise Exception(f"unexpected db {self._db}")
         # record db package
-        self._db_pkg = db
+        try:
+            self._db_pkg = __import__(package)
+        except ImportError:
+            log.error(f"cannot import {package} for {self._db}")
+            raise
+
         # get version
-        if not hasattr(self, "_db_version"):
-            if hasattr(db, "__version__"):
-                self._db_version = db.__version__
-            else:  # pragma: no cover
-                self._db_version = pkg_version(module)
+        if hasattr(self._db_pkg, "__version__"):
+            self._db_version = self._db_pkg.__version__
+        elif hasattr(self._db_pkg, "version"):
+            self._db_version = self._db_pkg.version
+        else:  # pragma: no cover
+            self._db_version = pkg_version(module)
 
     def _connect(self):
         """Create a database connection."""
@@ -239,7 +224,7 @@ class DB:
             raise e
 
     def _reconnect(self):
-        """Try to reconnect to database."""
+        """Try to reconnect to database, possibly with some cleanup."""
         log.info(f"DB {self._db}: reconnecting")
         if self._conn:
             # attempt at closing but ignore errors
