@@ -322,6 +322,8 @@ class ThriceFail:
             self._fails = 0
             return sqlite3.connect(*args, **kwargs)
 
+    Error = Exception
+
 
 # NOTE this tests has an unlikely race condition for coverage
 def test_reconnect_delays():

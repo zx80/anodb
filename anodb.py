@@ -112,12 +112,12 @@ class DB:
         try:
             self._count[query] += 1
             return fn(self._conn, *args, **kwargs)
-        except Exception as error:
+        except self._db_pkg.Error as error:
             log.info(f"DB {self._db} query {query} failed: {error}")
             # coldly rollback on any error
             try:
                 self._conn.rollback()
-            except Exception as rolerr:
+            except self._db_pkg.Error as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg[23], to attempt a
             # reconnection should more cases be handled?
@@ -228,7 +228,7 @@ class DB:
             self._conn_attempts = 0
             self._conn_last_fail = None
             self._conn_delay = None
-        except Exception as e:
+        except self._db_pkg.Error as e:
             self._conn_failures += 1
             self._conn_last_fail = dt.datetime.now(dt.timezone.utc)
             if self._conn_delay is None:
@@ -245,7 +245,7 @@ class DB:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
-            except Exception as error:  # pragma: no cover
+            except self._db_pkg.Error as error:  # pragma: no cover
                 log.error(f"DB {self._db} close: {error}")
         self._do_connect()
         self._reconn = False
