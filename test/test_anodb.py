@@ -1,5 +1,6 @@
 import pytest  # type: ignore
 import anodb
+import sqlite3
 import re
 from os import environ as ENV
 import logging
@@ -305,3 +306,35 @@ def test_misc():
         assert False, "bad type for options"
     except Exception as err:
         assert True, f"oops: {err}"
+
+
+class ThriceFail:
+    """Always fails thrice before connecting."""
+
+    def __init__(self):
+        self._fails = 0
+
+    def connect(self, *args, **kwargs):
+        if self._fails < 3:
+            self._fails += 1
+            raise sqlite3.Error(f"connect intentional failure #{self._fails}")
+        else:
+            self._fails = 0
+            return sqlite3.connect(*args, **kwargs)
+
+
+# NOTE this tests has an unlikely race condition for coverage
+def test_reconnect_delays():
+    db = anodb.DB("sqlite", ":memory:", TEST_SQL)
+    db.close()
+    # replace some stuff for testing
+    db._CONNECTION_MIN_DELAY = 0.01
+    db._db_pkg = ThriceFail()
+    errors = 0
+    for _ in range(10):
+        try:
+            db.connect()
+            db.close()
+        except sqlite3.Error:
+            errors += 1
+    assert errors == 8

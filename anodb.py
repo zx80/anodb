@@ -5,6 +5,8 @@
 from typing import Any
 import logging
 import functools as ft
+import datetime as dt
+import time
 import aiosql as sql  # type: ignore
 
 log = logging.getLogger("anodb")
@@ -28,6 +30,10 @@ class DB:
     SQLITE = ("sqlite3", "sqlite")
     POSTGRES = ("psycopg", "pg", "postgres", "postgresql", "psycopg3")
     # others stay as-is: psycopg2 pg8000…
+
+    # connection delays
+    _CONNECTION_MIN_DELAY = 0.001
+    _CONNECTION_MAX_DELAY = 30.0
 
     def __init__(
         self,
@@ -57,6 +63,7 @@ class DB:
             "sqlite3" if db in self.SQLITE else "psycopg" if db in self.POSTGRES else db
         ).lower()
         assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
+        self._set_db_pkg()
         # connection…
         self._conn = None
         self._conn_str = conn
@@ -82,7 +89,11 @@ class DB:
         for fn in self._queries_file:
             self.add_queries_from_path(fn)
         # last thing is to actually create the connection, which may fail
-        self._conn = self._connect()
+        self._conn_delay: float|None = None  # seconds
+        self._conn_last_fail: dt.datetime|None = None
+        self._conn_attempts: int = 0
+        self._conn_failures: int = 0
+        self._do_connect()
 
     def _call_fn(self, query, fn, *args, **kwargs):
         """Forward method call to aiosql query
@@ -147,15 +158,8 @@ class DB:
         """Load queries from a string."""
         self._create_fns(sql.from_str(qs, self._db))
 
-    def _connect(self):
-        # FIXME could/should be more generic?
-        """Create a database connection.
-
-        This is kind of a pain because PEP249 does not impose a unified
-        signature for connect:-(
-        """
-        log.info(f"DB {self._db}: connecting")
-        # load module
+    def _set_db_pkg(self):
+        """Load database package."""
         module = self._db
         if self._db == "sqlite3":
             import sqlite3 as db
@@ -187,19 +191,52 @@ class DB:
         elif self._db == "duckdb":  # pragma: no cover
             import duckdb as db  # type: ignore
         else:  # pragma: no cover
+            self._db_pkg = None
             raise Exception(f"unexpected db {self._db}")
-        # get version if needed
+        # record db package
+        self._db_pkg = db
+        # get version
         if not hasattr(self, "_db_version"):
             if hasattr(db, "__version__"):
                 self._db_version = db.__version__
             else:  # pragma: no cover
                 self._db_version = pkg_version(module)
-        # do connect
-        return (
-            db.connect(self._conn_str, **self._conn_options)
-            if self._conn_str
-            else db.connect(**self._conn_options)
-        )
+
+    def _connect(self):
+        """Create a database connection."""
+        log.info(f"DB {self._db}: connecting")
+        # PEP249 does not impose a unified signature for connect.
+        if self._conn_str:
+            return self._db_pkg.connect(self._conn_str, **self._conn_options)
+        else:
+            return self._db_pkg.connect(**self._conn_options)
+
+    def _do_connect(self):
+        """Create a connection, possibly with active throttling."""
+        self._conn = None
+        try:
+            self._conn_attempts += 1
+            if self._conn_delay is not None:
+                delay = dt.timedelta(seconds=self._conn_delay)
+                assert self._conn_last_fail
+                wait = (delay - (dt.datetime.now(dt.timezone.utc) - self._conn_last_fail)).total_seconds()
+                if wait > 0.0:
+                    log.info(f"connection wait #{self._conn_attempts}: {wait}")
+                    time.sleep(wait)
+            self._conn = self._connect()
+            # on success, reset reconnection stuff
+            self._conn_attempts = 0
+            self._conn_last_fail = None
+            self._conn_delay = None
+        except Exception as e:
+            self._conn_failures += 1
+            self._conn_last_fail = dt.datetime.now(dt.timezone.utc)
+            if self._conn_delay is None:
+                self._conn_delay = self._CONNECTION_MIN_DELAY
+            else:
+                self._conn_delay = min(2 * self._conn_delay, self._CONNECTION_MAX_DELAY)
+            log.error(f"connect failed #{self._conn_attempts}: {e}")
+            raise e
 
     def _reconnect(self):
         """Try to reconnect to database."""
@@ -210,13 +247,13 @@ class DB:
                 self._conn.close()
             except Exception as error:  # pragma: no cover
                 log.error(f"DB {self._db} close: {error}")
-        self._conn = self._connect()
+        self._do_connect()
         self._reconn = False
 
     def connect(self):
         """Create (if needed) and return the database connection."""
         if "_conn" not in self.__dict__ or not self._conn:
-            self._conn = self._connect()
+            self._do_connect()
         return self._conn
 
     def cursor(self):

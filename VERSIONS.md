@@ -12,7 +12,10 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add something about caching?
 - sync version numbering with aiosql?
-- throttle reconnection attempts?
+
+## ? on ?
+
+Throttle reconnection attempts from 0.001 to 30.0 seconds.
 
 ## 8.2 on 2023-07-15
 
