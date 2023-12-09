@@ -180,13 +180,8 @@ class DB:
             log.error(f"cannot import {package} for {self._db}")
             raise
 
-        # get version
-        if hasattr(self._db_pkg, "__version__"):
-            self._db_version = self._db_pkg.__version__
-        elif hasattr(self._db_pkg, "version"):
-            self._db_version = self._db_pkg.version
-        else:  # pragma: no cover
-            self._db_version = pkg_version(module)
+        # get version from metadata ("__version__"?, deprecated "version"?)
+        self._db_version = pkg_version(module)
 
         # get exception class
         if hasattr(self._db_pkg, "Error"):
