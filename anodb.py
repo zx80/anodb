@@ -181,7 +181,7 @@ class DB:
             raise
 
         # get version from metadata ("__version__"?, deprecated "version"?)
-        self._db_version = pkg_version(module)
+        self._db_version = pkg_version(module) if module != "sqlite3" else self._db_pkg.version
 
         # get exception class
         if hasattr(self._db_pkg, "Error"):
