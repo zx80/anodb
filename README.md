@@ -113,6 +113,5 @@ db = anodb.DB("mariadb", None, "acme-queries.sql", host="localhost", port=3306, 
 [issues](https://github.com/zx80/anodb/issues)
 are available on [GitHub](https://github.com/).
 
-Latest version is *8.2* on 2023-07-15.
-
-See [all versions](VERSIONS.md)
+See [all versions](VERSIONS.md) and
+get [packages](https://pypi.org/project/anodb/) from [PyPI](https://pypi.org/).
