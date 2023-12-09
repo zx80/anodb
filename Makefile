@@ -45,7 +45,17 @@ venv:
 	$(PYTHON) -m venv venv
 	source venv/bin/activate
 	$(PIP) install -U pip
-	$(PIP) install -e .[dev,pub,postgres]
+	$(PIP) install -e .[postgres]
+
+.PHONY: venv.check
+venv.check: venv
+	source venv/bin/activate
+	$(PIP) install -e .[dev,mysql]
+
+.PHONY: venv.dev
+venv.dev: venv
+	source venv/bin/activate
+	$(PIP) install -e .[dev,pub]
 
 # distribution
 dist: venv
