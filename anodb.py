@@ -43,6 +43,7 @@ class DB:
         queries: str|list[str] = [],
         options: str|dict[str, Any] = {},
         auto_reconnect: bool = True,
+        kwargs_only: bool = False,
         debug: bool = False,
         **conn_options,
     ):
@@ -53,6 +54,7 @@ class DB:
         - queries: file(s) holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
+        - kwargs_only: whether to require named parameters on query execution.
         - debug: debug mode generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
@@ -81,6 +83,7 @@ class DB:
         # various boolean flags
         self._debug = debug
         self._auto_reconnect = auto_reconnect
+        self._kwargs_only = kwargs_only
         self._reconn = False
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
@@ -153,11 +156,11 @@ class DB:
 
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
-        self._create_fns(sql.from_path(fn, self._db))
+        self._create_fns(sql.from_path(fn, self._db, kwargs_only=self._kwargs_only))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
-        self._create_fns(sql.from_str(qs, self._db))
+        self._create_fns(sql.from_str(qs, self._db, kwargs_only=self._kwargs_only))
 
     def _set_db_pkg(self):
         """Load database package."""
