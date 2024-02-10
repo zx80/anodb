@@ -13,11 +13,12 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## 9.3 on ?
+## 9.3 on 2024-02-10
 
 Rename `query` parameter to avoid name collisions.
 Allow Pytest _8_.
 Update doc.
+Add `pyright` type checking to CI.
 
 ## 9.2 on 2024-01-28
 
