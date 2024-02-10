@@ -6,11 +6,15 @@ PYTHON	= python
 PIP		= pip
 
 .PHONY: check check.mypy check.flake8 check.black check.pytest check.coverage check.pymarkdown
-check: check.mypy check.flake8 check.pytest check.coverage check.pymarkdown
+check: check.mypy check.pyright check.flake8 check.pytest check.coverage check.pymarkdown
 
 check.mypy: venv
 	source venv/bin/activate
 	mypy $(MODULE).py
+
+check.pyright: venv
+	source venv/bin/activate
+	pyright $(MODULE).py
 
 check.flake8: venv
 	source venv/bin/activate

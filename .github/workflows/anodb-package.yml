@@ -44,6 +44,8 @@ jobs:
       run: make venv.check
     - name: Check types with mypy
       run: make check.mypy
+    - name: Check types with pyright
+      run: make check.pyright
     # - name: Lint with black
     #   run: black --check anodb.py test/test_anodb.py
     - name: Lint with flake8

@@ -87,7 +87,7 @@ class DB:
         self._reconn = False
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
-        self._queries: list[sql.aiosql.Queries] = []
+        self._queries: list[sql.aiosql.Queries] = []  # type: ignore
         self._count: dict[str, int] = {}
         self._available_queries: set[str] = set()
         for fn in self._queries_file:
@@ -120,30 +120,31 @@ class DB:
             log.info(f"DB {self._db} query {_query} failed: {error}")
             # coldly rollback on any error
             try:
-                self._conn.rollback()
+                if self._conn:
+                    self._conn.rollback()
             except self._db_error as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
             # detect a connection error for psycopg[23], to attempt a
             # reconnection should more cases be handled?
             if (
-                self._db == "psycopg"
+                self._auto_reconnect
+                and self._db == "psycopg"
                 and hasattr(self._conn, "closed")
-                and self._conn.closed
-                and self._auto_reconnect
+                and self._conn.closed  # type: ignore
             ):
                 self._reconn = True
             elif (
-                self._db == "psycopg2"
+                self._auto_reconnect
+                and self._db == "psycopg2"
                 and hasattr(self._conn, "closed")
-                and self._conn.closed == 2
-                and self._auto_reconnect
+                and self._conn.closed == 2  # type: ignore
             ):
                 self._reconn = True
             # re-raise initial error
             raise error
 
     # this could probably be done dynamic by overriding __getattribute__
-    def _create_fns(self, queries: sql.aiosql.Queries):
+    def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
         """Create call forwarding to insert the database connection."""
         self._queries.append(queries)
         for q in queries.available_queries:
@@ -252,20 +253,25 @@ class DB:
         """Get a cursor on the current connection."""
         if self._reconn and self._auto_reconnect:
             self._reconnect()
+        assert self._conn is not None
         return self._conn.cursor()
 
     def commit(self):
         """Commit database transaction."""
+        assert self._conn is not None
         self._conn.commit()
 
     def rollback(self):
         """Rollback database transaction."""
+        assert self._conn is not None
         self._conn.rollback()
 
     def close(self):
-        """Close underlying database connection."""
-        self._conn.close()
-        self._conn = None
+        """Close underlying database connection if needed."""
+        if self._conn is not None:
+            # NOTE only reset if close succeeded?
+            self._conn.close()
+            self._conn = None
 
     def __str__(self):
         return f"connection to {self._db} database ({self._conn_str})"
