@@ -13,6 +13,24 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## 9.3 on ?
+
+Rename `query` parameter to avoid name collisions.
+Allow Pytest _8_.
+Update doc.
+
+## 9.2 on 2024-01-28
+
+Update CI script.
+Forward `kwargs_only` option to AioSQL.
+Avoid Pytest _8_.
+
+## 9.1 on 2023-12-09
+
+Simpler CI script.
+Improved doc and tests.
+Simpler version code.
+
 ## 9.0 on 2023-11-19
 
 Throttle reconnection attempts from 0.001 to 30.0 seconds.

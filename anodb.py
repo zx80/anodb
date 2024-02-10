@@ -99,7 +99,7 @@ class DB:
         self._conn_failures: int = 0
         self._do_connect()
 
-    def _call_fn(self, query, fn, *args, **kwargs):
+    def _call_fn(self, _query, _fn, *args, **kwargs):
         """Forward method call to aiosql query
 
         On connection failure, it will try to reconnect on the next call
@@ -110,14 +110,14 @@ class DB:
         the next call should be on a different request.
         """
         if self._debug:  # pragma: no cover
-            log.debug(f"DB: {query}({args}, {kwargs})")
+            log.debug(f"DB: {_query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
         try:
-            self._count[query] += 1
-            return fn(self._conn, *args, **kwargs)
+            self._count[_query] += 1
+            return _fn(self._conn, *args, **kwargs)
         except self._db_error as error:
-            log.info(f"DB {self._db} query {query} failed: {error}")
+            log.info(f"DB {self._db} query {_query} failed: {error}")
             # coldly rollback on any error
             try:
                 self._conn.rollback()
