@@ -13,7 +13,7 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 9.4 on ?
 
 Add `exception` parameter to `DB` constructor.
 Improved coverage tests.
