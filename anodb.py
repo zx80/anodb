@@ -2,7 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
-from typing import Any
+from typing import Any, Callable
 import logging
 import importlib
 import functools as ft
@@ -44,6 +44,7 @@ class DB:
         options: str|dict[str, Any] = {},
         auto_reconnect: bool = True,
         kwargs_only: bool = False,
+        exception: Callable[[BaseException], BaseException]|None = None,
         debug: bool = False,
         **conn_options,
     ):
@@ -55,7 +56,8 @@ class DB:
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
         - kwargs_only: whether to require named parameters on query execution.
-        - debug: debug mode generate more logs through `logging`
+        - exception: user function to reraise database exceptions.
+        - debug: debug mode, generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
         self.__version__ = __version__
@@ -84,6 +86,7 @@ class DB:
         self._debug = debug
         self._auto_reconnect = auto_reconnect
         self._kwargs_only = kwargs_only
+        self._exception = exception
         self._reconn = False
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
@@ -141,7 +144,7 @@ class DB:
             ):
                 self._reconn = True
             # re-raise initial error
-            raise error
+            raise self._exception(error) if self._exception else error
 
     # this could probably be done dynamic by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
@@ -188,12 +191,11 @@ class DB:
         self._db_version = self._db_pkg.version if module in ("sqlite3", "pgdb") else pkg_version(module)
 
         # get exception class
-        if hasattr(self._db_pkg, "Error"):
-            self._db_error = self._db_pkg.Error
-        else:  # pragma: no cover
+        self._db_error = self._db_pkg.Error if hasattr(self._db_pkg, "Error") else Exception
+
+        if self._db_error == Exception:  # pragma: no cover
             # myco does not need to follow the standard?
             log.error(f"missing Error class in {package}, falling back to Exception")
-            self._db_error = Exception
 
     def _connect(self):
         """Create a database connection."""

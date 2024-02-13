@@ -13,6 +13,11 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## ? on ?
+
+Add `exception` parameter to `DB` constructor.
+Improved coverage tests.
+
 ## 9.3 on 2024-02-10
 
 Rename `query` parameter to avoid name collisions.
