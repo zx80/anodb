@@ -41,3 +41,6 @@ SELECT 'hello world!';
 -- name: kill-me-pg!
 -- kill current backend process, to test reconnections
 SELECT pg_terminate_backend(pg_backend_pid());
+
+-- name: syntax-error$
+SELECT :s + ;

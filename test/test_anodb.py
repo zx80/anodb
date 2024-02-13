@@ -345,3 +345,16 @@ def test_reconnect_delays():
     end = dt.datetime.now()
     # 0, 1 and 2 ms delays, 3 times
     assert (end - start).total_seconds() >= 0.09
+
+
+class MyException(BaseException):
+    pass
+
+
+def test_exception():
+    db = anodb.DB("sqlite", ":memory", TEST_SQL, kwargs_only=True, exception=MyException)
+    try:
+        d = db.syntax_error(s="2024-12-34")
+        assert False, f"exception should be raised (d={d})"
+    except MyException as e:
+        assert True, "good, exception was raised"

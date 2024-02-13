@@ -145,6 +145,9 @@ class DB:
                 self._reconn = True
             # re-raise initial error
             raise self._exception(error) if self._exception else error
+        except Exception as e:  # pragma: no cover
+            log.error(f"unexpected exception: {e}")
+            raise
 
     # this could probably be done dynamic by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
