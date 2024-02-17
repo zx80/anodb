@@ -18,7 +18,7 @@ check.pyright: venv
 
 check.flake8: venv
 	source venv/bin/activate
-	flake8 --ignore=E127,E227,E402,E501,W503 $(MODULE).py
+	flake8 --ignore=E127,E227,E402,E501,W503,W504 $(MODULE).py
 
 check.black: venv
 	source venv/bin/activate
