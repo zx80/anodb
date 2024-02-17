@@ -102,11 +102,18 @@ class DB:
         self._conn_failures: int = 0
         self._do_connect()
 
+    def _possibly_reconnect(self):
+        """Detect a connection error for psycopg."""
+        # FIXME detect other cases of bad connections?
+        self._reconn = self._auto_reconnect and (
+            (self._db == "psycopg" and hasattr(self._conn, "closed") and self._conn.closed) or      # type: ignore
+            (self._db == "psycopg2" and hasattr(self._conn, "closed") and self._conn.closed == 2))  # type: ignore
+
     def _call_fn(self, _query, _fn, *args, **kwargs):
-        """Forward method call to aiosql query
+        """Forward method call to aiosql query.
 
         On connection failure, it will try to reconnect on the next call
-        if auto_reconnect was specified.
+        if auto_reconnect was set.
 
         This may or may not be a good idea, but it should be: the failure
         raises an exception which should abort the current request, so that
@@ -116,8 +123,8 @@ class DB:
             log.debug(f"DB: {_query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
+        self._count[_query] += 1
         try:
-            self._count[_query] += 1
             return _fn(self._conn, *args, **kwargs)
         except self._db_error as error:
             log.info(f"DB {self._db} query {_query} failed: {error}")
@@ -127,29 +134,14 @@ class DB:
                     self._conn.rollback()
             except self._db_error as rolerr:
                 log.warning(f"DB {self._db} rollback failed: {rolerr}")
-            # detect a connection error for psycopg[23], to attempt a
-            # reconnection should more cases be handled?
-            if (
-                self._auto_reconnect
-                and self._db == "psycopg"
-                and hasattr(self._conn, "closed")
-                and self._conn.closed  # type: ignore
-            ):
-                self._reconn = True
-            elif (
-                self._auto_reconnect
-                and self._db == "psycopg2"
-                and hasattr(self._conn, "closed")
-                and self._conn.closed == 2  # type: ignore
-            ):
-                self._reconn = True
-            # re-raise initial error
+            self._possibly_reconnect()
+            # re-raise error
             raise self._exception(error) if self._exception else error
         except Exception as e:  # pragma: no cover
             log.error(f"unexpected exception: {e}")
             raise
 
-    # this could probably be done dynamic by overriding __getattribute__
+    # this could probably be done dynamically by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
         """Create call forwarding to insert the database connection."""
         self._queries.append(queries)

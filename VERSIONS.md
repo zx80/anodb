@@ -13,6 +13,11 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## 9.5 on 2024-02-17
+
+Reconnection refactoring.
+Fix sqlite3 in-memory test.
+
 ## 9.4 on 2024-02-13
 
 Add `exception` parameter to `DB` constructor.

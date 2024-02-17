@@ -352,7 +352,7 @@ class MyException(BaseException):
 
 
 def test_exception():
-    db = anodb.DB("sqlite", ":memory", TEST_SQL, kwargs_only=True, exception=MyException)
+    db = anodb.DB("sqlite", ":memory:", TEST_SQL, kwargs_only=True, exception=MyException)
     try:
         d = db.syntax_error(s="2024-12-34")
         assert False, f"exception should be raised (d={d})"
