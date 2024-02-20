@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## ? on ?
+
+Possibly reconnect after a `close`?
+
 ## 9.5 on 2024-02-17
 
 Reconnection refactoring.

@@ -269,6 +269,8 @@ class DB:
             # NOTE only reset if close succeeded?
             self._conn.close()
             self._conn = None
+            # should we try to reconnect?
+            self._reconn = self._auto_reconnect
 
     def __str__(self):
         return f"connection to {self._db} database ({self._conn_str})"
