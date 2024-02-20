@@ -82,6 +82,15 @@ class DB:
         else:
             raise Exception(f"unexpected type for options: {type(options)}")
         self._conn_options.update(conn_options)
+        # useful global stats
+        self._count: dict[str, int] = {}  # name -> #calls
+        self._conn_last = None  # current connection start
+        self._conn_count: int = 0  # how many connections succeeded
+        self._conn_total: int = 0  # number of "executions" in this connection
+        self._conn_ntx: int = 0  # number of tx in this connection
+        self._conn_nstat: int = 0  # number of executions (fn, cursors) in current tx
+        self._total: int = 0  # total number of executions
+        self._ntx: int = 0  # number of tx
         # various boolean flags
         self._debug = debug
         self._auto_reconnect = auto_reconnect
@@ -91,7 +100,6 @@ class DB:
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: list[sql.aiosql.Queries] = []  # type: ignore
-        self._count: dict[str, int] = {}
         self._available_queries: set[str] = set()
         for fn in self._queries_file:
             self.add_queries_from_path(fn)
@@ -123,6 +131,7 @@ class DB:
             log.debug(f"DB: {_query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
+        self._conn_nstat += 1
         self._count[_query] += 1
         try:
             return _fn(self._conn, *args, **kwargs)
@@ -192,8 +201,8 @@ class DB:
             # myco does not need to follow the standard?
             log.error(f"missing Error class in {package}, falling back to Exception")
 
-    def _connect(self):
-        """Create a database connection."""
+    def __connect(self):
+        """Create a database connection (internal)."""
         log.info(f"DB {self._db}: connecting")
         # PEP249 does not impose a unified signature for connect.
         if self._conn_str:
@@ -213,13 +222,21 @@ class DB:
                 if wait > 0.0:
                     log.info(f"connection wait #{self._conn_attempts}: {wait}")
                     time.sleep(wait)
-            self._conn = self._connect()
+            self._conn = self.__connect()
+            # on success, update stats
+            self._ntx += self._conn_ntx
+            self._total += self._conn_total
+            self._conn_count += 1
+            self._conn_last = dt.datetime.now(dt.timezone.utc)
+            self._conn_total = 0
+            self._conn_ntx = 0
             # on success, reset reconnection stuff
             self._conn_attempts = 0
             self._conn_last_fail = None
             self._conn_delay = None
         except self._db_error as e:
             self._conn_failures += 1
+            self._conn_last = None
             self._conn_last_fail = dt.datetime.now(dt.timezone.utc)
             if self._conn_delay is None:
                 self._conn_delay = self._CONNECTION_MIN_DELAY
@@ -251,16 +268,23 @@ class DB:
         if self._reconn and self._auto_reconnect:
             self._reconnect()
         assert self._conn is not None
+        self._conn_nstat += 1
         return self._conn.cursor()
 
     def commit(self):
         """Commit database transaction."""
         assert self._conn is not None
+        self._conn_ntx += 1
+        self._conn_total += self._conn_nstat
+        self._conn_nstat = 0
         self._conn.commit()
 
     def rollback(self):
         """Rollback database transaction."""
         assert self._conn is not None
+        self._conn_ntx += 1
+        self._conn_total += self._conn_nstat
+        self._conn_nstat = 0
         self._conn.rollback()
 
     def close(self):
@@ -273,7 +297,9 @@ class DB:
             self._reconn = self._auto_reconnect
 
     def __str__(self):
-        return f"connection to {self._db} database ({self._conn_str})"
+        return (f"connection to {self._db} database ({self._conn_str})" +
+                f" nstat={self._conn_nstat} total={self._conn_total} ntx={self._conn_ntx} since={self._conn_last}" +
+                f" [total={self._total} ntx={self._ntx} for previous connections]")
 
     def __del__(self):
         if hasattr(self, "_conn") and self._conn:

@@ -1,3 +1,4 @@
+SHELL   = /bin/bash
 .ONESHELL:
 
 PYTEST	= pytest --log-level=debug --capture=tee-sys
@@ -5,11 +6,13 @@ PYTOPT	=
 
 .PHONY: check
 check:
+	source ../venv/bin/activate
 	export PGCLIENTENCODING="UTF8"
 	$(PYTEST) $(PYTOPT)
 
 .PHONY: coverage
 coverage:
+	source ../venv/bin/activate
 	export PGCLIENTENCODING="UTF8"
 	coverage run -m $(PYTEST) $(PYTOPT)
 	coverage html ../anodb.py

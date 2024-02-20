@@ -49,12 +49,12 @@ venv:
 	$(PYTHON) -m venv venv
 	source venv/bin/activate
 	$(PIP) install -U pip
-	$(PIP) install -e .[postgres]
+	$(PIP) install -e .[postgres,dev]
 
 .PHONY: venv.check
 venv.check: venv
 	source venv/bin/activate
-	$(PIP) install -e .[dev,mysql]
+	pips install -e .[mysql]
 
 .PHONY: venv.dev
 venv.dev: venv
