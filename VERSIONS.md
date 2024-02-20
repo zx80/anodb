@@ -13,7 +13,7 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 9.6 on 2024-02-20
 
 Possibly reconnect after a `close`?
 
