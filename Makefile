@@ -54,7 +54,7 @@ venv:
 .PHONY: venv.check
 venv.check: venv
 	source venv/bin/activate
-	pips install -e .[mysql]
+	pip install -e .[mysql]
 
 .PHONY: venv.dev
 venv.dev: venv
