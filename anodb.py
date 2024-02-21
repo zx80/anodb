@@ -297,9 +297,13 @@ class DB:
             self._reconn = self._auto_reconnect
 
     def __str__(self):
-        return (f"connection to {self._db} database ({self._conn_str})" +
-                f" nstat={self._conn_nstat} total={self._conn_total} ntx={self._conn_ntx} since={self._conn_last}" +
-                f" [total={self._total} ntx={self._ntx} for previous connections]")
+        info = [
+            f"connection to {self._db} database ({self._conn_str})",
+            f" - nstat={self._conn_nstat} total={self._conn_total} ntx={self._conn_ntx} since={self._conn_last}",
+            f" - total={self._total} ntx={self._ntx} for previous connections"] + [
+            f" - {name}: {self._count[name]}" for name in self._count if self._count[name] != 0
+        ]
+        return "\n".join(info)
 
     def __del__(self):
         if hasattr(self, "_conn") and self._conn:
