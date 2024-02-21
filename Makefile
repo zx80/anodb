@@ -62,11 +62,11 @@ venv.dev: venv
 	$(PIP) install -e .[dev,pub]
 
 # distribution
-dist: venv
+dist: venv.dev
 	source venv/bin/activate
 	$(PYTHON) -m build
 
 .PHONY: publish
 publish: dist
 	# provide pypi ids in ~/.pypirc
-	echo twine upload dist/*
+	echo ./venv/bin/twine upload dist/*
