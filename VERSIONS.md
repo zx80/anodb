@@ -12,6 +12,7 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add something about caching?
 - sync version numbering with aiosql?
+- generate a convenient stats structure?
 
 ## 9.8 on 2024-02-21
 
