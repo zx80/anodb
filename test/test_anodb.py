@@ -271,7 +271,7 @@ def test_myco(my_dsn, mysql):
 # test from-string queries
 def test_from_str():
     db = anodb.DB("sqlite", ":memory:")
-    assert "connection to sqlite" in str(db)
+    assert "sqlite" in str(db)
     db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
     assert list(db.next(arg=1))[0][0] == 2
     db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")

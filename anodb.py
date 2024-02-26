@@ -9,6 +9,7 @@ import functools as ft
 import datetime as dt
 import time
 import aiosql as sql  # type: ignore
+import json
 
 log = logging.getLogger("anodb")
 
@@ -296,14 +297,31 @@ class DB:
             # should we try to reconnect?
             self._reconn = self._auto_reconnect
 
+    def _stats(self):
+        """Generate a JSON-compatible structure for statistics."""
+        return {
+            "driver": self._db,
+            "conn": {
+                "info": self._conn_str,
+                # current connection status
+                "nstat": self._conn_nstat,
+                "total": self._conn_total,
+                "ntx": self._conn_ntx,
+                "last": str(self._conn_last),
+                # (re)connection attempts
+                "attempts": self._conn_attempts,
+                "failures": self._conn_failures,
+                "delay": self._conn_delay,
+                "last-fail": str(self._conn_last_fail),
+            },
+            # life time
+            "total": self._total,
+            "ntx": self._ntx,
+            "calls": self._count,
+        }
+
     def __str__(self):
-        info = [
-            f"connection to {self._db} database ({self._conn_str})",
-            f" - nstat={self._conn_nstat} total={self._conn_total} ntx={self._conn_ntx} since={self._conn_last}",
-            f" - total={self._total} ntx={self._ntx} for previous connections"] + [
-            f" - {name}: {self._count[name]}" for name in self._count if self._count[name] != 0
-        ]
-        return "\n".join(info)
+        return json.dumps(self._stats())
 
     def __del__(self):
         if hasattr(self, "_conn") and self._conn:
