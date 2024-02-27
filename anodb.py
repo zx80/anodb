@@ -301,8 +301,8 @@ class DB:
         """Generate a JSON-compatible structure for statistics."""
         return {
             "driver": self._db,
+            "info": self._conn_str,
             "conn": {
-                "info": self._conn_str,
                 # current connection status
                 "nstat": self._conn_nstat,
                 "total": self._conn_total,
@@ -318,6 +318,7 @@ class DB:
             "total": self._total,
             "ntx": self._ntx,
             "calls": self._count,
+            "count": self._conn_count,
         }
 
     def __str__(self):
