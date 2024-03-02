@@ -10,6 +10,7 @@ import datetime as dt
 
 log = logging.getLogger(__name__)
 
+# look for actual SQL test file
 for f in ["test.sql", "test/test.sql"]:
     if Path(f).exists():
         TEST_SQL = f
@@ -28,7 +29,7 @@ def run_42(db: anodb.DB):
 
 
 # do various stuff, common to sqlite & pg tests
-def run_stuff(db: anodb.DB):
+def run_stuff(db: anodb.DB, skip_dot=False):
     assert db is not None
     # create table Foo
     db.create_foo()
@@ -60,6 +61,10 @@ def run_stuff(db: anodb.DB):
     # table cleanup
     db.drop_foo()
     db.commit()
+    # check module
+    if not skip_dot:
+        assert db.module(x=(3+4j)) == 5.0
+        db.commit()
     # check reconnection
     db.close()
     db.connect()
@@ -103,7 +108,7 @@ def test_options():
     db.close()
 
 
-def run_test_sql(driver, dsn):
+def run_test_sql(driver, dsn, skip_dot=False):
     log.debug(f"driver={driver} dsn={dsn}")
     if isinstance(dsn, str):
         db = anodb.DB(driver, dsn, TEST_SQL)
@@ -111,7 +116,7 @@ def run_test_sql(driver, dsn):
         db = anodb.DB(driver, None, TEST_SQL, **dsn)
     else:
         raise Exception(f"unexpected dsn type: {type(dsn)}")
-    run_stuff(db)
+    run_stuff(db, skip_dot)
     db.close()
     return db
 
@@ -128,11 +133,11 @@ def pg_dsn(postgresql_proc):
 # postgres basic test
 # pg_dsn is the string returned by the above fixture
 # test may use psycopg or psycopg2 driver depending on $PSYCOPG
-def run_postgres(driver, dsn, skip_kill=False):
+def run_postgres(driver, dsn, skip_kill=False, skip_dot=False):
     if driver in ("psycopg", "psycopg2"):
         assert re.match(r"postgres://", dsn)
     assert driver in ("psycopg", "psycopg2", "pygresql", "pg8000")
-    db = run_test_sql(driver, dsn)
+    db = run_test_sql(driver, dsn, skip_dot)
     # further checks on the db object:
     if driver == "psycopg":
         assert re.match(r"3\.", db._db_version)
@@ -222,7 +227,7 @@ def test_pg8000(postgresql_proc):
         "database": pp.user,
     }
     log.debug(f"dsn={dsn}")
-    run_postgres("pg8000", dsn, skip_kill=True)
+    run_postgres("pg8000", dsn, skip_kill=True, skip_dot=True)
 
 
 # mysql tests

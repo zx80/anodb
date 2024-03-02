@@ -44,3 +44,6 @@ SELECT pg_terminate_backend(pg_backend_pid());
 
 -- name: syntax-error$
 SELECT :s + ;
+
+-- name: module$
+SELECT SQRT(:x.real * :x.real + :x.imag * :x.imag);

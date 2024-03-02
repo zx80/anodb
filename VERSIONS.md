@@ -18,6 +18,8 @@ are available on [GitHub](https://github.com/).
 Add `attribute` parameter forwarded to AioSQL _10.0_.
 Use iso format.
 
+Note: the attribute feature does not seem to work with _pg8000_, for now.
+
 ## 9.11 on 2024-03-02
 
 Do not str-ize undefined timestamps.

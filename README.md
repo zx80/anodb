@@ -87,6 +87,7 @@ The `DB` constructor parameters are:
   Default is `True`. Reconnection attempts are throttled exponentially
   following powers of two delays from *0.001* and capped at *30.0* seconds.
 - `kwargs_only` whether to only accept named parameters to python functions.
+- `attribute` attribute dot access substition, default is `"__"`, use _None_ to disable.
 - `exception` function to re-process database exceptions.
 - `debug` whether to generate debugging messages.
   Default is `False`.
