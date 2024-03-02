@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## 9.11 on 2024-03-02
+
+Do not str-ize undefined timestamps.
+
 ## 9.10 on 2024-02-27
 
 Improve stats data.
