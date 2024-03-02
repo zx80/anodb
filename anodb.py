@@ -45,18 +45,20 @@ class DB:
         options: str|dict[str, Any] = {},
         auto_reconnect: bool = True,
         kwargs_only: bool = False,
+        attribute: str = "__",
         exception: Callable[[BaseException], BaseException]|None = None,
         debug: bool = False,
         **conn_options,
     ):
         """DB constructor
 
-        - db: database engine/driver)
+        - db: database engine/driver
         - conn: database-specific connection string
         - queries: file(s) holding queries for `aiosql`, may be empty
         - options: database-specific options in various forms
         - auto_reconnect: whether to reconnect on connection errors
         - kwargs_only: whether to require named parameters on query execution.
+        - attribute: attribute dot access substitution, default is `"__"`.
         - exception: user function to reraise database exceptions.
         - debug: debug mode, generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
@@ -96,8 +98,10 @@ class DB:
         self._debug = debug
         self._auto_reconnect = auto_reconnect
         self._kwargs_only = kwargs_only
-        self._exception = exception
         self._reconn = False
+        # oother parameters
+        self._attribute = attribute
+        self._exception = exception
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: list[sql.aiosql.Queries] = []  # type: ignore
@@ -165,11 +169,11 @@ class DB:
 
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
-        self._create_fns(sql.from_path(fn, self._db, kwargs_only=self._kwargs_only))
+        self._create_fns(sql.from_path(fn, self._db, kwargs_only=self._kwargs_only, attribute=self._attribute))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
-        self._create_fns(sql.from_str(qs, self._db, kwargs_only=self._kwargs_only))
+        self._create_fns(sql.from_str(qs, self._db, kwargs_only=self._kwargs_only, attribute=self._attribute))
 
     def _set_db_pkg(self):
         """Load database package."""

@@ -13,8 +13,9 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
-## ? on ?
+## 10.0 on 2024-03-02
 
+Add `attribute` parameter forwarded to AioSQL _10.0_.
 Use iso format.
 
 ## 9.11 on 2024-03-02
