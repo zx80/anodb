@@ -307,12 +307,12 @@ class DB:
                 "nstat": self._conn_nstat,
                 "total": self._conn_total,
                 "ntx": self._conn_ntx,
-                "last": str(self._conn_last) if self._conn_last else None,
+                "last": self._conn_last.isoformat() if self._conn_last else None,
                 # (re)connection attempt status
                 "attempts": self._conn_attempts,
                 "failures": self._conn_failures,
                 "delay": self._conn_delay,
-                "last-fail": str(self._conn_last_fail) if self._conn_last_fail else None,
+                "last-fail": self._conn_last_fail.isoformat() if self._conn_last_fail else None,
             },
             # life time
             "total": self._total,
