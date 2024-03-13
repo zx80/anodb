@@ -38,7 +38,7 @@ check.pymarkdown: venv
 
 .PHONY: clean clean.venv
 clean:
-	$(RM) -r __pycache__ */__pycache__ dist build .mypy_cache .pytest_cache
+	$(RM) -r __pycache__ */__pycache__ dist build .mypy_cache .pytest_cache .ruff_cache
 	$(MAKE) -C test clean
 
 clean.venv: clean
