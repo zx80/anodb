@@ -109,6 +109,14 @@ db = anodb.DB("mysql-connector", None, "acme-queries.sql", host="localhost", por
 db = anodb.DB("mariadb", None, "acme-queries.sql", host="localhost", port=3306, user="calvin", password="...", database="acme")
 ```
 
+## License
+
+This code is [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/).
+
+All software has bug, this is software, hence… Beware that you may lose your
+hairs or your friends because of it. If you like it, feel free to send a
+postcard to the author.
+
 ## Versions
 
 [Sources](https://github.com/zx80/anodb),
