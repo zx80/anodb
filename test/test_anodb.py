@@ -363,3 +363,21 @@ def test_exception():
         assert False, f"exception should be raised (d={d})"
     except MyException as e:
         assert True, "good, exception was raised"
+
+
+def test_readme():
+    import anodb
+    db = anodb.DB("sqlite3", ":memory:", "test.sql")
+    res = db.create_stuff()
+    assert res == "DONE"
+    res = db.do_some_insert(key=1, val="hello")
+    assert res == 1
+    res = db.do_some_update(key=1, val="world")
+    assert res == 1
+    res = db.do_some_select(key=1)
+    assert res == (1, "world")
+    # not in readme
+    res = db.do_some_select(key=2)
+    assert res is None
+    db.commit()
+    db.close()

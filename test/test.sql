@@ -47,3 +47,19 @@ SELECT :s + ;
 
 -- name: module$
 SELECT SQRT(:x.real * :x.real + :x.imag * :x.imag);
+
+--
+-- README example
+--
+
+-- name: create_stuff#
+CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
+
+-- name: do_some_select^
+SELECT * FROM Stuff WHERE key = :key;
+
+-- name: do_some_insert!
+INSERT INTO Stuff(key, val) VALUES (:key, :val);
+
+-- name: do_some_update!
+UPDATE Stuff SET val = :val WHERE key = :key;

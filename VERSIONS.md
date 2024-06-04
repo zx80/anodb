@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - sync version numbering with aiosql?
 
+## ? on ?
+
+Improve README introductory example and run it in tests.
+
 ## 10.0 on 2024-03-02
 
 Add `attribute` parameter forwarded to AioSQL _10.0_.
