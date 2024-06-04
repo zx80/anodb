@@ -10,12 +10,13 @@ are available on [GitHub](https://github.com/).
 
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
-- add something about caching?
 - sync version numbering with aiosql?
+- add something about caching?
 
-## ? on ?
+## 10.1 on 2024-06-04
 
 Improve README introductory example and run it in tests.
+Add license section to documentation.
 
 ## 10.0 on 2024-03-02
 
