@@ -87,6 +87,7 @@ def test_options():
         timeout=10,
         check_same_thread=False,
         isolation_level=None,
+        debug=True,
     )
     run_42(db)
     db.close()

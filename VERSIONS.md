@@ -13,6 +13,11 @@ are available on [GitHub](https://github.com/).
 - sync version numbering with aiosql?
 - add something about caching?
 
+## 10.2 on 2024-07-31
+
+Improve internal logging infrastructure.
+Add counter to help identify DB objects.
+
 ## 10.1 on 2024-06-04
 
 Improve README introductory example and run it in tests.

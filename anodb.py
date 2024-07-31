@@ -28,6 +28,9 @@ class DB:
     and SQL execution methods from aiosql.
     """
 
+    # global counter to help identify DB objects
+    _counter = 0
+
     # database connection driver and variants, with a little hardcoding
     SQLITE = ("sqlite3", "sqlite")
     POSTGRES = ("psycopg", "pg", "postgres", "postgresql", "psycopg3")
@@ -36,6 +39,18 @@ class DB:
     # connection delays
     _CONNECTION_MIN_DELAY = 0.001
     _CONNECTION_MAX_DELAY = 30.0
+
+    def _log_info(self, m: str):
+        log.info(f"DB:{self._db}:{self._id} {m}")
+
+    def _log_debug(self, m: str):
+        log.debug(f"DB:{self._db}:{self._id} {m}")
+
+    def _log_warning(self, m: str):
+        log.warning(f"DB:{self._db}:{self._id} {m}")
+
+    def _log_error(self, m: str):
+        log.error(f"DB:{self._db}:{self._id} {m}")
 
     def __init__(
         self,
@@ -50,7 +65,8 @@ class DB:
         debug: bool = False,
         **conn_options,
     ):
-        """DB constructor
+        """
+        DB constructor
 
         - db: database engine/driver
         - conn: database-specific connection string
@@ -63,14 +79,16 @@ class DB:
         - debug: debug mode, generate more logs through `logging`
         - conn_options: database-specific `kwargs` constructor options
         """
+        DB._counter += 1
+        self._id = DB._counter
         self.__version__ = __version__
         self.__aiosql_version__ = pkg_version("aiosql")
-        log.info(f"creating DB for {db}")
         # this is the class name
         self._db = (
             "sqlite3" if db in self.SQLITE else "psycopg" if db in self.POSTGRES else db
         ).lower()
         assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
+        self._log_info("creating DB")
         self._set_db_pkg()
         # connection…
         self._conn = None
@@ -96,6 +114,8 @@ class DB:
         self._ntx: int = 0  # number of tx
         # various boolean flags
         self._debug = debug
+        if debug:
+            self._log_debug("running in debug mode…")
         self._auto_reconnect = auto_reconnect
         self._kwargs_only = kwargs_only
         self._reconn = False
@@ -132,8 +152,7 @@ class DB:
         raises an exception which should abort the current request, so that
         the next call should be on a different request.
         """
-        if self._debug:  # pragma: no cover
-            log.debug(f"DB: {_query}({args}, {kwargs})")
+        _ = self._debug and self._log_debug(f"{_query}({args}, {kwargs})")
         if self._reconn and self._auto_reconnect:
             self._reconnect()
         self._conn_nstat += 1
@@ -141,18 +160,18 @@ class DB:
         try:
             return _fn(self._conn, *args, **kwargs)
         except self._db_error as error:
-            log.info(f"DB {self._db} query {_query} failed: {error}")
+            self._log_info(f"query {_query} failed: {error}")
             # coldly rollback on any error
             try:
                 if self._conn:
                     self._conn.rollback()
             except self._db_error as rolerr:
-                log.warning(f"DB {self._db} rollback failed: {rolerr}")
+                self._log_warning(f"rollback failed: {rolerr}")
             self._possibly_reconnect()
             # re-raise error
             raise self._exception(error) if self._exception else error
         except Exception as e:  # pragma: no cover
-            log.error(f"unexpected exception: {e}")
+            self._log_error(f"unexpected exception: {e}")
             raise
 
     # this could probably be done dynamically by overriding __getattribute__
@@ -193,7 +212,7 @@ class DB:
         try:
             self._db_pkg = importlib.import_module(package)
         except ImportError:  # pragma: no cover
-            log.error(f"cannot import {package} for {self._db}")
+            self._log_error(f"cannot import {package} for {self._db}")
             raise
 
         # get version from metadata ("__version__"?, deprecated "version"?)
@@ -204,11 +223,11 @@ class DB:
 
         if self._db_error == Exception:  # pragma: no cover
             # myco does not need to follow the standard?
-            log.error(f"missing Error class in {package}, falling back to Exception")
+            self._log_error(f"missing Error class in {package}, falling back to Exception")
 
     def __connect(self):
         """Create a database connection (internal)."""
-        log.info(f"DB {self._db}: connecting")
+        self._log_info(f"{self._db}: connecting")
         # PEP249 does not impose a unified signature for connect.
         if self._conn_str:
             return self._db_pkg.connect(self._conn_str, **self._conn_options)
@@ -225,7 +244,7 @@ class DB:
                 assert self._conn_last_fail
                 wait = (delay - (dt.datetime.now(dt.timezone.utc) - self._conn_last_fail)).total_seconds()
                 if wait > 0.0:
-                    log.info(f"connection wait #{self._conn_attempts}: {wait}")
+                    self._log_info(f"connection wait #{self._conn_attempts}: {wait}")
                     time.sleep(wait)
             self._conn = self.__connect()
             # on success, update stats
@@ -247,18 +266,18 @@ class DB:
                 self._conn_delay = self._CONNECTION_MIN_DELAY
             else:
                 self._conn_delay = min(2 * self._conn_delay, self._CONNECTION_MAX_DELAY)
-            log.error(f"connect failed #{self._conn_attempts}: {e}")
+            self._log_error(f"connect failed #{self._conn_attempts}: {e}")
             raise e
 
     def _reconnect(self):
         """Try to reconnect to database, possibly with some cleanup."""
-        log.info(f"DB {self._db}: reconnecting")
+        self._log_info(f"{self._db}: reconnecting")
         if self._conn:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
             except self._db_error as error:  # pragma: no cover
-                log.error(f"DB {self._db} close: {error}")
+                self._log_error(f"DB {self._db} close: {error}")
         self._do_connect()
         self._reconn = False
 
@@ -304,6 +323,7 @@ class DB:
     def _stats(self):
         """Generate a JSON-compatible structure for statistics."""
         return {
+            "id": self._id,
             "driver": self._db,
             "info": self._conn_str,
             "conn": {
