@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - sync version numbering with aiosql?
 - add something about caching?
 
+## ? on ?
+
+Set debug verbosity when debugging.
+
 ## 10.2 on 2024-07-31
 
 Improve internal logging infrastructure.
