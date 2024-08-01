@@ -115,6 +115,7 @@ class DB:
         # various boolean flags
         self._debug = debug
         if debug:
+            log.setLevel(logging.DEBUG)
             self._log_debug("running in debug mode…")
         self._auto_reconnect = auto_reconnect
         self._kwargs_only = kwargs_only
