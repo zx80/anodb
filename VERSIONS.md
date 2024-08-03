@@ -12,12 +12,12 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - sync version numbering with aiosql?
 - add something about caching?
-- remove psycopg2 exclusion for python 3.13 when possible.
+- remove psycopg2 exclusion for python 3.13 and pypy 3.10 when possible.
 
-## 10.3 on ?
+## 10.3 on 2024-08-03
 
 Set debug verbosity when debugging.
-Add _Python 3.13_ testing in GitHub CI.
+Add _Python 3.13_ and _PyPy 3.10_ testing in GitHub CI.
 
 ## 10.2 on 2024-07-31
 
