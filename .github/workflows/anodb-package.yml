@@ -3,7 +3,6 @@ name: AnoDB Package
 on:
   push:
     branches: [ main ]
-  # pull_request: branches: [ master ]
 
 jobs:
   build:
