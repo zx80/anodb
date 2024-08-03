@@ -36,7 +36,7 @@ pub = [ "build", "twine", "wheel" ]
 postgres = [
   "pytest-postgresql",
   # drivers
-  "psycopg2; python_version < \"3.13\"; implementation_name != \"PyPy\"",
+  "psycopg2; python_version < '3.13', implementation_name != 'PyPy'",
   "psycopg",
   "pygresql",
   "pg8000"
