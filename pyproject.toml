@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anodb"
-version = "10.2"
+version = "10.3"
 authors = [ { name = "Fabien Coelho", email = "ano.db@coelho.net" } ]
 description = "Convenient Wrapper around AioSQL and a Database Connection"
 readme = "README.md"
@@ -33,5 +33,12 @@ py-modules = [ "anodb" ]
 [project.optional-dependencies]
 dev = [ "mypy", "pyright", "flake8", "black", "pytest", "coverage", "pymarkdownlnt" ]
 pub = [ "build", "twine", "wheel" ]
-postgres = [ "pytest-postgresql", "psycopg2;python_version<\"3.13\"", "psycopg", "pygresql", "pg8000" ]
+postgres = [
+  "pytest-postgresql",
+  # drivers
+  "psycopg2; python_version < \"3.13\" implementation_name != \"PyPy\"",
+  "psycopg",
+  "pygresql",
+  "pg8000"
+]
 mysql = [ "pytest-mysql", "mysqlclient", "pymysql", "mysql-connector" ]

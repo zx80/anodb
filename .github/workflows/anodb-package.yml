@@ -13,7 +13,7 @@ jobs:
       matrix:
         # NOTE psycopg2 does not compile with pypy 3.10
         # NOTE psycopg2 fails on load with python 3.13
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "pypy3.10"]
 
     services:
       # Label used to access the service container
