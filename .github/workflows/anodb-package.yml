@@ -14,7 +14,7 @@ jobs:
         # NOTE asyncpg does not compile with pypy 3.7 & 3.8
         # FIXME cannot use pymarkdown on 3.7
         # 3.12-dev has an issue with typing_extensions
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "pypy3.10"]
 
     services:
       # Label used to access the service container
