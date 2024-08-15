@@ -216,14 +216,17 @@ class DB:
             self._log_error(f"cannot import {package} for {self._db}")
             raise
 
-        # get version from metadata ("__version__"?, deprecated "version"?)
-        self._db_version = self._db_pkg.version if module in ("sqlite3", "pgdb") else pkg_version(module)
+        # best effort only
+        try:
+            self._db_version = pkg_version(module)
+        except Exception:
+            self._db_version = "<unknown>"
 
         # get exception class
         self._db_error = self._db_pkg.Error if hasattr(self._db_pkg, "Error") else Exception
 
+        # myco does not need to follow the standard?
         if self._db_error == Exception:  # pragma: no cover
-            # myco does not need to follow the standard?
             self._log_error(f"missing Error class in {package}, falling back to Exception")
 
     def __connect(self):
