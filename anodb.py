@@ -18,6 +18,10 @@ from importlib.metadata import version as pkg_version
 __version__ = pkg_version("anodb")
 
 
+class AnoDBException(Exception):
+    """Locally generated exception."""
+    pass
+
 #
 # DB (Database) class
 #
@@ -101,7 +105,7 @@ class DB:
         elif isinstance(options, dict):
             self._conn_options.update(options)
         else:
-            raise Exception(f"unexpected type for options: {type(options)}")
+            raise AnoDBException(f"unexpected type for options: {type(options)}")
         self._conn_options.update(conn_options)
         # useful global stats
         self._count: dict[str, int] = {}  # name -> #calls
@@ -183,6 +187,9 @@ class DB:
             f = getattr(queries, q)
             # we skip internal *_cursor attributes
             if callable(f):
+                log.warning(f"adding q={q}")
+                if hasattr(self, q):
+                    raise AnoDBException(f"cannot override existing method: {q}")
                 setattr(self, q, ft.partial(self._call_fn, q, f))
                 self._available_queries.add(q)
                 self._count[q] = 0

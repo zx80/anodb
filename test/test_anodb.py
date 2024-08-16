@@ -155,16 +155,16 @@ def run_postgres(driver, dsn, skip_kill=False, skip_dot=False):
         return
     try:
         db.kill_me_pg()
-        assert False, "1. backend should have been killed"
-    except:
+        pytest.fail("1. backend should have been killed")
+    except Exception:
         assert True, "1. backend was killed"
     # should reconnect automatically
     assert db.hello_world()[0] == "hello world!"
     # again from cursor
     try:
         db.kill_me_pg()
-        assert False, "2. backend should have been killed"
-    except:
+        pytest.fail("2. backend should have been killed")
+    except Exception:
         assert True, "2. backend was killed"
     run_42(db)
     db.close()
@@ -283,16 +283,17 @@ def test_from_str():
     db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
     assert list(db.next(arg=41))[0][0] == 42
     assert list(db.prev(arg=42))[0][0] == 41
-    # override previous definition
-    db.add_queries_from_str("-- name: foo\nSELECT :arg + 42 AS foo;\n")
-    assert list(db.foo(arg=0))[0][0] == 42
-    db.add_queries_from_str("-- name: foo\nSELECT :arg - 42 AS foo;\n")
-    assert list(db.foo(arg=42))[0][0] == 0
+    db.add_queries_from_str("-- name: foo1\nSELECT :arg + 42 AS foo;\n")
+    assert list(db.foo1(arg=0))[0][0] == 42
+    db.add_queries_from_str("-- name: foo2\nSELECT :arg - 42 AS foo;\n")
+    assert list(db.foo2(arg=42))[0][0] == 0
     assert list(db.next(arg=42))[0][0] == 43
     assert list(db.prev(arg=43))[0][0] == 42
     assert sorted(db._available_queries) == [
-        "foo",
-        "foo_cursor",
+        "foo1",
+        "foo1_cursor",
+        "foo2",
+        "foo2_cursor",
         "next",
         "next_cursor",
         "prev",
@@ -305,13 +306,13 @@ def test_from_str():
 def test_misc():
     try:
         db = anodb.DB("foodb", "anodb", TEST_SQL)
-        assert False, "there is no foodb"
+        pytest.fail("there is no foodb")
     except Exception as err:
         assert True, "foodb is not supported"
     try:
         db = anodb.DB("psycopg", None, TEST_SQL, options=False)
-        assert False, "bad type for options"
-    except Exception as err:
+        pytest.fail("bad type for options")
+    except anodb.AnoDBException as err:
         assert True, f"oops: {err}"
 
 
@@ -361,13 +362,12 @@ def test_exception():
     db = anodb.DB("sqlite", ":memory:", TEST_SQL, kwargs_only=True, exception=MyException)
     try:
         d = db.syntax_error(s="2024-12-34")
-        assert False, f"exception should be raised (d={d})"
+        pytest.fail(f"exception should be raised (d={d})")
     except MyException as e:
         assert True, "good, exception was raised"
 
 
 def test_readme():
-    import anodb
     db = anodb.DB("sqlite3", ":memory:", "test.sql")
     res = db.create_stuff()
     assert res == "DONE"
@@ -382,3 +382,16 @@ def test_readme():
     assert res is None
     db.commit()
     db.close()
+
+
+def test_bad_name():
+    try:
+        anodb.DB("sqlite3", ":memory:", "bad.sql")
+        pytest.fail("should not accept a query named commit")
+    except anodb.AnoDBException:
+        assert True, "bad name was rejected"
+    try:
+        anodb.DB("sqlite3", ":memory:", ["bad2.sql", "bad2.sql"])
+        pytest.fail("should not accept eponymous queries")
+    except anodb.AnoDBException:
+        assert True, "eponymous query was rejected"

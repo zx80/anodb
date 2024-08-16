@@ -14,6 +14,14 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - remove psycopg2 exclusion for python 3.13 and pypy 3.10 when possible.
 
+## ? on ?
+
+- Improved pytest tests.
+- Use an AnoDB specific exception for generated errors.
+- Do not allow to override DB methods (eg `commit`, `close`…).
+  Note: AioSQL currently allows to override query names in a file…
+- Add test about name rejections.
+
 ## 10.4 on 2024-08-15
 
 - Fix deprecation warning for _Python 3.13_.
