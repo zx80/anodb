@@ -63,3 +63,6 @@ INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
 -- name: do_some_update!
 UPDATE Stuff SET val = :val WHERE key = :key;
+
+-- name: compute-norm$
+SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);

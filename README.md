@@ -36,12 +36,13 @@ Once available:
 ```python
 import anodb
 # parameters: driver, connection string, SQL file
-db = anodb.DB("sqlite3", "test.db", "test.sql")
+db = anodb.DB("sqlite3", "test.db", "test.sql", kwargs_only=True)
 
 db.create_stuff()
 db.do_some_insert(key=1, val="hello")
 db.do_some_update(key=1, val="world")
 print("data", db.do_some_select(key=1))
+print("norm", db.compute_norm(c=3+4j))
 db.commit()
 
 db.close()
@@ -61,6 +62,9 @@ INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
 -- name: do_some_update!
 UPDATE Stuff SET val = :val WHERE key = :key;
+
+-- name: compute-norm$
+SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);
 ```
 
 ## Documentation
