@@ -19,7 +19,6 @@ are available on [GitHub](https://github.com/).
 - Improved pytest tests.
 - Use an AnoDB specific exception for generated errors.
 - Do not allow to override DB methods (eg `commit`, `close`…).
-  Note: AioSQL currently allows to override query names in a file…
 - Add test about name rejections.
 - Add attribute access example to documentation.
 
