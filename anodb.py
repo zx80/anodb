@@ -22,6 +22,7 @@ class AnoDBException(Exception):
     """Locally generated exception."""
     pass
 
+
 #
 # DB (Database) class
 #
