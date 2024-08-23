@@ -62,7 +62,14 @@ class DB:
         db: str,
         conn: str|None,
         queries: str|list[str] = [],
-        options: str|dict[str, Any] = {},
+        options: str|dict[str, Any] = {},  # undocumented backward compatibility
+        # further connection options
+        conn_args: list[str] = [],
+        conn_kwargs: dict[str, Any] = {},
+        # adapter creation options
+        adapter_args: list[Any] = [],
+        adapter_kwargs: dict[str, Any] = {},
+        # anodb behavior
         auto_reconnect: bool = True,
         kwargs_only: bool = False,
         attribute: str = "__",
@@ -73,16 +80,19 @@ class DB:
         """
         DB constructor
 
-        - db: database engine/driver
-        - conn: database-specific connection string
-        - queries: file(s) holding queries for `aiosql`, may be empty
-        - options: database-specific options in various forms
-        - auto_reconnect: whether to reconnect on connection errors
-        - kwargs_only: whether to require named parameters on query execution.
-        - attribute: attribute dot access substitution, default is `"__"`.
-        - exception: user function to reraise database exceptions.
-        - debug: debug mode, generate more logs through `logging`
-        - conn_options: database-specific `kwargs` constructor options
+        - :param db: database engine/driver.
+        - :param conn: database-specific simple connection string.
+        - :param queries: file(s) holding queries for `aiosql`, may be empty.
+        - :param conn_args: database-specific connection options as a list.
+        - :param conn_kwargs: database-specific connection options as a dict.
+        - :param adapter_args: adapter creation options as a list.
+        - :param adapter_kwargs: adapter creation options as a dict.
+        - :param auto_reconnect: whether to reconnect on connection errors.
+        - :param kwargs_only: whether to require named parameters on query execution.
+        - :param attribute: attribute dot access substitution, default is ``"__"``.
+        - :param exception: user function to reraise database exceptions.
+        - :param debug: debug mode, generate more logs through ``logging``.
+        - :param **conn_options: database-specific ``kwargs`` connection options.
         """
         DB._counter += 1
         self._id = DB._counter
@@ -95,19 +105,26 @@ class DB:
         assert self._db in sql.aiosql._ADAPTERS, f"database {db} is supported"
         self._log_info("creating DB")
         self._set_db_pkg()
-        # connection…
+        # connection parameters…
         self._conn = None
-        self._conn_str = conn
-        self._conn_options: dict[str, Any] = {}
+        self._conn_args = [] if conn is None else [conn]
+        self._conn_args.extend(conn_args)
+        self._conn_kwargs: dict[str, Any] = dict(conn_kwargs)
+        self._adapter = None
+        # backward compatibility for "options"
         if isinstance(options, str):
             import ast
 
-            self._conn_options.update(ast.literal_eval(options))
+            self._conn_kwargs.update(ast.literal_eval(options))
         elif isinstance(options, dict):
-            self._conn_options.update(options)
+            self._conn_kwargs.update(options)
         else:
             raise AnoDBException(f"unexpected type for options: {type(options)}")
-        self._conn_options.update(conn_options)
+        # remaining parameters are associated to the connection
+        self._conn_kwargs.update(conn_options)
+        # adapter
+        self._adapter_args = list(adapter_args)
+        self._adapter_kwargs = dict(adapter_kwargs)
         # useful global stats
         self._count: dict[str, int] = {}  # name -> #calls
         self._conn_last = None  # current connection start
@@ -183,6 +200,9 @@ class DB:
     # this could probably be done dynamically by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
         """Create call forwarding to insert the database connection."""
+        # keep first encountered adapter
+        if self._adapter is None:
+            self._adapter = queries.driver_adapter
         self._queries.append(queries)
         for q in queries.available_queries:
             f = getattr(queries, q)
@@ -197,11 +217,15 @@ class DB:
 
     def add_queries_from_path(self, fn: str):
         """Load queries from a file or directory."""
-        self._create_fns(sql.from_path(fn, self._db, kwargs_only=self._kwargs_only, attribute=self._attribute))
+        self._create_fns(sql.from_path(fn, self._db, *self._adapter_args,
+                                       kwargs_only=self._kwargs_only, attribute=self._attribute,
+                                       **self._adapter_kwargs))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
-        self._create_fns(sql.from_str(qs, self._db, kwargs_only=self._kwargs_only, attribute=self._attribute))
+        self._create_fns(sql.from_str(qs, self._db, *self._adapter_args,
+                                      kwargs_only=self._kwargs_only, attribute=self._attribute,
+                                      **self._adapter_kwargs))
 
     def _set_db_pkg(self):
         """Load database package."""
@@ -241,10 +265,7 @@ class DB:
         """Create a database connection (internal)."""
         self._log_info(f"{self._db}: connecting")
         # PEP249 does not impose a unified signature for connect.
-        if self._conn_str:
-            return self._db_pkg.connect(self._conn_str, **self._conn_options)
-        else:
-            return self._db_pkg.connect(**self._conn_options)
+        return self._db_pkg.connect(*self._conn_args, **self._conn_kwargs)
 
     def _do_connect(self):
         """Create a connection, possibly with active throttling."""
@@ -303,9 +324,12 @@ class DB:
         """Get a cursor on the current connection."""
         if self._reconn and self._auto_reconnect:
             self._reconnect()
-        assert self._conn is not None
+        assert self._conn is not None and self._adapter is not None
         self._conn_nstat += 1
-        return self._conn.cursor()
+        if hasattr(self._adapter, "_cursor"):
+            return self._adapter._cursor(self._conn)  # type: ignore
+        else:  # pragma: no cover
+            return self._conn.cursor()
 
     def commit(self):
         """Commit database transaction."""
@@ -337,7 +361,7 @@ class DB:
         return {
             "id": self._id,
             "driver": self._db,
-            "info": self._conn_str,
+            "info": self._conn_args,  # _conn_kwargs?
             "conn": {
                 # current connection status
                 "nstat": self._conn_nstat,

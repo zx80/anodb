@@ -71,9 +71,20 @@ def run_stuff(db: anodb.DB, skip_dot=False):
     run_42(db)
 
 
-# sqlite memory test
+# sqlite memory test and connection option coverage
 def test_sqlite():
     db = anodb.DB("sqlite", ":memory:", TEST_SQL, '{"check_same_thread":False}')
+    run_stuff(db)
+    db.close()
+    # obsolete
+    db = anodb.DB("sqlite", None, TEST_SQL, '{"check_same_thread":False}', conn_args=[":memory:"])
+    run_stuff(db)
+    db.close()
+    db = anodb.DB("sqlite", None, TEST_SQL, {"check_same_thread": False}, conn_args=[":memory:"])
+    run_stuff(db)
+    db.close()
+    # new interface
+    db = anodb.DB("sqlite", None, TEST_SQL, conn_kwargs={"check_same_thread": False}, conn_args=[":memory:"])
     run_stuff(db)
     db.close()
 

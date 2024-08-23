@@ -14,6 +14,13 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - remove psycopg2 exclusion for python 3.13 and pypy 3.10 when/if possible.
 
+## 12.0 on ?
+
+- improve option versatility to better deal with various database drivers:
+  - support `conn_args` and `conn_kwargs` for connect.
+  - support `adapter_args` and `adapter_kwargs` for adapter,
+    which is forwarded to cursor creation by default.
+
 ## 11.0 on 2024-08-17
 
 - Improved pytest tests.

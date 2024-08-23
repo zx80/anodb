@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anodb"
-version = "11.0"
+version = "12.0"
 authors = [ { name = "Fabien Coelho", email = "ano.db@coelho.net" } ]
 description = "Convenient Wrapper around AioSQL and a Database Connection"
 readme = "README.md"
 license = { text = "CC0" }
 requires-python = ">= 3.10"
-dependencies = [ "aiosql >= 11.0" ]
+dependencies = [ "aiosql >= 12.0" ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
