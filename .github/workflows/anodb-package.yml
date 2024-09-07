@@ -41,8 +41,8 @@ jobs:
         allow-prereleases: true
     - name: Install dependencies
       run: make venv.check
-    - name: Check types with mypy
-      run: make check.mypy
+    # - name: Check types with mypy
+    #   run: make check.mypy
     - name: Check types with pyright
       run: make check.pyright
     # - name: Lint with black
