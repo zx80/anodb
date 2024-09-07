@@ -9,6 +9,7 @@ import functools as ft
 import datetime as dt
 import time
 import aiosql as sql  # type: ignore
+from aiosql.types import DriverAdapterProtocol
 import json
 
 log = logging.getLogger("anodb")
@@ -110,7 +111,7 @@ class DB:
         self._conn_args = [] if conn is None else [conn]
         self._conn_args.extend(conn_args)
         self._conn_kwargs: dict[str, Any] = dict(conn_kwargs)
-        self._adapter = None
+        self._adapter: DriverAdapterProtocol|None = None
         # backward compatibility for "options"
         if isinstance(options, str):
             import ast
