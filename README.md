@@ -78,35 +78,32 @@ into dynamically generated functions by
 Such functions may be loaded from a string (`add_queries_from_str`) or a
 path (`add_queries_from_path`).
 
-The `DB` constructor parameters are:
+The `DB` constructor main parameters are:
 
 - `db` the name of the database driver: `sqlite3`, `psycopg`, `pymysql`, see
   [aiosql documentation](https://nackjicholson.github.io/aiosql/database-driver-adapters.html)
   for a list of supported drivers.
-- `conn` an optional connection string used to initiate a connection with the
-  driver.
+- `conn` an optional connection string used to initiate a connection with the driver.
   For instance, `psycopg` accepts a
   [libpq connection string](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
   such as: `"host=db1.my.org port=5432 dbname=acme user=calvin …"`.
-- `queries` a path name or list of path names from which to read query
-   definitions.
-- `options` a dictionary or string to pass additional connection parameters.
+- `queries` a path name or list of path names from which to read query definitions.
+- `conn_args` and `conn_kwargs` a list and dictionary of further connection parameters.
 - `auto_reconnect` whether to attempt a reconnection if the connection is lost.
   Default is `True`. Reconnection attempts are throttled exponentially
   following powers of two delays from *0.001* and capped at *30.0* seconds.
 - `kwargs_only` whether to only accept named parameters to python functions.
-- `attribute` attribute dot access substition, default is `"__"`, use _None_ to disable.
-- `exception` function to re-process database exceptions.
-- `debug` whether to generate debugging messages.
-  Default is `False`.
+  This helps avoiding silly bugs!
+- `debug` whether to generate debugging messages through `logging`.
 - other named parameters are passed as additional connection parameters.
+  For instance you might consider using `autocommit=True` with `psycopg`.
 
 ```python
 import anodb
 
 db = anodb.DB("sqlite3", "acme.db", "acme-queries.sql")
 db = anodb.DB("duckdb", "acme.db", "acme-queries.sql")
-db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql")
+db = anodb.DB("psycopg", "host=localhost dbname=acme", "acme-queries.sql", autocommit=True)
 db = anodb.DB("psycopg", None, "acme-queries.sql", host="localhost", user="calvin", password="...", dbname="acme")
 db = anodb.DB("psycopg2", "host=localhost dbname=acme", "acme-queries.sql")
 db = anodb.DB("pygresql", None, "acme-queries.sql", host="localhost:5432", user="calvin", password="...", database="acme")
