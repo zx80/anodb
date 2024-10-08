@@ -14,6 +14,10 @@ are available on [GitHub](https://github.com/).
 - add something about caching?
 - remove psycopg2 exclusion for python 3.13 and pypy 3.10 when/if possible.
 
+## ? on ?
+
+- improve documentation.
+
 ## 12.0 on 2024-09-07
 
 - improve option versatility to better deal with various database drivers:

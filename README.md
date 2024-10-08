@@ -115,6 +115,8 @@ db = anodb.DB("mariadb", None, "acme-queries.sql", host="localhost", port=3306, 
 db = anodb.DB("pymssql", None, "acme-queries.sql", server="localhost", port=1433, user="sa", password="...", database="acme", as_dict=True, autocommit=False)
 ```
 
+See DB docstring for knowing about all parameters.
+
 ## License
 
 This code is [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/).
