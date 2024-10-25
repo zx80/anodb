@@ -18,6 +18,7 @@ are available on [GitHub](https://github.com/).
 
 - improve documentation.
 - fix verbosity
+- allow psycopg2 with python3.13
 
 ## 12.0 on 2024-09-07
 

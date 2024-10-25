@@ -37,7 +37,7 @@ postgres = [
   "pytest-postgresql",
   # drivers
   # 2.9.10 needed for 3.13
-  "psycopg2 >= 2.9.10; implementation_name != 'pypy'",
+  "psycopg2 >= 2.9.10", # ; implementation_name != 'pypy'",
   "psycopg",
   "pygresql",
   "pg8000"
