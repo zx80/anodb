@@ -11,7 +11,7 @@ are available on [GitHub](https://github.com/).
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
 - sync version numbering with aiosql?
-- add something about caching?
+- add something about caching? or at aiosql level? tags?
 - remove psycopg2 exclusion for python 3.13 and pypy 3.10 when/if possible.
 
 ## ? on ?
