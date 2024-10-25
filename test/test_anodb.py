@@ -411,12 +411,14 @@ def test_bad_name():
 
 pytest.mark.skipif(not has_module("CacheToolsUtils"), reason="test needs module")
 def test_cache():
-    import cachetools as ct
     import CacheToolsUtils as ctu
     cache = ctu.DictCache()
     def cacher(name: str, fun):
-        return ct.cached(cache=ctu.PrefixedCache(cache, name + "."))(fun)
+        return ctu.cached(cache=ctu.PrefixedCache(cache, name + "."))(fun)
     db = anodb.DB("sqlite3", ":memory:", "caching.sql", cacher=cacher)
     assert db.rand() == db.rand() and db.rand() == db.rand()
+    assert db.rand.cache_in()
     assert db.len(s="Hello World!") == db.len(s="Hello World!")
-    assert len(cache) == 2
+    assert db.len.cache_in(s="Hello World!")
+    assert len(cache) == 2, "2 inputs in cache"
+    # TODO function which returns a relation
