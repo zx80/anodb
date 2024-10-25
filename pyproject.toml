@@ -31,7 +31,10 @@ package = "https://pypi.org/project/anodb/"
 py-modules = [ "anodb" ]
 
 [project.optional-dependencies]
-dev = [ "mypy", "pyright", "flake8", "black", "pytest", "coverage", "pymarkdownlnt" ]
+dev = [
+  "mypy", "pyright", "flake8", "black", "pytest", "coverage", "pymarkdownlnt",
+  "CacheToolsUtils"
+]
 pub = [ "build", "twine", "wheel" ]
 postgres = [
   "pytest-postgresql",

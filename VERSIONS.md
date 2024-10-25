@@ -11,11 +11,13 @@ are available on [GitHub](https://github.com/).
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
 - sync version numbering with aiosql?
-- add something about caching? or at aiosql level? tags?
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
+- improve caching feature checks… see FIXME.
+- document caching feature.
 
 ## ? on ?
 
+- preliminary caching feature (wip).
 - improve documentation.
 
 ## 12.1 on 2024-10-25

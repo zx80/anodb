@@ -19,6 +19,10 @@ from importlib.metadata import version as pkg_version
 __version__ = pkg_version("anodb")
 
 
+CacheFactory = Callable[[str, Callable], Callable]
+"""Type for caching cachable queries."""
+
+
 class AnoDBException(Exception):
     """Locally generated exception."""
     pass
@@ -28,10 +32,28 @@ class AnoDBException(Exception):
 # DB (Database) class
 #
 class DB:
-    """Hides database connection and queries in here.
+    """
+    Class to hide database connection and queries.
 
     The class provides the DB-API 2.0 connection methods,
-    and SQL execution methods from aiosql.
+    and wrap SQL execution methods from aiosql.
+
+    Constructor:
+
+    - :param db: database engine/driver.
+    - :param conn: database-specific simple connection string.
+    - :param queries: file(s) holding queries for `aiosql`, may be empty.
+    - :param conn_args: database-specific connection options as a list.
+    - :param conn_kwargs: database-specific connection options as a dict.
+    - :param adapter_args: adapter creation options as a list.
+    - :param adapter_kwargs: adapter creation options as a dict.
+    - :param auto_reconnect: whether to reconnect on connection errors.
+    - :param kwargs_only: whether to require named parameters on query execution.
+    - :param attribute: attribute dot access substitution, default is ``"__"``.
+    - :param exception: user function to reraise database exceptions.
+    - :param debug: debug mode, generate more logs through ``logging``.
+    - :param cacher: cache factory for queries marked as such.
+    - :param **conn_options: database-specific ``kwargs`` connection options.
     """
 
     # global counter to help identify DB objects
@@ -76,25 +98,9 @@ class DB:
         attribute: str = "__",
         exception: Callable[[BaseException], BaseException]|None = None,
         debug: bool = False,
+        cacher: CacheFactory|None = None,
         **conn_options,
     ):
-        """
-        DB constructor
-
-        - :param db: database engine/driver.
-        - :param conn: database-specific simple connection string.
-        - :param queries: file(s) holding queries for `aiosql`, may be empty.
-        - :param conn_args: database-specific connection options as a list.
-        - :param conn_kwargs: database-specific connection options as a dict.
-        - :param adapter_args: adapter creation options as a list.
-        - :param adapter_kwargs: adapter creation options as a dict.
-        - :param auto_reconnect: whether to reconnect on connection errors.
-        - :param kwargs_only: whether to require named parameters on query execution.
-        - :param attribute: attribute dot access substitution, default is ``"__"``.
-        - :param exception: user function to reraise database exceptions.
-        - :param debug: debug mode, generate more logs through ``logging``.
-        - :param **conn_options: database-specific ``kwargs`` connection options.
-        """
         DB._counter += 1
         self._id = DB._counter
         self.__version__ = __version__
@@ -143,9 +149,10 @@ class DB:
         self._auto_reconnect = auto_reconnect
         self._kwargs_only = kwargs_only
         self._reconn = False
-        # oother parameters
+        # other parameters
         self._attribute = attribute
         self._exception = exception
+        self._cacher = cacher
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: list[sql.aiosql.Queries] = []  # type: ignore
@@ -209,10 +216,18 @@ class DB:
             f = getattr(queries, q)
             # we skip internal *_cursor attributes
             if callable(f):
-                self._log_info(f"adding q={q}")
+                self._log_debug(f"adding q={q}")
                 if hasattr(self, q):
                     raise AnoDBException(f"cannot override existing method: {q}")
-                setattr(self, q, ft.partial(self._call_fn, q, f))
+                fn = ft.partial(self._call_fn, q, f)
+                # FIXME how to trigger caching?
+                # FIXME only ^ and $ functions can be cached simply…
+                # FIXME simple functions require a list()
+                # FIXME cachability may not work on some types?
+                if self._cacher and f.__doc__ and "CACHED" in f.__doc__:
+                    self._log_info(f"caching query {q}")
+                    fn = self._cacher(q, fn)
+                setattr(self, q, fn)
                 self._available_queries.add(q)
                 self._count[q] = 0
 

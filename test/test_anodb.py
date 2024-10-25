@@ -408,3 +408,15 @@ def test_bad_name():
         pytest.fail("should not accept eponymous queries")
     except anodb.AnoDBException:
         assert True, "eponymous query was rejected"
+
+pytest.mark.skipif(not has_module("CacheToolsUtils"), reason="test needs module")
+def test_cache():
+    import cachetools as ct
+    import CacheToolsUtils as ctu
+    cache = ctu.DictCache()
+    def cacher(name: str, fun):
+        return ct.cached(cache=ctu.PrefixedCache(cache, name + "."))(fun)
+    db = anodb.DB("sqlite3", ":memory:", "caching.sql", cacher=cacher)
+    assert db.rand() == db.rand() and db.rand() == db.rand()
+    assert db.len(s="Hello World!") == db.len(s="Hello World!")
+    assert len(cache) == 2
