@@ -17,6 +17,7 @@ are available on [GitHub](https://github.com/).
 ## ? on ?
 
 - improve documentation.
+- fix verbosity
 
 ## 12.0 on 2024-09-07
 

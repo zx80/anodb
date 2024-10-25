@@ -209,7 +209,7 @@ class DB:
             f = getattr(queries, q)
             # we skip internal *_cursor attributes
             if callable(f):
-                log.warning(f"adding q={q}")
+                self._log_info(f"adding q={q}")
                 if hasattr(self, q):
                     raise AnoDBException(f"cannot override existing method: {q}")
                 setattr(self, q, ft.partial(self._call_fn, q, f))
