@@ -43,6 +43,14 @@ check.pymarkdown: venv
 	source venv/bin/activate
 	pymarkdown -d MD013 scan *.md
 
+# targets for development environment
+.PHONY: dev
+dev: venv
+
+.PHONY: clean.dev
+clean.dev: clean.venv
+
+# cleanup
 .PHONY: clean
 clean:
 	$(RM) -r __pycache__ */__pycache__ dist build .mypy_cache .pytest_cache .ruff_cache
