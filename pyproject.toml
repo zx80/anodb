@@ -36,7 +36,8 @@ pub = [ "build", "twine", "wheel" ]
 postgres = [
   "pytest-postgresql",
   # drivers
-  "psycopg2; python_version < '3.13' and implementation_name != 'pypy'",
+  # 2.9.10 needed for 3.13
+  "psycopg2 >= 2.9.10; implementation_name != 'pypy'",
   "psycopg",
   "pygresql",
   "pg8000"
