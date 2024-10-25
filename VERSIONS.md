@@ -14,10 +14,14 @@ are available on [GitHub](https://github.com/).
 - add something about caching? or at aiosql level? tags?
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
 
+## ? on ?
+
+- improve documentation.
+
 ## 12.1 on 2024-10-25
 
 - fix verbosity.
-- allow psycopg2 with python3.13, but does not work with pypy.
+- allow psycopg2 with _Python 3.13_, but does not work with _Pypy_.
 - improve documentation.
 
 ## 12.0 on 2024-09-07
