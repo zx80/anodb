@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - sync version numbering with aiosql?
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
 
+## ? on ?
+
+- add _Python 3.14_ CI run.
+
 ## 12.2 on 2024-10-26
 
 - **experimental** caching feature.
