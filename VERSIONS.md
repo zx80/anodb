@@ -15,7 +15,9 @@ are available on [GitHub](https://github.com/).
 
 ## ? on ?
 
+- improve cache tests
 - add _Python 3.14_ CI run.
+- fix test dependencies.
 
 ## 12.2 on 2024-10-26
 

@@ -9,44 +9,44 @@ PIP		= pip
 check: check.pyright check.ruff check.pytest check.coverage check.pymarkdown
 
 .PHONY: check.mypy
-check.mypy: venv
+check.mypy: dev
 	source venv/bin/activate
 	mypy $(MODULE).py
 
 .PHONY: check.pyright
-check.pyright: venv
+check.pyright: dev
 	source venv/bin/activate
 	pyright $(MODULE).py
 
 IGNORE  = E227,E402,E501
 
 .PHONY: check.flake8
-check.flake8: venv
+check.flake8: dev
 	source venv/bin/activate
 	flake8 --ignore=E127,W503,W504,$(IGNORE) $(MODULE).py
 
 .PHONY: check.ruff
-check.ruff: venv
+check.ruff: dev
 	source venv/bin/activate
 	ruff check --ignore=$(IGNORE) $(MODULE).py
 
 .PHONY: check.black
-check.black: venv
+check.black: dev
 	source venv/bin/activate
 	black --check $(MODULE).py test/test_anodb.py
 
 .PHONY: check.pytest
-check.pytest: venv
+check.pytest: dev
 	source venv/bin/activate
 	$(MAKE) -C test check
 
 .PHONY: check.coverage
-check.coverage: venv
+check.coverage: dev
 	source venv/bin/activate
 	$(MAKE) -C test coverage
 
 .PHONY: check.pymarkdown
-check.pymarkdown: venv
+check.pymarkdown: dev
 	source venv/bin/activate
 	pymarkdown -d MD013 scan *.md
 
@@ -80,11 +80,11 @@ venv/.dev: venv
 	touch $@
 
 .PHONY: venv.check
-venv.check: venv/.dev
+venv.check: dev
 	source venv/bin/activate
 	pip install -e .[mysql]
 
-venv/.pub: venv/.dev
+venv/.pub: dev
 	source venv/bin/activate
 	$(PIP) install -e .[pub]
 	touch $@

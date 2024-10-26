@@ -412,7 +412,7 @@ def test_bad_name():
 pytest.mark.skipif(not has_module("CacheToolsUtils"), reason="test needs module")
 def test_cache():
     import CacheToolsUtils as ctu
-    cache = ctu.DictCache()
+    cache = ctu.StatsCache(ctu.DictCache())
     def cacher(name: str, fun):
         return ctu.cached(cache=ctu.PrefixedCache(cache, name + "."))(fun)
     db = anodb.DB("sqlite3", ":memory:", "caching.sql", cacher=cacher, kwargs_only=True)
@@ -427,5 +427,7 @@ def test_cache():
     assert db._count["gen"] == 1
     # not cached
     assert db.bad() == "DONE" and db.bad() == "DONE"
-    assert db._count["bad"] == 2
+    assert db._count["bad"] == 2  # 2 actual calls
+    # expected cache stats
     assert len(cache) == 3, "3 inputs in cache"
+    assert cache.hits() > 0.65  # expecting ⅔
