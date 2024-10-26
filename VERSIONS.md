@@ -12,12 +12,11 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - sync version numbering with aiosql?
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
-- improve caching feature checks… see FIXME.
-- document caching feature.
 
-## ? on ?
+## 12.2 on 2024-10-26
 
-- preliminary caching feature (wip).
+- **experimental** caching feature.
+- add `auto_rollback` parameter to allow disabling this feature.
 - improve documentation.
 
 ## 12.1 on 2024-10-25

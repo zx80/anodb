@@ -90,11 +90,21 @@ The `DB` constructor main parameters are:
 - `queries` a path name or list of path names from which to read query definitions.
 - `conn_args` and `conn_kwargs` a list and dictionary of further connection parameters.
 - `auto_reconnect` whether to attempt a reconnection if the connection is lost.
-  Default is `True`. Reconnection attempts are throttled exponentially
-  following powers of two delays from *0.001* and capped at *30.0* seconds.
+  Default is _True_. Reconnection attempts are throttled exponentially
+  following powers of two delays from _0.001_ and capped at _30.0_ seconds.
+- `auto_rollback` whether to rollback internaly on query errors, before re-raising them.
+  Default is _True_.
 - `kwargs_only` whether to only accept named parameters to python functions.
   This helps avoiding silly bugs!
+  Default is _False_.
 - `debug` whether to generate debugging messages through `logging`.
+  Default is _False_.
+- `cacher` factory to wrap functions for caching `SELECT` queries designated
+  as such because `CACHED` appears in their doctring.
+  The cacher is passed the query name and underlying function, and must
+  return the wrapped function.
+  See `test_cache` in the non regression tests for a simple example with
+  [`CacheToolsUtils`](https://pypi.org/project/CacheToolsUtils/).
 - other named parameters are passed as additional connection parameters.
   For instance you might consider using `autocommit=True` with `psycopg`.
 

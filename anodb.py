@@ -9,7 +9,7 @@ import functools as ft
 import datetime as dt
 import time
 import aiosql as sql  # type: ignore
-from aiosql.types import DriverAdapterProtocol
+from aiosql.types import DriverAdapterProtocol, SQLOperationType as Ops
 import json
 
 log = logging.getLogger("anodb")
@@ -47,8 +47,9 @@ class DB:
     - :param conn_kwargs: database-specific connection options as a dict.
     - :param adapter_args: adapter creation options as a list.
     - :param adapter_kwargs: adapter creation options as a dict.
-    - :param auto_reconnect: whether to reconnect on connection errors.
-    - :param kwargs_only: whether to require named parameters on query execution.
+    - :param auto_reconnect: whether to reconnect on connection errors, default is true.
+    - :param auto_rollback: whether to rollback internaly on errors, default is true.
+    - :param kwargs_only: whether to require named parameters on query execution, default is false.
     - :param attribute: attribute dot access substitution, default is ``"__"``.
     - :param exception: user function to reraise database exceptions.
     - :param debug: debug mode, generate more logs through ``logging``.
@@ -67,6 +68,9 @@ class DB:
     # connection delays
     _CONNECTION_MIN_DELAY = 0.001
     _CONNECTION_MAX_DELAY = 30.0
+
+    # select operations
+    _SELECT_OPS = (Ops.SELECT, Ops.SELECT_ONE, Ops.SELECT_VALUE)
 
     def _log_info(self, m: str):
         log.info(f"DB:{self._db}:{self._id} {m}")
@@ -94,6 +98,7 @@ class DB:
         adapter_kwargs: dict[str, Any] = {},
         # anodb behavior
         auto_reconnect: bool = True,
+        auto_rollback: bool = True,
         kwargs_only: bool = False,
         attribute: str = "__",
         exception: Callable[[BaseException], BaseException]|None = None,
@@ -145,8 +150,9 @@ class DB:
         self._debug = debug
         if debug:
             log.setLevel(logging.DEBUG)
-            self._log_debug("running in debug mode…")
+            self._log_info("running in debug mode…")
         self._auto_reconnect = auto_reconnect
+        self._auto_rollback = auto_rollback
         self._kwargs_only = kwargs_only
         self._reconn = False
         # other parameters
@@ -192,18 +198,42 @@ class DB:
             return _fn(self._conn, *args, **kwargs)
         except self._db_error as error:
             self._log_info(f"query {_query} failed: {error}")
-            # coldly rollback on any error
-            try:
-                if self._conn:
-                    self._conn.rollback()
-            except self._db_error as rolerr:
-                self._log_warning(f"rollback failed: {rolerr}")
+            if self._auto_rollback:
+                try:
+                    if self._conn:
+                        self._conn.rollback()
+                except self._db_error as rolerr:
+                    self._log_warning(f"rollback failed: {rolerr}")
             self._possibly_reconnect()
             # re-raise error
             raise self._exception(error) if self._exception else error
         except Exception as e:  # pragma: no cover
             self._log_error(f"unexpected exception: {e}")
             raise
+
+    def _create_fn(self, q: str, f: Callable) -> Callable:
+        """Create one wrapped method."""
+        # call internal caller
+        fn = ft.partial(self._call_fn, q, f)
+        # FIXME how to trigger caching?
+        # FIXME cachability may not work on some types? lo?
+        # NOTE we skip internal *_cursor attributes
+        if self._cacher and not q.endswith("_cursor") and f.__doc__ and "CACHED" in f.__doc__:
+            operation = f.operation  # type: ignore
+            if operation not in self._SELECT_OPS:
+                self._log_warning(f"skip caching non select method: {q} ({operation})")
+                return fn
+            # else proceed with wrapping
+            self._log_info(f"caching query {q}")
+            if operation == Ops.SELECT:  # materialize generator
+                # TODO ft.wraps?
+                fx = lambda *a, **kw: list(fn(*a, **kw))
+            else:
+                fx = fn
+            return self._cacher(q, fx)
+        else:
+            return fn
+
 
     # this could probably be done dynamically by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
@@ -214,20 +244,11 @@ class DB:
         self._queries.append(queries)
         for q in queries.available_queries:
             f = getattr(queries, q)
-            # we skip internal *_cursor attributes
             if callable(f):
                 self._log_debug(f"adding q={q}")
                 if hasattr(self, q):
                     raise AnoDBException(f"cannot override existing method: {q}")
-                fn = ft.partial(self._call_fn, q, f)
-                # FIXME how to trigger caching?
-                # FIXME only ^ and $ functions can be cached simply…
-                # FIXME simple functions require a list()
-                # FIXME cachability may not work on some types?
-                if self._cacher and f.__doc__ and "CACHED" in f.__doc__:
-                    self._log_info(f"caching query {q}")
-                    fn = self._cacher(q, fn)
-                setattr(self, q, fn)
+                setattr(self, q, self._create_fn(q, f))
                 self._available_queries.add(q)
                 self._count[q] = 0
 

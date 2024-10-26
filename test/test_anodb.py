@@ -415,10 +415,17 @@ def test_cache():
     cache = ctu.DictCache()
     def cacher(name: str, fun):
         return ctu.cached(cache=ctu.PrefixedCache(cache, name + "."))(fun)
-    db = anodb.DB("sqlite3", ":memory:", "caching.sql", cacher=cacher)
-    assert db.rand() == db.rand() and db.rand() == db.rand()
-    assert db.rand.cache_in()
+    db = anodb.DB("sqlite3", ":memory:", "caching.sql", cacher=cacher, kwargs_only=True)
+    assert db.ran() == db.ran() and db.ran() == db.ran()
+    assert db.ran.cache_in()
+    assert db._count["ran"] == 1
     assert db.len(s="Hello World!") == db.len(s="Hello World!")
     assert db.len.cache_in(s="Hello World!")
-    assert len(cache) == 2, "2 inputs in cache"
-    # TODO function which returns a relation
+    assert db._count["len"] == 1
+    assert db.gen(n=7) == db.gen(n=7) and len(db.gen(n=7)) == 7
+    assert db.gen.cache_in(n=7)
+    assert db._count["gen"] == 1
+    # not cached
+    assert db.bad() == "DONE" and db.bad() == "DONE"
+    assert db._count["bad"] == 2
+    assert len(cache) == 3, "3 inputs in cache"
