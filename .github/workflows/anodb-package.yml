@@ -47,8 +47,10 @@ jobs:
       run: make check.pyright
     # - name: Lint with black
     #   run: black --check anodb.py test/test_anodb.py
-    - name: Lint with flake8
-      run: make check.flake8
+    # - name: Lint with flake8
+    #   run: make check.flake8
+    - name: Lint with ruff
+      run: make check.ruff
     - name: Test with pytest and databases
       run: make check.pytest
     - name: Coverage tests

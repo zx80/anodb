@@ -32,7 +32,8 @@ py-modules = [ "anodb" ]
 
 [project.optional-dependencies]
 dev = [
-  "mypy", "pyright", "flake8", "black", "pytest", "coverage", "pymarkdownlnt",
+  "mypy", "pyright", "ruff", "flake8", "black", "pymarkdownlnt",
+  "pytest", "coverage",
   "CacheToolsUtils"
 ]
 pub = [ "build", "twine", "wheel" ]

@@ -6,7 +6,7 @@ PYTHON	= python
 PIP		= pip
 
 .PHONY: check
-check: check.pyright check.flake8 check.pytest check.coverage check.pymarkdown
+check: check.pyright check.ruff check.pytest check.coverage check.pymarkdown
 
 .PHONY: check.mypy
 check.mypy: venv
@@ -18,10 +18,17 @@ check.pyright: venv
 	source venv/bin/activate
 	pyright $(MODULE).py
 
+IGNORE  = E227,E402,E501
+
 .PHONY: check.flake8
 check.flake8: venv
 	source venv/bin/activate
-	flake8 --ignore=E127,E227,E402,E501,W503,W504 $(MODULE).py
+	flake8 --ignore=E127,W503,W504,$(IGNORE) $(MODULE).py
+
+.PHONY: check.ruff
+check.ruff: venv
+	source venv/bin/activate
+	ruff check --ignore=$(IGNORE) $(MODULE).py
 
 .PHONY: check.black
 check.black: venv
@@ -45,7 +52,7 @@ check.pymarkdown: venv
 
 # targets for development environment
 .PHONY: dev
-dev: venv
+dev: venv/.dev
 
 .PHONY: clean.dev
 clean.dev: clean.venv
@@ -65,20 +72,25 @@ venv:
 	$(PYTHON) -m venv venv
 	source venv/bin/activate
 	$(PIP) install -U pip
+	$(PIP) install -e .
+
+venv/.dev: venv
+	source venv/bin/activate
 	$(PIP) install -e .[postgres,dev]
+	touch $@
 
 .PHONY: venv.check
-venv.check: venv
+venv.check: venv/.dev
 	source venv/bin/activate
 	pip install -e .[mysql]
 
-.PHONY: venv.dev
-venv.dev: venv
+venv/.pub: venv/.dev
 	source venv/bin/activate
-	$(PIP) install -e .[dev,pub]
+	$(PIP) install -e .[pub]
+	touch $@
 
 # distribution
-dist: venv.dev
+dist: venv/.pub
 	source venv/bin/activate
 	$(PYTHON) -m build
 

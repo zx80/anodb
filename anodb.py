@@ -214,7 +214,9 @@ class DB:
     def _create_fn(self, q: str, f: Callable) -> Callable:
         """Create one wrapped method."""
         # call internal caller
-        fn = ft.partial(self._call_fn, q, f)
+        @ft.wraps(f)
+        def fn(*a, **kw):
+            return self._call_fn(q, f, *a, **kw)
         # FIXME how to trigger caching?
         # FIXME cachability may not work on some types? lo?
         # NOTE we skip internal *_cursor attributes
@@ -226,14 +228,14 @@ class DB:
             # else proceed with wrapping
             self._log_info(f"caching query {q}")
             if operation == Ops.SELECT:  # materialize generator
-                # TODO ft.wraps?
-                fx = lambda *a, **kw: list(fn(*a, **kw))
+                @ft.wraps(fn)
+                def fx(*a, **kw):
+                    return list(fn(*a, **kw))
             else:
                 fx = fn
             return self._cacher(q, fx)
         else:
             return fn
-
 
     # this could probably be done dynamically by overriding __getattribute__
     def _create_fns(self, queries: sql.aiosql.Queries):  # type: ignore
@@ -295,7 +297,7 @@ class DB:
         self._db_error = self._db_pkg.Error if hasattr(self._db_pkg, "Error") else Exception
 
         # myco does not need to follow the standard?
-        if self._db_error == Exception:  # pragma: no cover
+        if self._db_error is Exception:  # pragma: no cover
             self._log_error(f"missing Error class in {package}, falling back to Exception")
 
     def __connect(self):

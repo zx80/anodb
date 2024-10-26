@@ -18,6 +18,7 @@ are available on [GitHub](https://github.com/).
 - **experimental** caching feature.
 - add `auto_rollback` parameter to allow disabling this feature.
 - improve documentation.
+- replace `flake8` with `ruff` in CI.
 
 ## 12.1 on 2024-10-25
 
