@@ -13,6 +13,10 @@ are available on [GitHub](https://github.com/).
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
 
+## ? on ?
+
+- fix readme about default `kwargs_only`.
+
 ## 13.0 on 2024-11-10
 
 - add `cached` option to control caching re trigger.

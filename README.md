@@ -96,7 +96,7 @@ The `DB` constructor main parameters are:
   Default is _True_.
 - `kwargs_only` whether to only accept named parameters to python functions.
   This helps avoiding silly bugs!
-  Default is _False_.
+  Default is _True_.
 - `debug` whether to generate debugging messages through `logging`.
   Default is _False_.
 - `cacher` factory to wrap functions for caching `SELECT` queries designated
