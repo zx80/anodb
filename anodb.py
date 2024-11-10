@@ -49,7 +49,7 @@ class DB:
     - :param adapter_kwargs: adapter creation options as a dict.
     - :param auto_reconnect: whether to reconnect on connection errors, default is true.
     - :param auto_rollback: whether to rollback internaly on errors, default is true.
-    - :param kwargs_only: whether to require named parameters on query execution, default is false.
+    - :param kwargs_only: whether to require named parameters on query execution, default is true.
     - :param attribute: attribute dot access substitution, default is ``"__"``.
     - :param exception: user function to reraise database exceptions.
     - :param debug: debug mode, generate more logs through ``logging``.
@@ -99,11 +99,13 @@ class DB:
         # anodb behavior
         auto_reconnect: bool = True,
         auto_rollback: bool = True,
-        kwargs_only: bool = False,
-        attribute: str = "__",
-        exception: Callable[[BaseException], BaseException]|None = None,
         debug: bool = False,
+        exception: Callable[[BaseException], BaseException]|None = None,
         cacher: CacheFactory|None = None,
+        # aiosql behavior
+        kwargs_only: bool = True,
+        attribute: str = "__",
+        # connection options
         **conn_options,
     ):
         DB._counter += 1

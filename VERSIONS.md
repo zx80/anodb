@@ -15,6 +15,7 @@ are available on [GitHub](https://github.com/).
 
 ## 13.0 on ?
 
+- make `kwargs_only` default to _true_ (**breaking change**).
 - improve cache tests.
 - add _Python 3.14_ CI run.
 - fix test dependencies.
