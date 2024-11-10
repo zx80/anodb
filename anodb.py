@@ -9,6 +9,7 @@ import importlib
 import functools as ft
 import datetime as dt
 import time
+from collections import deque
 import aiosql as sql  # type: ignore
 from aiosql.types import DriverAdapterProtocol, SQLOperationType as Ops
 import json
@@ -50,12 +51,13 @@ class DB:
     - :param adapter_kwargs: adapter creation options as a dict.
     - :param auto_reconnect: whether to reconnect on connection errors, default is true.
     - :param auto_rollback: whether to rollback internaly on errors, default is true.
-    - :param kwargs_only: whether to require named parameters on query execution, default is true.
+    - :param kwargs_only: whether to require named parameters on query execution, default is *true*.
     - :param attribute: attribute dot access substitution, default is ``"__"``.
     - :param exception: user function to reraise database exceptions.
     - :param debug: debug mode, generate more logs through ``logging``.
     - :param cacher: cache factory for queries marked as such.
     - :param cached: doc string re for checking whether to cache a query, default is ``r"\\bCACHED\\b"``
+    - :param last_calls: keep track of this method invocations, default is *1*.
     - :param **conn_options: database-specific ``kwargs`` connection options.
     """
 
@@ -105,6 +107,7 @@ class DB:
         exception: Callable[[BaseException], BaseException]|None = None,
         cacher: CacheFactory|None = None,
         cached: str = r"\bCACHED\b",
+        last_calls: int = 1,
         # aiosql behavior
         kwargs_only: bool = True,
         attribute: str = "__",
@@ -165,6 +168,8 @@ class DB:
         self._exception = exception
         self._cacher = cacher
         self._cached = cached
+        self._last_calls = last_calls
+        self._calls = deque()
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: list[sql.aiosql.Queries] = []  # type: ignore
@@ -200,6 +205,10 @@ class DB:
             self._reconnect()
         self._conn_nstat += 1
         self._count[_query] += 1
+        if self._last_calls:
+            self._calls.append(_query)
+            while len(self._calls) > self._last_calls:
+                self._calls.popleft()
         try:
             return _fn(self._conn, *args, **kwargs)
         except self._db_error as error:
@@ -423,6 +432,7 @@ class DB:
             "ntx": self._ntx,
             "calls": self._count,
             "count": self._conn_count,
+            "lasts": list(self._calls),
         }
 
     def __str__(self):

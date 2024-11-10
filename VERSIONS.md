@@ -18,6 +18,7 @@ are available on [GitHub](https://github.com/).
 
 - improve readme example.
 - fix readme about default `kwargs_only`.
+- add `last_calls` to keep track of recent calls.
 
 ## 13.0 on 2024-11-10
 
