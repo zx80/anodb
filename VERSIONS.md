@@ -8,12 +8,12 @@ are available on [GitHub](https://github.com/).
 
 ## TODO
 
-- keep version numbering synced with aiosql and python.
+- keep version numbering synced with aiosql and Python 3.
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
 
-## 13.0 on ?
+## 13.0 on 2024-11-10
 
 - add `cached` option to control caching re trigger.
 - make `kwargs_only` default to _true_ (**breaking change**).
