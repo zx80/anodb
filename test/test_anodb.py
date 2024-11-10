@@ -118,6 +118,7 @@ def test_options():
         TEST_SQL,
         '{"timeout":10, "check_same_thread":False, "isolation_level":None}',
         kwargs_only=False,
+        last_calls=7,
     )
     run_42(db)
     db.close()
