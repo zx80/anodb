@@ -54,6 +54,7 @@ class DB:
     - :param exception: user function to reraise database exceptions.
     - :param debug: debug mode, generate more logs through ``logging``.
     - :param cacher: cache factory for queries marked as such.
+    - :param cached: doc string re for checking whether to cache a query, default is ``r"\\bCACHED\\b"``
     - :param **conn_options: database-specific ``kwargs`` connection options.
     """
 
@@ -102,6 +103,7 @@ class DB:
         debug: bool = False,
         exception: Callable[[BaseException], BaseException]|None = None,
         cacher: CacheFactory|None = None,
+        cached: str = r"\bCACHED\b",
         # aiosql behavior
         kwargs_only: bool = True,
         attribute: str = "__",
@@ -161,6 +163,7 @@ class DB:
         self._attribute = attribute
         self._exception = exception
         self._cacher = cacher
+        self._cached = cached
         # queries… keep track of calls
         self._queries_file = [queries] if isinstance(queries, str) else queries
         self._queries: list[sql.aiosql.Queries] = []  # type: ignore
@@ -219,10 +222,9 @@ class DB:
         @ft.wraps(f)
         def fn(*a, **kw):
             return self._call_fn(q, f, *a, **kw)
-        # FIXME how to trigger caching?
         # FIXME cachability may not work on some types? lo?
         # NOTE we skip internal *_cursor attributes
-        if self._cacher and not q.endswith("_cursor") and f.__doc__ and "CACHED" in f.__doc__:
+        if self._cacher and not q.endswith("_cursor") and f.__doc__ and re.search(self._cached, f.__doc__):
             operation = f.operation  # type: ignore
             if operation not in self._SELECT_OPS:
                 self._log_warning(f"skip caching non select method: {q} ({operation})")
