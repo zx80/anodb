@@ -8,10 +8,10 @@ are available on [GitHub](https://github.com/).
 
 ## TODO
 
+- keep version numbering synced with aiosql and python.
+- remove psycopg2 exclusion for pypy 3.10 when/if possible.
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
-- sync version numbering with aiosql?
-- remove psycopg2 exclusion for pypy 3.10 when/if possible.
 
 ## 13.0 on ?
 

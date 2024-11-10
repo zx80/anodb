@@ -2,6 +2,7 @@
 # This marvelous code is Public Domain.
 #
 
+import re
 from typing import Any, Callable
 import logging
 import importlib
