@@ -12,9 +12,11 @@ are available on [GitHub](https://github.com/).
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
 - make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
+- add pydantic example to documentation.
 
 ## ? on ?
 
+- improve readme example.
 - fix readme about default `kwargs_only`.
 
 ## 13.0 on 2024-11-10

@@ -35,13 +35,14 @@ Once available:
 
 ```python
 import anodb
+
 # parameters: driver, connection string, SQL file
 db = anodb.DB("sqlite3", "test.db", "test.sql")
 
 db.create_stuff()
-db.do_some_insert(key=1, val="hello")
-db.do_some_update(key=1, val="world")
-print("data", db.do_some_select(key=1))
+db.add_stuff(key=1, val="hello")
+db.change_stuff(key=1, val="world")
+print("data", db.get_stuff(key=1))
 print("norm", db.compute_norm(c=3+4j))
 db.commit()
 
@@ -54,13 +55,13 @@ With file `test.sql` to define parametric queries such as:
 -- name: create_stuff#
 CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
 
--- name: do_some_select(key)^
+-- name: get_stuff(key)^
 SELECT * FROM Stuff WHERE key = :key;
 
--- name: do_some_insert(key, val)!
+-- name: add_stuff(key, val)!
 INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
--- name: do_some_update(key, val)!
+-- name: change_stuff(key, val)!
 UPDATE Stuff SET val = :val WHERE key = :key;
 
 -- name: compute-norm(c)$
