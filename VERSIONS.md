@@ -13,9 +13,9 @@ are available on [GitHub](https://github.com/).
 - sync version numbering with aiosql?
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
 
-## ? on ?
+## 13.0 on ?
 
-- improve cache tests
+- improve cache tests.
 - add _Python 3.14_ CI run.
 - fix test dependencies.
 
