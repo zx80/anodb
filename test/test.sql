@@ -1,51 +1,51 @@
--- name: create-foo!
+-- name: create-foo#
 -- create table foo
 CREATE TABLE Foo(pk INT PRIMARY KEY, val TEXT NOT NULL);
 
--- name: drop-foo! 
+-- name: drop-foo#
 -- drop table foo
 DROP TABLE IF EXISTS Foo;
 
--- name: count-foo^ 
+-- name: count-foo()^
 -- count number of items in foo
 SELECT COUNT(*) FROM Foo;
 
--- name: insert-foo!		
+-- name: insert-foo(pk, val)!
 -- insert one item into foo
 INSERT INTO Foo(pk, val) VALUES (:pk, :val);
 
--- name: select-foo-pk
+-- name: select-foo-pk(pk)
 -- extract one value from foo
 SELECT val FROM Foo WHERE pk = :pk;
 
--- name: select-foo-all
+-- name: select-foo-all()
 -- extract all values from foo
 SELECT pk, val FROM Foo ORDER BY 1;
 
--- name: update-foo-pk!
+-- name: update-foo-pk(pk, val)!
 -- update a value in foo
 UPDATE Foo SET val = :val WHERE pk = :pk;
 
--- name: delete-foo-pk!
+-- name: delete-foo-pk(pk)!
 -- delete an item in foo
 DELETE FROM Foo WHERE pk = :pk;
 
--- name: delete-foo-all!
+-- name: delete-foo-all()!
 -- delete all items
 DELETE FROM Foo WHERE TRUE;
 
--- name: hello-world^
+-- name: hello-world()^
 -- simple hello world expression
 SELECT 'hello world!';
 
--- name: kill-me-pg!
+-- name: kill-me-pg()!
 -- kill current backend process, to test reconnections
 SELECT pg_terminate_backend(pg_backend_pid());
 
 -- name: syntax-error$
 SELECT :s + ;
 
--- name: module$
+-- name: module(x)$
 SELECT SQRT(:x.real * :x.real + :x.imag * :x.imag);
 
 --
@@ -55,14 +55,14 @@ SELECT SQRT(:x.real * :x.real + :x.imag * :x.imag);
 -- name: create_stuff#
 CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
 
--- name: do_some_select^
+-- name: do_some_select(key)^
 SELECT * FROM Stuff WHERE key = :key;
 
--- name: do_some_insert!
+-- name: do_some_insert(key, val)!
 INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
--- name: do_some_update!
+-- name: do_some_update(key, val)!
 UPDATE Stuff SET val = :val WHERE key = :key;
 
--- name: compute-norm$
+-- name: compute-norm(c)$
 SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);

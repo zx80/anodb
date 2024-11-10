@@ -10,7 +10,7 @@ description = "Convenient Wrapper around AioSQL and a Database Connection"
 readme = "README.md"
 license = { text = "CC0" }
 requires-python = ">= 3.10"
-dependencies = [ "aiosql >= 12.0" ]
+dependencies = [ "aiosql >= 13.0" ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",

@@ -73,18 +73,18 @@ def run_stuff(db: anodb.DB, skip_dot=False):
 
 # sqlite memory test and connection option coverage
 def test_sqlite():
-    db = anodb.DB("sqlite", ":memory:", TEST_SQL, '{"check_same_thread":False}')
+    db = anodb.DB("sqlite", ":memory:", TEST_SQL, '{"check_same_thread":False}', kwargs_only=False)
     run_stuff(db)
     db.close()
     # obsolete
-    db = anodb.DB("sqlite", None, TEST_SQL, '{"check_same_thread":False}', conn_args=[":memory:"])
+    db = anodb.DB("sqlite", None, TEST_SQL, '{"check_same_thread":False}', conn_args=[":memory:"], kwargs_only=False)
     run_stuff(db)
     db.close()
-    db = anodb.DB("sqlite", None, TEST_SQL, {"check_same_thread": False}, conn_args=[":memory:"])
+    db = anodb.DB("sqlite", None, TEST_SQL, {"check_same_thread": False}, conn_args=[":memory:"], kwargs_only=False)
     run_stuff(db)
     db.close()
     # new interface
-    db = anodb.DB("sqlite", None, TEST_SQL, conn_kwargs={"check_same_thread": False}, conn_args=[":memory:"])
+    db = anodb.DB("sqlite", None, TEST_SQL, conn_kwargs={"check_same_thread": False}, conn_args=[":memory:"], kwargs_only=False)
     run_stuff(db)
     db.close()
 
@@ -99,6 +99,7 @@ def test_options():
         check_same_thread=False,
         isolation_level=None,
         debug=True,
+        kwargs_only=False,
     )
     run_42(db)
     db.close()
@@ -107,6 +108,7 @@ def test_options():
         ":memory:",
         TEST_SQL,
         {"timeout": 10, "check_same_thread": False, "isolation_level": None},
+        kwargs_only=False,
     )
     run_42(db)
     db.close()
@@ -115,6 +117,7 @@ def test_options():
         ":memory:",
         TEST_SQL,
         '{"timeout":10, "check_same_thread":False, "isolation_level":None}',
+        kwargs_only=False,
     )
     run_42(db)
     db.close()
