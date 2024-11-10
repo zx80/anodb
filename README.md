@@ -36,7 +36,7 @@ Once available:
 ```python
 import anodb
 # parameters: driver, connection string, SQL file
-db = anodb.DB("sqlite3", "test.db", "test.sql", kwargs_only=True)
+db = anodb.DB("sqlite3", "test.db", "test.sql")
 
 db.create_stuff()
 db.do_some_insert(key=1, val="hello")
@@ -48,22 +48,22 @@ db.commit()
 db.close()
 ```
 
-With file `test.sql` containing something like:
+With file `test.sql` to define parametric queries such as:
 
 ```sql
 -- name: create_stuff#
 CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
 
--- name: do_some_select^
+-- name: do_some_select(key)^
 SELECT * FROM Stuff WHERE key = :key;
 
--- name: do_some_insert!
+-- name: do_some_insert(key, val)!
 INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
--- name: do_some_update!
+-- name: do_some_update(key, val)!
 UPDATE Stuff SET val = :val WHERE key = :key;
 
--- name: compute-norm$
+-- name: compute-norm(c)$
 SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);
 ```
 
