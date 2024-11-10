@@ -21,6 +21,7 @@ are available on [GitHub](https://github.com/).
 - add _Python 3.14_ CI run.
 - fix test dependencies.
 - improve makefile.
+- remove project-specific `MANIFEST.in`.
 
 ## 12.2 on 2024-10-26
 
