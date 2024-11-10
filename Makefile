@@ -94,6 +94,11 @@ dist: venv/.pub
 	source venv/bin/activate
 	$(PYTHON) -m build
 
+.PHONY: check.publish
+check.publish: dist
+	source venv/bin/activate
+	twine check dist/*
+
 .PHONY: publish
 publish: dist
 	# provide pypi ids in ~/.pypirc
