@@ -240,7 +240,7 @@ class DB:
                 self._log_warning(f"skip caching non select method: {q} ({operation})")
                 return fn
             # else proceed with wrapping
-            self._log_info(f"caching query {q}")
+            self._log_debug(f"caching query {q}")
             if operation == Ops.SELECT:  # materialize generator
                 @ft.wraps(fn)
                 def fx(*a, **kw):
