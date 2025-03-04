@@ -436,4 +436,4 @@ def test_cache():
     assert db._count["bad"] == 2  # 2 actual calls
     # expected cache stats
     assert len(cache) == 3, "3 inputs in cache"
-    assert cache.hits() > 0.65  # expecting ⅔
+    assert cache.hits() > 0.66  # expecting ⅔
