@@ -55,14 +55,17 @@ SELECT SQRT(:x.real * :x.real + :x.imag * :x.imag);
 -- name: create_stuff#
 CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
 
--- name: do_some_select(key)^
-SELECT * FROM Stuff WHERE key = :key;
-
--- name: do_some_insert(key, val)!
+-- name: add_stuff(key, val)!
 INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
--- name: do_some_update(key, val)!
+-- name: change_stuff(key, val)!
 UPDATE Stuff SET val = :val WHERE key = :key;
+
+-- name: get_stuff(key)^
+SELECT * FROM Stuff WHERE key = :key;
+
+-- name: get_all_stuff()
+SELECT * FROM Stuff ORDER BY 1;
 
 -- name: compute-norm(c)$
 SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);

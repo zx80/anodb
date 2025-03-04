@@ -39,13 +39,16 @@ import anodb
 # parameters: driver, connection string, SQL file
 db = anodb.DB("sqlite3", "test.db", "test.sql")
 
-db.create_stuff()
-db.add_stuff(key=1, val="hello")
-db.change_stuff(key=1, val="world")
-print("data", db.get_stuff(key=1))
-print("norm", db.compute_norm(c=3+4j))
-db.commit()
+db.create_stuff()                       # table created
+db.add_stuff(key=1, val="hello")        # 1 row added
+db.change_stuff(key=1, val="world")     # 1 row changed
+print("data", db.get_stuff(key=1))      # (1, "world")
+print("norm", db.compute_norm(c=3+4j))  # 5.0
 
+for key, val in db.get_all_stuff():
+    print(f"{key}: {val}")
+
+db.commit()
 db.close()
 ```
 
@@ -55,17 +58,20 @@ With file `test.sql` to define parametric queries such as:
 -- name: create_stuff#
 CREATE TABLE Stuff(key INTEGER PRIMARY KEY, val TEXT NOT NULL);
 
--- name: get_stuff(key)^
-SELECT * FROM Stuff WHERE key = :key;
-
 -- name: add_stuff(key, val)!
 INSERT INTO Stuff(key, val) VALUES (:key, :val);
 
 -- name: change_stuff(key, val)!
 UPDATE Stuff SET val = :val WHERE key = :key;
 
+-- name: get_stuff(key)^
+SELECT * FROM Stuff WHERE key = :key;
+
 -- name: compute-norm(c)$
 SELECT SQRT(:c.real * :c.real + :c.imag * :c.imag);
+
+-- name: get_all_stuff()
+SELECT * FROM Stuff ORDER BY 1;
 ```
 
 ## Documentation

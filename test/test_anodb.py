@@ -386,16 +386,18 @@ def test_readme():
     db = anodb.DB("sqlite3", ":memory:", "test.sql", kwargs_only=True)
     res = db.create_stuff()
     assert res == "DONE"
-    res = db.do_some_insert(key=1, val="hello")
+    res = db.add_stuff(key=1, val="hello")
     assert res == 1
-    res = db.do_some_update(key=1, val="world")
+    res = db.change_stuff(key=1, val="world")
     assert res == 1
-    res = db.do_some_select(key=1)
+    res = db.get_stuff(key=1)
     assert res == (1, "world")
+    for row in db.get_all_stuff():
+        assert row == (1, "world")
     res = db.compute_norm(c=3+4j)
     assert res == 5.0
     # not in readme
-    res = db.do_some_select(key=2)
+    res = db.get_stuff(key=2)
     assert res is None
     db.commit()
     db.close()
