@@ -14,11 +14,11 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add pydantic example to documentation.
 
-## ? on ?
+## 13.1 on 2025-03-04
 
+- add `last_calls` to keep track of recent calls.
 - improve readme example.
 - fix readme about default `kwargs_only`.
-- add `last_calls` to keep track of recent calls.
 
 ## 13.0 on 2024-11-10
 
