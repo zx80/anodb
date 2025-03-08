@@ -19,14 +19,19 @@ jobs:
         - version: "3.12"
         - version: "3.13"
         - version: "3.13t"
-          env: PYTHON_GIL=1
+          gil: 1
         - version: "3.13t"
-          env: PYTHON_GIL=0
+          gil: 0
         - version: "3.14"
+        # - version: "3.14t"
+        #   gil: 1
+        # - version: "3.14t"
+        #   gil: 0
     services:
       # Label used to access the service container
       postgres:
         # GitHub Docker Images: https://github.com/docker-library/official-images/blob/master/library/postgres
+        # NOTE we could also activate the local ubuntu postgres server
         image: postgres:alpine
         # Provide the password for postgres
         env:
@@ -62,8 +67,8 @@ jobs:
     - name: Lint with ruff
       run: make check.ruff
     - name: Test with pytest and databases
-      run: make check.pytest
+      run: PYTHON_GIL=${{ matrix.python.gil }} make check.pytest
     - name: Coverage tests
-      run: make check.coverage
+      run: PYTHON_GIL=${{ matrix.python.gil }} make check.coverage
     - name: Check markdown
       run: make check.pymarkdown
