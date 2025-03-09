@@ -45,8 +45,11 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
+    env:
+      PYTHON_GIL: ${{ matrix.python.gil }}
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Project
+      uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python.version }}
       # uses: actions/setup-python@v5
       uses: actions/setup-python@main
@@ -67,8 +70,8 @@ jobs:
     - name: Lint with ruff
       run: make check.ruff
     - name: Test with pytest and databases
-      run: PYTHON_GIL=${{ matrix.python.gil }} make check.pytest
+      run: make check.pytest
     - name: Coverage tests
-      run: PYTHON_GIL=${{ matrix.python.gil }} make check.coverage
+      run: make check.coverage
     - name: Check markdown
       run: make check.pymarkdown
