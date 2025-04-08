@@ -14,6 +14,11 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add pydantic example to documentation.
 
+## ? on ?
+
+- improve GitHub CI configuration.
+- use SPDX for licensing information in `pyproject.toml`.
+
 ## 13.2 on 2025-03-07
 
 - add _PyPy 3.11_ and _Python 3.13t_ to GitHub CI.

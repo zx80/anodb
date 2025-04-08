@@ -8,13 +8,12 @@ version = "13.2"
 authors = [ { name = "Fabien Coelho", email = "ano.db@coelho.net" } ]
 description = "Convenient Wrapper around AioSQL and a Database Connection"
 readme = "README.md"
-license = { text = "CC0" }
+license = "CC0-1.0"
 requires-python = ">= 3.10"
 dependencies = [ "aiosql >= 13.0" ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
-  "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
   "Programming Language :: Python",
   "Programming Language :: SQL",
   "Topic :: Database :: Front-Ends",
