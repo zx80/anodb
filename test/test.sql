@@ -42,7 +42,7 @@ SELECT 'hello world!';
 -- kill current backend process, to test reconnections
 SELECT pg_terminate_backend(pg_backend_pid());
 
--- name: syntax-error$
+-- name: syntax-error(s)$
 SELECT :s + ;
 
 -- name: module(x)$

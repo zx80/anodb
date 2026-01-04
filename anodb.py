@@ -52,6 +52,7 @@ class DB:
     - :param auto_reconnect: whether to reconnect on connection errors, default is true.
     - :param auto_rollback: whether to rollback internaly on errors, default is true.
     - :param kwargs_only: whether to require named parameters on query execution, default is *true*.
+    - :param mandatory_parameters: whether to require function parameter declarations, default is *true*.
     - :param attribute: attribute dot access substitution, default is ``"__"``.
     - :param exception: user function to reraise database exceptions.
     - :param debug: debug mode, generate more logs through ``logging``.
@@ -110,6 +111,7 @@ class DB:
         last_calls: int = 1,
         # aiosql behavior
         kwargs_only: bool = True,
+        mandatory_parameters: bool = True,
         attribute: str = "__",
         # connection options
         **conn_options,
@@ -162,6 +164,7 @@ class DB:
         self._auto_reconnect = auto_reconnect
         self._auto_rollback = auto_rollback
         self._kwargs_only = kwargs_only
+        self._mandatory_parameters = mandatory_parameters
         self._reconn = False
         # other parameters
         self._attribute = attribute
@@ -272,12 +275,14 @@ class DB:
         """Load queries from a file or directory."""
         self._create_fns(sql.from_path(fn, self._db, *self._adapter_args,
                                        kwargs_only=self._kwargs_only, attribute=self._attribute,
+                                       mandatory_parameters=self._mandatory_parameters,
                                        **self._adapter_kwargs))
 
     def add_queries_from_str(self, qs: str):
         """Load queries from a string."""
         self._create_fns(sql.from_str(qs, self._db, *self._adapter_args,
                                       kwargs_only=self._kwargs_only, attribute=self._attribute,
+                                      mandatory_parameters=self._mandatory_parameters,
                                       **self._adapter_kwargs))
 
     def _set_db_pkg(self):

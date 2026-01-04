@@ -293,14 +293,14 @@ def test_myco(my_dsn, mysql):
 def test_from_str():
     db = anodb.DB("sqlite", ":memory:")
     assert "sqlite" in str(db)
-    db.add_queries_from_str("-- name: next\nSELECT :arg + 1 AS next;\n")
+    db.add_queries_from_str("-- name: next(arg)\nSELECT :arg + 1 AS next;\n")
     assert list(db.next(arg=1))[0][0] == 2
-    db.add_queries_from_str("-- name: prev\nSELECT :arg - 1 AS prev;\n")
+    db.add_queries_from_str("-- name: prev(arg)\nSELECT :arg - 1 AS prev;\n")
     assert list(db.next(arg=41))[0][0] == 42
     assert list(db.prev(arg=42))[0][0] == 41
-    db.add_queries_from_str("-- name: foo1\nSELECT :arg + 42 AS foo;\n")
+    db.add_queries_from_str("-- name: foo1(arg)\nSELECT :arg + 42 AS foo;\n")
     assert list(db.foo1(arg=0))[0][0] == 42
-    db.add_queries_from_str("-- name: foo2\nSELECT :arg - 42 AS foo;\n")
+    db.add_queries_from_str("-- name: foo2(arg)\nSELECT :arg - 42 AS foo;\n")
     assert list(db.foo2(arg=42))[0][0] == 0
     assert list(db.next(arg=42))[0][0] == 43
     assert list(db.prev(arg=43))[0][0] == 42

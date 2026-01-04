@@ -14,6 +14,10 @@ are available on [GitHub](https://github.com/).
 - sync drivers with aiosql?
 - add pydantic example to documentation.
 
+## 15.0 on 2026-01-04
+
+- add `mandatory_parameters` parameter for _AioSQL 15.0_
+
 ## 14.0 on 2025-11-21
 
 - improve GitHub CI configuration.

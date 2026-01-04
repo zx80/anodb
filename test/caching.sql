@@ -1,13 +1,13 @@
--- name: ran$
+-- name: ran()$
 -- the point is to detect caching by caching a volatile function
 -- CACHED
 SELECT RANDOM();
 
--- name: len^
+-- name: len(s)^
 -- CACHED
 SELECT LENGTH(:s), :s, TRUE;
 
--- name: gen
+-- name: gen(n)
 -- CACHED
 WITH RECURSIVE gens(i) AS (
   SELECT 1

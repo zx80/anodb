@@ -1,2 +1,2 @@
--- name: one-name
+-- name: one-name()
 SELECT 1;
