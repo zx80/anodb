@@ -18,6 +18,7 @@ are available on [GitHub](https://github.com/).
 
 - github actions: use latest python setup
 - github actions: tests with _Python 3.15_, remove _3.10_, add _Pypy 3.12_.
+- checks: please `ruff` or ignore some rules
 
 ## 15.0 on 2026-01-04
 
