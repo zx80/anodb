@@ -10,9 +10,9 @@ are available on [GitHub](https://github.com/).
 
 - keep version numbering synced with aiosql and Python 3.
 - remove psycopg2 exclusion for pypy 3.10 when/if possible.
-- make it work with "with", i.e. provide relevant __enter__ and __exit__?
 - sync drivers with aiosql?
 - add pydantic example to documentation.
+- mark pytest tests for selection with `-m`
 
 ## ?? on ??
 
@@ -20,6 +20,7 @@ are available on [GitHub](https://github.com/).
 - github actions: tests with _Python 3.15_, remove _3.10_, add _Pypy 3.12_.
 - checks: please `ruff` or ignore some rules
 - checks: please `pymarkdown` to ignore rule _MD050_
+- add context manager support to `DB` class
 
 ## 15.0 on 2026-01-04
 

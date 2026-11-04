@@ -88,6 +88,9 @@ def test_sqlite():
     run_stuff(db)
     db.close()
 
+def test_sqlite_context_manager():
+    with anodb.DB("sqlite", ":memory:", TEST_SQL) as db:
+        run_stuff(db)
 
 # sqlite memory test with options
 def test_options():

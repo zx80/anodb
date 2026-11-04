@@ -133,6 +133,7 @@ db = anodb.DB("pymssql", None, "acme-queries.sql", server="localhost", port=1433
 ```
 
 See DB docstring for knowing about all parameters.
+The DB class also has context manager support.
 
 ## License
 

@@ -449,6 +449,12 @@ class DB:
     def __str__(self):
         return json.dumps(self._stats())
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     def __del__(self):
         if hasattr(self, "_conn") and self._conn:
             self.close()
