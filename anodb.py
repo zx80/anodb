@@ -2,22 +2,29 @@
 # This marvelous code is Public Domain.
 #
 
-import re
-from typing import Any, Callable
-import logging
-import importlib
-import functools as ft
 import datetime as dt
-import time
-from collections import deque
-import aiosql as sql  # type: ignore
-from aiosql.types import DriverAdapterProtocol, SQLOperationType as Ops
+import functools as ft
+import importlib
+import importlib.metadata
 import json
+import logging
+import re
+import time
+
+# type related stuff
+from collections import deque
+from collections.abc import Callable
+from typing import Any
+
+# packaging
+from importlib.metadata import version as pkg_version
+
+# aiosql stuff
+import aiosql as sql  # type: ignore
+from aiosql.types import DriverAdapterProtocol
+from aiosql.types import SQLOperationType as Ops
 
 log = logging.getLogger("anodb")
-
-# get package version
-from importlib.metadata import version as pkg_version
 __version__ = pkg_version("anodb")
 
 
@@ -27,7 +34,6 @@ CacheFactory = Callable[[str, Callable], Callable]
 
 class AnoDBException(Exception):
     """Locally generated exception."""
-    pass
 
 
 #
@@ -358,7 +364,7 @@ class DB:
             else:
                 self._conn_delay = min(2 * self._conn_delay, self._CONNECTION_MAX_DELAY)
             self._log_error(f"connect failed #{self._conn_attempts}: {e}")
-            raise e
+            raise
 
     def _reconnect(self):
         """Try to reconnect to database, possibly with some cleanup."""

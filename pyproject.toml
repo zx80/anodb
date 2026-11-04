@@ -46,3 +46,7 @@ postgres = [
   "pg8000"
 ]
 mysql = [ "pytest-mysql", "mysqlclient", "pymysql", "mysql-connector" ]
+
+[tool.ruff.lint]
+# ruff rules are what they are, but they are not always right
+ignore = ["BLE001", "B006", "I001"]
