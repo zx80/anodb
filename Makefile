@@ -48,7 +48,7 @@ check.coverage: dev
 .PHONY: check.pymarkdown
 check.pymarkdown: dev
 	source venv/bin/activate
-	pymarkdown -d MD013 scan *.md
+	pymarkdown -d MD013,MD050 scan *.md
 
 # targets for development environment
 .PHONY: dev

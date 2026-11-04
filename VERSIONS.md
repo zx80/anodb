@@ -19,6 +19,7 @@ are available on [GitHub](https://github.com/).
 - github actions: use latest python setup
 - github actions: tests with _Python 3.15_, remove _3.10_, add _Pypy 3.12_.
 - checks: please `ruff` or ignore some rules
+- checks: please `pymarkdown` to ignore rule _MD050_
 
 ## 15.0 on 2026-01-04
 
@@ -179,8 +180,8 @@ are available on [GitHub](https://github.com/).
 
 - Rename `master` to `main`.
 - Use `pyproject.toml`
-- Fix tests for `aiosql` *8.0* which returns generators.
-- Drop support for Python *3.8* and *3.9* for simpler typing.
+- Fix tests for `aiosql` _8.0_ which returns generators.
+- Drop support for Python _3.8_ and _3.9_ for simpler typing.
 - Add support for `duckdb`
 
 ## 7.3 on 2023-01-21
@@ -195,7 +196,7 @@ are available on [GitHub](https://github.com/).
 
 ## 7.1 on 2022-11-12
 
-- Test with Python *3.12*.
+- Test with Python _3.12_.
 
 ## 7.0 on 2022-10-26
 

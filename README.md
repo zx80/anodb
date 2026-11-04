@@ -23,7 +23,7 @@ throttling delays.
 
 Compared to `aiosql`, the point is not to need to pass a connection
 as an argument on each call: The `DB` class embeds both connection
-*and* query methods.
+_and_ query methods.
 
 For concurrent programming (threads, greenlets…), a relevant setup
 should also consider thread-locals and pooling issues at some higher level.
@@ -79,7 +79,7 @@ SELECT * FROM Stuff ORDER BY 1;
 The `anodb` module provides the `DB` class which embeds both a
 [PEP 249](https://peps.python.org/pep-0249/) database connection
 (providing methods `commit`, `rollback`, `cursor`, `close` and
-its `connect` counterpart to re-connect) *and* SQL queries wrapped
+its `connect` counterpart to re-connect) _and_ SQL queries wrapped
 into dynamically generated functions by
 [aiosql](https://pypi.org/project/aiosql/).
 Such functions may be loaded from a string (`add_queries_from_str`) or a
