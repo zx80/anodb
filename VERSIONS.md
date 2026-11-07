@@ -16,12 +16,13 @@ are available on [GitHub](https://github.com/).
 
 ## 16.0 on 2026-11-07
 
-- github actions: use latest python setup
+- github actions: use latest python setup.
 - github actions: tests with _Python 3.15_, remove _3.10_, add _Pypy 3.12_.
-- checks: please `ruff` or ignore some rules
-- checks: please `pymarkdown` to ignore rule _MD050_
-- add context manager support to `DB` class
-- add `is_closed` DB parameter to allow reconnect with any driver
+- github actions: drop _3.13t_ tests which trigger a maturin installation error.
+- checks: please `ruff` or ignore some rules.
+- checks: please `pymarkdown` to ignore rule _MD050_.
+- add context manager support to `DB` class.
+- add `is_closed` DB parameter to allow reconnect with any driver.
 
 ## 15.0 on 2026-01-04
 
