@@ -17,15 +17,17 @@ jobs:
         - version: "3.11"
         - version: "3.12"
         - version: "3.13"
-        - version: "3.13t"
-          gil: 1
-        - version: "3.13t"
-          gil: 0
+        # FIXME skip because of undetected installation failures (ast-serialize maturin cargo)
+        # - version: "3.13t"
+        #   gil: 1
+        # - version: "3.13t"
+        #   gil: 0
         - version: "3.14"
         - version: "3.14t"
           gil: 1
         - version: "3.14t"
           gil: 0
+        # TODO check whether t is different from no-t now
         - version: "3.15"
         - version: "3.15t"
           gil: 1
