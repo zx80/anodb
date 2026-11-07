@@ -13,10 +13,15 @@ check.mypy: dev
 	source venv/bin/activate
 	mypy $(MODULE).py
 
+# NOTE (temporary) workaround installation failure with python 3.13t
 .PHONY: check.pyright
 check.pyright: dev
 	source venv/bin/activate
-	pyright $(MODULE).py
+	if type pyright > /dev/null 2>&1 ; then
+	  pyright $(MODULE).py
+	else
+	  echo "ignoring pyright checl: pyright not found"
+	fi
 
 IGNORE  = E227,E402,E501
 
