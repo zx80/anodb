@@ -112,6 +112,9 @@ The `DB` constructor main parameters are:
   return the wrapped function.
   See `test_cache` in the non regression tests for a simple example with
   [`CacheToolsUtils`](https://pypi.org/project/CacheToolsUtils/).
+- `is_closed` is a function expected to tell whether a connection (passed as a parameter)
+  has been closed, allowing to trigger a reconnect in some case.
+  Default is _None_ for all drivers but `psycopg` and `psycopg2`
 - other named parameters are passed as additional connection parameters.
   For instance you might consider using `autocommit=True` with `psycopg`.
 
