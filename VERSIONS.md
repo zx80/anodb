@@ -14,7 +14,7 @@ are available on [GitHub](https://github.com/).
 - add pydantic example to documentation.
 - mark pytest tests for selection with `-m`
 
-## ?? on ??
+## 16.0 on 2026-11-07
 
 - github actions: use latest python setup
 - github actions: tests with _Python 3.15_, remove _3.10_, add _Pypy 3.12_.
