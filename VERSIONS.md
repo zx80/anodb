@@ -21,6 +21,7 @@ are available on [GitHub](https://github.com/).
 - checks: please `ruff` or ignore some rules
 - checks: please `pymarkdown` to ignore rule _MD050_
 - add context manager support to `DB` class
+- add `is_closed` DB parameter to allow reconnect with any driver
 
 ## 15.0 on 2026-01-04
 

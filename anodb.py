@@ -65,6 +65,7 @@ class DB:
     - :param cacher: cache factory for queries marked as such.
     - :param cached: doc string re for checking whether to cache a query, default is ``r"\\bCACHED\\b"``
     - :param last_calls: keep track of this method invocations, default is *1*.
+    - :param is_closed: function to check whether the current connection is closed.
     - :param **conn_options: database-specific ``kwargs`` connection options.
     """
 
@@ -119,6 +120,7 @@ class DB:
         kwargs_only: bool = True,
         mandatory_parameters: bool = True,
         attribute: str = "__",
+        is_closed: Callable[[Any], bool]|None = None,
         # connection options
         **conn_options,
     ):
@@ -190,14 +192,17 @@ class DB:
         self._conn_last_fail: dt.datetime|None = None
         self._conn_attempts: int = 0
         self._conn_failures: int = 0
+        self._conn_is_closed = (
+            is_closed if is_closed is not None else
+            lambda c: hasattr(c, "closed") and c.closed if self._db == "psycopg" else
+            lambda c: hasattr(c, "closed") and c.closed == 2 if self._db == "psycopg2" else
+            lambda _: False
+        )
         self._do_connect()
 
     def _possibly_reconnect(self):
-        """Detect a connection error for psycopg."""
-        # FIXME detect other cases of bad connections?
-        self._reconn = self._auto_reconnect and (
-            (self._db == "psycopg" and hasattr(self._conn, "closed") and self._conn.closed) or      # type: ignore
-            (self._db == "psycopg2" and hasattr(self._conn, "closed") and self._conn.closed == 2))  # type: ignore
+        """Detect a connection error for the current db driver."""
+        self._reconn = self._auto_reconnect and self._conn_is_closed(self._conn)
 
     def _call_fn(self, _query, _fn, *args, **kwargs):
         """Forward method call to aiosql query.
@@ -327,7 +332,7 @@ class DB:
 
     def __connect(self):
         """Create a database connection (internal)."""
-        self._log_info(f"{self._db}: connecting")
+        self._log_info("connecting")
         # PEP249 does not impose a unified signature for connect.
         return self._db_pkg.connect(*self._conn_args, **self._conn_kwargs)
 
@@ -341,6 +346,7 @@ class DB:
                 assert self._conn_last_fail
                 wait = (delay - (dt.datetime.now(dt.timezone.utc) - self._conn_last_fail)).total_seconds()
                 if wait > 0.0:
+                    # FIXME use async wait instead?
                     self._log_info(f"connection wait #{self._conn_attempts}: {wait}")
                     time.sleep(wait)
             self._conn = self.__connect()
@@ -368,13 +374,14 @@ class DB:
 
     def _reconnect(self):
         """Try to reconnect to database, possibly with some cleanup."""
-        self._log_info(f"{self._db}: reconnecting")
+        self._log_info("reconnecting")
         if self._conn:
             # attempt at closing but ignore errors
             try:
                 self._conn.close()
+                self._conn = None
             except self._db_error as error:  # pragma: no cover
-                self._log_error(f"DB {self._db} close: {error}")
+                self._log_error(f"close: {error}")
         self._do_connect()
         self._reconn = False
 
